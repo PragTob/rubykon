@@ -1,8 +1,9 @@
 module Rubykon
   class Board
-    def initialize
+    attr_reader :size
+    def initialize(size = 19)
       @board = []
-      @moves_played = 0
+      @size = size
     end
     
     def empty?
