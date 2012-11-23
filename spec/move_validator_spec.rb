@@ -1,6 +1,8 @@
 require_relative 'spec_helper'
 
 MoveValidator = Rubykon::MoveValidator
+MoveFactory   = Rubykon::SpecHelpers::MoveFactory
+Board         = Rubykon::Board
 
 DEFAULT_X           = 5
 DEFAULT_Y           = 7
@@ -32,41 +34,63 @@ describe Rubykon::MoveValidator do
   
   describe 'legal moves' do
     before :each do
-      @board = Rubykon::Board.new DEFAULT_BOARD_SIZE
+      @board = Board.new DEFAULT_BOARD_SIZE
     end
     
   end
   
   describe 'Moves illegal of their own' do
-  
     before :each do
       @board = mock :board
     end
     
     it 'is illegal with negative x and y' do
-      @move = Move.new -DEFAULT_X, -DEFAULT_Y, DEFAULT_COLOR
-      should_be_invalid_move @move, @board
+      move = MoveFactory.build x: -3, y: -4
+      should_be_invalid_move move, @board
     end
     
     it 'is illegal with negative x' do
-      @move = Move.new -DEFAULT_X, DEFAULT_Y, DEFAULT_COLOR
-      should_be_invalid_move @move, @board
+      move = MoveFactory.build x: -1
+      should_be_invalid_move move, @board
     end
     
     it 'is illegal with negative y' do
-      @move = Move.new DEFAULT_X, -DEFAULT_Y, DEFAULT_COLOR
-      should_be_invalid_move @move, @board
+      move = MoveFactory.build y: -1
+      should_be_invalid_move move, @board
     end
     
     it 'is illegal with x set to 0' do
-      @move = Move.new 0, -DEFAULT_Y, DEFAULT_COLOR
-      should_be_invalid_move @move, @board
+      move = MoveFactory.build x: 0
+      should_be_invalid_move move, @board
     end
     
     it 'is illegal with y set to 0' do
-      @move = Move.new DEFAULT_X, 0, DEFAULT_COLOR
-      should_be_invalid_move @move, @board
+      move = MoveFactory.build y: 0
+      should_be_invalid_move move, @board
     end
+  end
+  
+  describe 'Moves illegal in the context of a board' do
+    before :each do
+      @board = Board.new DEFAULT_BOARD_SIZE
+    end
+    
+    it 'is illegal with x bigger than the board size' do
+      move = MoveFactory.build x: DEFAULT_BOARD_SIZE + 1
+      should_be_invalid_move move, @board
+    end
+    
+    it 'is illegal with y bigger than the board size' do
+      move = MoveFactory.build y: DEFAULT_BOARD_SIZE + 1
+      should_be_invalid_move move, @board
+    end
+    
+    it 'is illegal to set a stone at a position already occupied by a stone' do
+      move = MoveFactory.build x: 1, y: 1
+      @board.play move
+      should_be_invalid_move move, @board
+    end
+    
   end
 
 
