@@ -8,7 +8,7 @@ module Rubykon
       DEFAULT_COLOR = :black
       
       class << self
-        def build(options)
+        def build(options = {})
           x     = options[:x]     || DEFAULT_X
           y     = options[:y]     || DEFAULT_Y
           color = options[:color] || DEFAULT_COLOR

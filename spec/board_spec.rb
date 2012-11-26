@@ -23,7 +23,6 @@ describe Rubykon::Board do
   end
   
   context 'setting and retrieving LOOKUP' do
-    
     it 'has the empty symbol for every LOOKUP' do
       all_empty = true
       @board.each do |cutting_point|
@@ -40,5 +39,6 @@ describe Rubykon::Board do
       @board[1, 1] = :test
       @board[1, 1].should be :test 
     end
-  end    
+  end   
+   
 end

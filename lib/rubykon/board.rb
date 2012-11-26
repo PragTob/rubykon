@@ -10,7 +10,8 @@ module Rubykon
     attr_reader :size
     
     def initialize(size = 19)
-      @size = size
+      @size           = size
+      @move_validator = MoveValidator.new
       initialize_board
     end
     
@@ -24,9 +25,12 @@ module Rubykon
     end
     
     def play(move)
-      self[move.x, move.y] = move.color
+      if @move_validator.validate move, self
+        self[move.x, move.y] = move.color
+      else
+        raise IllegalMoveException
+      end
     end
-    
     
     # the [] and []= methods encapsulate the non zero based ness
     def [](x,y)

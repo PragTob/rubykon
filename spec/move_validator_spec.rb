@@ -4,10 +4,7 @@ MoveValidator = Rubykon::MoveValidator
 MoveFactory   = Rubykon::SpecHelpers::MoveFactory
 Board         = Rubykon::Board
 
-DEFAULT_X           = 5
-DEFAULT_Y           = 7
 DEFAULT_BOARD_SIZE  = 19
-DEFAULT_COLOR       = :black
 
 def should_be_invalid_move move, board
   move_validate_should_return(false, move, board)
@@ -35,6 +32,29 @@ describe Rubykon::MoveValidator do
   describe 'legal moves' do
     before :each do
       @board = Board.new DEFAULT_BOARD_SIZE
+    end
+    
+    it 'is accepts normal moves' do
+      should_be_valid_move MoveFactory.build, @board
+    end
+    
+    it 'accepts 1-1' do
+      should_be_valid_move (MoveFactory.build x: 1, y: 1), @board
+    end
+    
+    it 'accepts the move in the top right corner (19-19)' do
+      should_be_valid_move (MoveFactory.build x: DEFAULT_BOARD_SIZE, 
+                                              y: DEFAULT_BOARD_SIZE),
+                            @board
+    end
+    
+    it 'accepts a different color' do
+      should_be_valid_move (MoveFactory.build color: :white), @board
+    end
+    
+    it 'also works correctly with bigger boards' do
+      board = Board.new 37
+      should_be_valid_move (MoveFactory.build x: 37, y: 37), board
     end
     
   end
@@ -91,7 +111,10 @@ describe Rubykon::MoveValidator do
       should_be_invalid_move move, @board
     end
     
+    it 'also works for other board sizes' do
+      board = Board.new 5
+      should_be_invalid_move (MoveFactory.build x: 6), board
+    end
   end
-
 
 end
