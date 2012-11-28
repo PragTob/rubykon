@@ -29,8 +29,9 @@ module Rubykon
       if @move_validator.validate move, self
         self[move.x, move.y] = move.color
         @moves << move
+        true
       else
-        raise IllegalMoveException
+        false
       end
     end
     

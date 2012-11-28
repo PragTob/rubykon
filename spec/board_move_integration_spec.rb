@@ -37,6 +37,11 @@ describe 'Playing moves on a board:' do
     it 'can retrieve the played move through moves' do
       @board.moves.first.should eq @move
     end
+    
+    it 'returns a truthy value' do
+      legal_move = MoveFactory.build x: SIMPLE_X + 2 #slightly different to avoid conflicts 
+      @board.play(legal_move).should == true 
+    end
   end
   
   describe 'A couple of moves' do
@@ -63,12 +68,12 @@ describe 'Playing moves on a board:' do
     # in the move_validator_spec since this is the responsible component
     it 'is illegal to play moves with a greater x than the board size' do
       illegal_move = Move.new BOARD_SIZE + 1, SIMPLE_Y, SIMPLE_COLOR
-      expect do @board.play illegal_move end.to raise_error IllegalMoveException
+      @board.play(illegal_move).should == false
     end
     
     it 'is illegal to play moves with a greater y than the board size' do
       illegal_move = Move.new SIMPLE_X, BOARD_SIZE + 1, SIMPLE_COLOR
-      expect do @board.play illegal_move end.to raise_error IllegalMoveException
+      @board.play(illegal_move).should == false
     end
   end
 
