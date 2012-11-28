@@ -7,11 +7,12 @@ module Rubykon
     
     EMPTY_SYMBOL = nil
     
-    attr_reader :size
+    attr_reader :size, :moves
     
     def initialize(size = 19)
       @size           = size
       @move_validator = MoveValidator.new
+      @moves          = []
       initialize_board
     end
     
@@ -27,6 +28,7 @@ module Rubykon
     def play(move)
       if @move_validator.validate move, self
         self[move.x, move.y] = move.color
+        @moves << move
       else
         raise IllegalMoveException
       end
@@ -39,6 +41,14 @@ module Rubykon
     
     def []=(x, y, value)
       @board[x - 1][y - 1] = value
+    end
+    
+    def move_count
+      @moves.size
+    end
+    
+    def no_moves_played?
+      @moves.empty?
     end
     
   end

@@ -3,6 +3,7 @@ require_relative 'spec_helper'
 Board                = Rubykon::Board
 Move                 = Rubykon::Move
 IllegalMoveException = Rubykon::IllegalMoveException
+MoveFactory          = Rubykon::SpecHelpers::MoveFactory
 
 SIMPLE_X             = 1
 SIMPLE_Y             = 1
@@ -24,6 +25,37 @@ describe 'Playing moves on a board:' do
     it 'lets the board retrieve the color of the move at that position' do
       @board[SIMPLE_X, SIMPLE_Y].should eq @move.color
     end
+    
+    it 'sets the move_count to 1' do
+      @board.move_count.should eq 1
+    end
+    
+    it 'should have played moves' do
+      @board.should_not be_no_moves_played
+    end
+    
+    it 'can retrieve the played move through moves' do
+      @board.moves.first.should eq @move
+    end
+  end
+  
+  describe 'A couple of moves' do
+    before :each do
+      move_1 = MoveFactory.build x: 3, y: 7, color: :black
+      move_2 = MoveFactory.build x: 5, y: 7, color: :white
+      move_3 = MoveFactory.build x: 3, y: 10, color: :black
+      @moves = [move_1, move_2, move_3]
+      @moves.each{|move| @board.play move}
+    end
+    
+    it 'sets the move_count to the number of moves played' do
+      @board.move_count.should eq @moves.size
+    end
+    
+    it 'remembers the moves in the correct order' do
+      @board.moves.should eq @moves
+    end
+  
   end
   
   describe 'Illegal moves' do

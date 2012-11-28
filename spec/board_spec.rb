@@ -16,6 +16,14 @@ describe Rubykon::Board do
       @board.size.should == 19
     end
     
+    it 'has a move_count of 0' do
+      @board.move_count.should eq 0
+    end
+    
+    it 'has no moves playd' do
+      @board.should be_no_moves_played
+    end
+    
     it 'can be created with another size' do
       size = 13
       Board.new(size).size.should eq size
