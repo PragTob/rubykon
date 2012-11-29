@@ -18,6 +18,27 @@ def move_validate_should_return(bool, move, board)
   @validator.validate(move, board).should be bool
 end
 
+def setup_ko_board
+  board = Board.new 5
+  board = black_star board
+  board = white_half_star board
+end
+
+def black_star(board)
+  board[2, 1] = :black
+  board[1, 2] = :black
+  board[2, 3] = :black
+  board[3, 2] = :black
+  board
+end
+
+def white_half_star(board)
+  board[3,1] = :white
+  board[4,2] = :white
+  board[3,4] = :white
+  board
+end
+
 
 describe Rubykon::MoveValidator do
 
@@ -115,6 +136,25 @@ describe Rubykon::MoveValidator do
       board = Board.new 5
       should_be_invalid_move (MoveFactory.build x: 6), board
     end
+  end
+  
+  describe 'KO' do
+  
+    before :each do
+      @board    = setup_ko_board
+      @move_2_2 = MoveFactory.build x: 2, y: 2, color: :white
+    end
+    
+    it 'is a valide move for white at 2-2' do
+      should_be_valid_move @move_2_2, @board
+    end
+    
+    it 'is an invalid move to catch back for black after white played 2-2' do
+      pending 'woops need to implement catching stones first'
+      @board.play @move_2_2
+      should_be_invalid_move MoveFactory.build(x: 2, y: 3, color: :black), @board
+    end
+    
   end
 
 end
