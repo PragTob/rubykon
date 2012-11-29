@@ -1,10 +1,5 @@
 require_relative 'spec_helper'
 
-Board                = Rubykon::Board
-Move                 = Rubykon::Move
-IllegalMoveException = Rubykon::IllegalMoveException
-MoveFactory          = Rubykon::SpecHelpers::MoveFactory
-
 SIMPLE_X             = 1
 SIMPLE_Y             = 1
 SIMPLE_COLOR         = :black

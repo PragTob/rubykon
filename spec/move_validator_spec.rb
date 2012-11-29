@@ -1,9 +1,5 @@
 require_relative 'spec_helper'
 
-MoveValidator = Rubykon::MoveValidator
-MoveFactory   = Rubykon::SpecHelpers::MoveFactory
-Board         = Rubykon::Board
-
 DEFAULT_BOARD_SIZE  = 19
 
 def should_be_invalid_move move, board
