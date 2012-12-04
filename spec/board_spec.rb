@@ -21,7 +21,7 @@ describe Rubykon::Board do
     end
     
     it 'has no moves playd' do
-      @board.should be_no_moves_played
+      @board.should be_no_stones_played
     end
     
     it 'can be created with another size' do

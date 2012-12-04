@@ -25,10 +25,10 @@ module Rubykon
       @board.flatten.each &block
     end
     
-    def play(move)
-      if @move_validator.validate move, self
-        self[move.x, move.y] = move.color
-        @moves << move
+    def play(stone)
+      if @move_validator.validate stone, self
+        self[stone.x, stone.y] = stone
+        @moves << stone
         true
       else
         false
@@ -48,7 +48,7 @@ module Rubykon
       @moves.size
     end
     
-    def no_moves_played?
+    def no_stones_played?
       @moves.empty?
     end
     
