@@ -40,8 +40,8 @@ module Rubykon
       @board[x - 1][y - 1]
     end
     
-    def []=(x, y, value)
-      @board[x - 1][y - 1] = value
+    def []=(x, y, stone)
+      @board[x - 1][y - 1] = stone
     end
     
     def move_count

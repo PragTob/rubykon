@@ -22,6 +22,10 @@ describe Rubykon::Stone do
   
   it 'correctly sets the color' do
     @stone.color.should == DEFAULT_COLOR
-  end  
+  end
+  
+  describe 'Playing it on a board' do
+  
+  end
   
 end
