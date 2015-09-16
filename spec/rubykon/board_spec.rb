@@ -28,9 +28,8 @@ describe Rubykon::Board do
   
   context 'setting and retrieving LOOKUP' do
     it 'has the empty symbol for every LOOKUP' do
-      all_empty = true
-      board.each do |cutting_point|
-        all_empty = false if cutting_point != Rubykon::Board::EMPTY_SYMBOL
+      all_empty = board.all? do |cutting_point|
+        cutting_point == Rubykon::Board::EMPTY_SYMBOL
       end
       expect(all_empty).to be true
     end
@@ -43,6 +42,74 @@ describe Rubykon::Board do
       board[1, 1] = :test
       expect(board[1, 1]).to be :test 
     end
-  end   
+  end
+
+  describe 'to_string' do
+    let(:board) {Rubykon::Board.new 7}
+
+    it "correctly outputs an empty board" do
+      expected = <<-BOARD
+-------
+-------
+-------
+-------
+-------
+-------
+-------
+      BOARD
+
+      expect(board.to_s).to eq expected
+    end
+
+    it "correctly outputs a board with a black move" do
+      move = Rubykon::Stone.new 4, 4, :black
+      board.play move
+      expected = <<-BOARD
+-------
+-------
+-------
+---X---
+-------
+-------
+-------
+      BOARD
+      expect(board.to_s).to eq expected
+    end
+
+    it "correctly outputs a board with a white move" do
+      board.play Rubykon::Stone.new 4, 4, :white
+      expected = <<-BOARD
+-------
+-------
+-------
+---O---
+-------
+-------
+-------
+      BOARD
+      expect(board.to_s).to eq expected
+    end
+
+    it "correctly outputs multiple moves played" do
+      board.play Rubykon::Stone.new 1, 1, :white
+      board.play Rubykon::Stone.new 7, 7, :black
+      board.play Rubykon::Stone.new 1, 7, :white
+      board.play Rubykon::Stone.new 7, 1, :black
+      board.play Rubykon::Stone.new 5, 5, :white
+      board.play Rubykon::Stone.new 3, 3, :black
+
+      expected = <<-BOARD
+O-----X
+-------
+--X----
+-------
+----O--
+-------
+O-----X
+      BOARD
+      expect(board.to_s).to eq expected
+    end
+
+  end
    
 end

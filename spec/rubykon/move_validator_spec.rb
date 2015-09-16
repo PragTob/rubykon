@@ -6,14 +6,13 @@ DEFAULT_BOARD_SIZE  = 19
 describe Rubykon::MoveValidator do
   
   let(:validator) {Rubykon::MoveValidator.new}
-  
+  let(:board) {Rubykon::Board.new DEFAULT_BOARD_SIZE}
+
   it 'can be created' do
     expect(validator).not_to be_nil
   end
   
   describe 'legal moves' do
-    let(:board) {Rubykon::Board.new DEFAULT_BOARD_SIZE}
-    
     it 'is accepts normal moves' do
       should_be_valid_move Rubykon::StoneFactory.build, board
     end
@@ -23,8 +22,8 @@ describe Rubykon::MoveValidator do
     end
     
     it 'accepts the move in the top right corner (19-19)' do
-      should_be_valid_move (Rubykon::StoneFactory.build x: DEFAULT_BOARD_SIZE,
-                                              y: DEFAULT_BOARD_SIZE),
+      should_be_valid_move Rubykon::StoneFactory.build(x: DEFAULT_BOARD_SIZE,
+                                                       y: DEFAULT_BOARD_SIZE),
                             board
     end
     
@@ -40,8 +39,6 @@ describe Rubykon::MoveValidator do
   end
   
   describe 'Moves illegal of their own' do
-    let(:board) {double :board}
-    
     it 'is illegal with negative x and y' do
       move = Rubykon::StoneFactory.build x: -3, y: -4
       should_be_invalid_move move, board
@@ -69,8 +66,6 @@ describe Rubykon::MoveValidator do
   end
   
   describe 'Moves illegal in the context of a board' do
-    let(:board) {Rubykon::Board.new DEFAULT_BOARD_SIZE}
-    
     it 'is illegal with x bigger than the board size' do
       move = Rubykon::StoneFactory.build x: DEFAULT_BOARD_SIZE + 1
       should_be_invalid_move move, board

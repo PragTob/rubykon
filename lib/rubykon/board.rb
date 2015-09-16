@@ -33,13 +33,12 @@ module Rubykon
       end
     end
     
-    # the [] and []= methods encapsulate the non zero based ness
     def [](x,y)
-      @board[x - 1][y - 1]
+      @board[y - 1][x - 1]
     end
     
     def []=(x, y, stone)
-      @board[x - 1][y - 1] = stone
+      @board[y - 1][x - 1] = stone
     end
     
     def move_count
@@ -49,6 +48,16 @@ module Rubykon
     def no_stones_played?
       @moves.empty?
     end
-    
+
+    COLOR_TO_CHARACTER = {black: 'X', white: 'O', EMPTY_SYMBOL => '-'}
+
+    def to_s
+      @board.map do |row|
+        row.map do |stone|
+          color = stone ? stone.color : nil
+          COLOR_TO_CHARACTER[color]
+        end.join
+      end.join("\n") << "\n"
+    end
   end
 end
