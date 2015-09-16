@@ -12,7 +12,7 @@ module Rubykon
     end
     
     def spot_unoccupied(move, board)
-      board[move.x, move.y] == board.class::EMPTY_SYMBOL
+      board[move.x, move.y] == Board::EMPTY_SYMBOL
     end
     
   end

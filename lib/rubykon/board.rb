@@ -1,6 +1,5 @@
 # Board itself acts a bit like a giant 2 dimensional array - but one based
 # not zero based
-
 module Rubykon
   class Board
     include Enumerable
@@ -17,8 +16,7 @@ module Rubykon
     end
     
     def initialize_board
-      @board = Array.new @size
-      @board = @board.map { |each| Array.new @size }
+      @board = Array.new(@size) {Array.new @size}
     end
     
     def each(&block)
@@ -26,7 +24,7 @@ module Rubykon
     end
     
     def play(stone)
-      if @move_validator.validate stone, self
+      if @move_validator.validate(stone, self)
         self[stone.x, stone.y] = stone
         @moves << stone
         true
