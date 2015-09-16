@@ -1,27 +1,25 @@
 require_relative 'spec_helper'
 
-DEFAULT_X     = 5
-DEFAULT_Y     = 13
-DEFAULT_COLOR = :black
-
 describe Rubykon::Stone do
-  before :each do
-    @stone = Stone.new DEFAULT_X, DEFAULT_Y, DEFAULT_COLOR
-  end
+  let(:default_x) {5}
+  let(:default_y) {13}
+  let(:default_color) {:black}
+
+  let(:stone) {Rubykon::Stone.new default_x, default_y, default_color}
   
-  subject {@stone}
+  subject {stone}
   it {should_not be_nil}
   
   it 'correctly sets x' do
-    @stone.x.should == DEFAULT_X
+    stone.x.should == default_x
   end
   
   it 'correctly sets y' do
-    @stone.y.should == DEFAULT_Y
+    stone.y.should == default_y
   end
   
   it 'correctly sets the color' do
-    @stone.color.should == DEFAULT_COLOR
+    stone.color.should == default_color
   end
   
   describe 'Playing it on a board' do
