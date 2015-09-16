@@ -8,18 +8,18 @@ describe Rubykon::Stone do
   let(:stone) {Rubykon::Stone.new default_x, default_y, default_color}
   
   subject {stone}
-  it {should_not be_nil}
+  it {is_expected.not_to be_nil}
   
   it 'correctly sets x' do
-    stone.x.should == default_x
+    expect(stone.x).to eq(default_x)
   end
   
   it 'correctly sets y' do
-    stone.y.should == default_y
+    expect(stone.y).to eq(default_y)
   end
   
   it 'correctly sets the color' do
-    stone.color.should == default_color
+    expect(stone.color).to eq(default_color)
   end
   
   describe 'Playing it on a board' do

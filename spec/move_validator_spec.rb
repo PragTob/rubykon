@@ -8,7 +8,7 @@ describe Rubykon::MoveValidator do
   let(:validator) {Rubykon::MoveValidator.new}
   
   it 'can be created' do
-    validator.should_not be_nil
+    expect(validator).not_to be_nil
   end
   
   describe 'legal moves' do
@@ -103,7 +103,7 @@ describe Rubykon::MoveValidator do
     end
     
     it 'is an invalid move to catch back for black after white played 2-2' do
-      pending 'woops need to implement catching stones first'
+      skip 'woops need to implement catching stones first'
       board.play move_2_2
       should_be_invalid_move Rubykon::StoneFactory.build(x: 2, y: 3, color: :black), board
     end
@@ -119,7 +119,7 @@ describe Rubykon::MoveValidator do
   end
 
   def move_validate_should_return(bool, move, board)
-    validator.validate(move, board).should be bool
+    expect(validator.validate(move, board)).to be bool
   end
 
   def setup_ko_board

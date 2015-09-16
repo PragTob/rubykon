@@ -16,24 +16,24 @@ describe 'Playing moves on a board:' do
     end
     
     it 'lets the board retrieve the stone at that position' do
-      board[simple_x, simple_y].should eq stone
+      expect(board[simple_x, simple_y]).to eq stone
     end
     
     it 'sets the move_count to 1' do
-      board.move_count.should eq 1
+      expect(board.move_count).to eq 1
     end
     
     it 'should have played moves' do
-      board.should_not be_no_stones_played
+      expect(board).not_to be_no_stones_played
     end
     
     it 'can retrieve the played move through moves' do
-      board.moves.first.should eq stone
+      expect(board.moves.first).to eq stone
     end
     
     it 'returns a truthy value' do
       legal_move = Rubykon::StoneFactory.build x: simple_x + 2 #slightly different to avoid conflicts
-      board.play(legal_move).should == true 
+      expect(board.play(legal_move)).to eq(true) 
     end
   end
   
@@ -50,11 +50,11 @@ describe 'Playing moves on a board:' do
     end
     
     it 'sets the move_count to the number of moves played' do
-      board.move_count.should eq stones.size
+      expect(board.move_count).to eq stones.size
     end
     
     it 'remembers the moves in the correct order' do
-      board.moves.should eq stones
+      expect(board.moves).to eq stones
     end
   
   end
@@ -62,12 +62,12 @@ describe 'Playing moves on a board:' do
   describe 'Illegal moves' do
     it 'is illegal to play moves with a greater x than the board size' do
       illegal_move = Rubykon::Stone.new board_size + 1, simple_y, simple_color
-      board.play(illegal_move).should == false
+      expect(board.play(illegal_move)).to eq(false)
     end
     
     it 'is illegal to play moves with a greater y than the board size' do
       illegal_move = Rubykon::Stone.new simple_x, board_size + 1, simple_color
-      board.play(illegal_move).should == false
+      expect(board.play(illegal_move)).to eq(false)
     end
   end
 
