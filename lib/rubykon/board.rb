@@ -26,6 +26,7 @@ module Rubykon
     end
     
     COLOR_TO_CHARACTER = {black: 'X', white: 'O', EMPTY_SYMBOL => '-'}
+    CHARACTER_TO_COLOR = COLOR_TO_CHARACTER.invert
 
     def ==(other_board)
       board == other_board.board
@@ -37,6 +38,17 @@ module Rubykon
           COLOR_TO_CHARACTER[color]
         end.join
       end.join("\n") << "\n"
+    end
+
+    def self.from(string)
+      rows = string.split("\n")
+      new_board = new rows.size
+      rows.each_with_index do |row, y|
+        row.chars.each_with_index do |character, x|
+          new_board[x + 1, y + 1] = CHARACTER_TO_COLOR[character]
+        end
+      end
+      new_board
     end
   end
 end

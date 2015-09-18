@@ -60,7 +60,7 @@ describe Rubykon::Board do
     end
   end
 
-  describe '#to_string' do
+  describe '#String coversions' do
     let(:board) {Rubykon::Board.new 7}
 
     it "correctly outputs an empty board" do
@@ -74,7 +74,9 @@ describe Rubykon::Board do
 -------
       BOARD
 
-      expect(board.to_s).to eq expected
+      board_string = board.to_s
+      expect(board_string).to eq expected
+      expect(Rubykon::Board.from board_string).to eq board
     end
 
     it "correctly outputs a board with a black move" do
@@ -88,7 +90,9 @@ describe Rubykon::Board do
 -------
 -------
       BOARD
-      expect(board.to_s).to eq expected
+      board_string = board.to_s
+      expect(board_string).to eq expected
+      expect(Rubykon::Board.from board_string).to eq board
     end
 
     it "correctly outputs a board with a white move" do
@@ -102,7 +106,9 @@ describe Rubykon::Board do
 -------
 -------
       BOARD
-      expect(board.to_s).to eq expected
+      board_string = board.to_s
+      expect(board_string).to eq expected
+      expect(Rubykon::Board.from board_string).to eq board
     end
 
     it "correctly outputs multiple moves played" do
@@ -122,7 +128,9 @@ O-----X
 -------
 O-----X
       BOARD
-      expect(board.to_s).to eq expected
+      board_string = board.to_s
+      expect(board_string).to eq expected
+      expect(Rubykon::Board.from board_string).to eq board
     end
 
   end
