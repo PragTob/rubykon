@@ -6,7 +6,7 @@ module Rubykon
     
     EMPTY_SYMBOL = nil
     
-    attr_reader :size
+    attr_reader :size, :board
     
     def initialize(size)
       @size           = size
@@ -26,6 +26,10 @@ module Rubykon
     end
     
     COLOR_TO_CHARACTER = {black: 'X', white: 'O', EMPTY_SYMBOL => '-'}
+
+    def ==(other_board)
+      board == other_board.board
+    end
 
     def to_s
       @board.map do |row|

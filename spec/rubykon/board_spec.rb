@@ -22,6 +22,44 @@ describe Rubykon::Board do
     end
   end
 
+  describe '#==' do
+    it "is true for two empty boards" do
+      expect(Rubykon::Board.new(5) == Rubykon::Board.new(5)).to be true
+    end
+
+    it "is false when the board size is different" do
+      expect(Rubykon::Board.new(6) == Rubykon::Board.new(5)).to be false
+    end
+
+    it "is equal to itself" do
+      board = Rubykon::Board.new 5
+      expect(board == board).to be true
+    end
+
+    it "is false if one of the boards has a move played" do
+      board = Rubykon::Board.new 5
+      other_board = Rubykon::Board.new 5
+      board[1, 1] = Rubykon::StoneFactory.build
+      expect(board == other_board).to be false
+    end
+
+    it "is true if both boards has a move played" do
+      board = Rubykon::Board.new 5
+      other_board = Rubykon::Board.new 5
+      board[1, 1] = Rubykon::StoneFactory.build
+      other_board[1, 1] = Rubykon::StoneFactory.build
+      expect(board == other_board).to be true
+    end
+
+    it "is false if both boards have a move played but different colors" do
+      board = Rubykon::Board.new 5
+      other_board = Rubykon::Board.new 5
+      board[1, 1] = Rubykon::StoneFactory.build color: :white
+      other_board[1, 1] = Rubykon::StoneFactory.build color: :black
+      expect(board == other_board).to be false
+    end
+  end
+
   describe '#to_string' do
     let(:board) {Rubykon::Board.new 7}
 
