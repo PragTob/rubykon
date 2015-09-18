@@ -2,29 +2,7 @@ require_relative 'spec_helper'
 
 describe Rubykon::Board do
   
-  let(:board) {Rubykon::Board.new}
-  
-  context 'creation' do
-    subject {board}
-    it {is_expected.not_to be_nil}
-    
-    it 'has a default size of 19' do
-      expect(board.size).to eq(19)
-    end
-    
-    it 'has a move_count of 0' do
-      expect(board.move_count).to eq 0
-    end
-    
-    it 'has no moves playd' do
-      expect(board).to be_no_stones_played
-    end
-    
-    it 'can be created with another size' do
-      size = 13
-      expect(Rubykon::Board.new(size).size).to eq size
-    end
-  end
+  let(:board) {Rubykon::Board.new(19)}
   
   context 'setting and retrieving LOOKUP' do
     it 'has the empty symbol for every LOOKUP' do
@@ -44,7 +22,7 @@ describe Rubykon::Board do
     end
   end
 
-  describe 'to_string' do
+  describe '#to_string' do
     let(:board) {Rubykon::Board.new 7}
 
     it "correctly outputs an empty board" do
@@ -62,8 +40,7 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs a board with a black move" do
-      move = Rubykon::Stone.new 4, 4, :black
-      board.play move
+      board[4, 4] = :black
       expected = <<-BOARD
 -------
 -------
@@ -77,7 +54,7 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs a board with a white move" do
-      board.play Rubykon::Stone.new 4, 4, :white
+      board[4, 4] = :white
       expected = <<-BOARD
 -------
 -------
@@ -91,12 +68,12 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs multiple moves played" do
-      board.play Rubykon::Stone.new 1, 1, :white
-      board.play Rubykon::Stone.new 7, 7, :black
-      board.play Rubykon::Stone.new 1, 7, :white
-      board.play Rubykon::Stone.new 7, 1, :black
-      board.play Rubykon::Stone.new 5, 5, :white
-      board.play Rubykon::Stone.new 3, 3, :black
+      board[1, 1] = :white
+      board[7, 7] = :black
+      board[1, 7] = :white
+      board[7, 1] = :black
+      board[5, 5] = :white
+      board[3, 3] = :black
 
       expected = <<-BOARD
 O-----X

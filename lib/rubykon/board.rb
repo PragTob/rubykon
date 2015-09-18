@@ -6,31 +6,15 @@ module Rubykon
     
     EMPTY_SYMBOL = nil
     
-    attr_reader :size, :moves
+    attr_reader :size
     
-    def initialize(size = 19)
+    def initialize(size)
       @size           = size
-      @move_validator = MoveValidator.new
-      @moves          = []
-      initialize_board
-    end
-    
-    def initialize_board
       @board = Array.new(@size) {Array.new @size}
     end
     
     def each(&block)
       @board.flatten.each &block
-    end
-    
-    def play(stone)
-      if @move_validator.validate(stone, self)
-        self[stone.x, stone.y] = stone
-        @moves << stone
-        true
-      else
-        false
-      end
     end
     
     def [](x,y)
@@ -41,20 +25,11 @@ module Rubykon
       @board[y - 1][x - 1] = stone
     end
     
-    def move_count
-      @moves.size
-    end
-    
-    def no_stones_played?
-      @moves.empty?
-    end
-
     COLOR_TO_CHARACTER = {black: 'X', white: 'O', EMPTY_SYMBOL => '-'}
 
     def to_s
       @board.map do |row|
-        row.map do |stone|
-          color = stone ? stone.color : nil
+        row.map do |color|
           COLOR_TO_CHARACTER[color]
         end.join
       end.join("\n") << "\n"

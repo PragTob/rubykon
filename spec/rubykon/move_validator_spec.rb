@@ -1,12 +1,11 @@
 require_relative 'spec_helper'
 
-DEFAULT_BOARD_SIZE  = 19
-
-
 describe Rubykon::MoveValidator do
   
   let(:validator) {Rubykon::MoveValidator.new}
-  let(:board) {Rubykon::Board.new DEFAULT_BOARD_SIZE}
+  let(:board_size) {19}
+  let(:game) {Rubykon::Game.new board_size}
+  let(:baord) {game.board}
 
   it 'can be created' do
     expect(validator).not_to be_nil
@@ -14,26 +13,26 @@ describe Rubykon::MoveValidator do
   
   describe 'legal moves' do
     it 'is accepts normal moves' do
-      should_be_valid_move Rubykon::StoneFactory.build, board
+      should_be_valid_move Rubykon::StoneFactory.build, game
     end
     
     it 'accepts 1-1' do
-      should_be_valid_move (Rubykon::StoneFactory.build x: 1, y: 1), board
+      should_be_valid_move (Rubykon::StoneFactory.build x: 1, y: 1), game
     end
     
     it 'accepts the move in the top right corner (19-19)' do
-      should_be_valid_move Rubykon::StoneFactory.build(x: DEFAULT_BOARD_SIZE,
-                                                       y: DEFAULT_BOARD_SIZE),
-                            board
+      should_be_valid_move Rubykon::StoneFactory.build(x: board_size,
+                                                       y: board_size),
+                            game
     end
     
     it 'accepts a different color' do
-      should_be_valid_move (Rubykon::StoneFactory.build color: :white), board
+      should_be_valid_move (Rubykon::StoneFactory.build color: :white), game
     end
     
     it 'also works correctly with bigger boards' do
-      board = Rubykon::Board.new 37
-      should_be_valid_move (Rubykon::StoneFactory.build x: 37, y: 37), board
+      game = Rubykon::Game.new 37
+      should_be_valid_move (Rubykon::StoneFactory.build x: 37, y: 37), game
     end
     
   end
@@ -41,86 +40,88 @@ describe Rubykon::MoveValidator do
   describe 'Moves illegal of their own' do
     it 'is illegal with negative x and y' do
       move = Rubykon::StoneFactory.build x: -3, y: -4
-      should_be_invalid_move move, board
+      should_be_invalid_move move, game
     end
     
     it 'is illegal with negative x' do
       move = Rubykon::StoneFactory.build x: -1
-      should_be_invalid_move move, board
+      should_be_invalid_move move, game
     end
     
     it 'is illegal with negative y' do
       move = Rubykon::StoneFactory.build y: -1
-      should_be_invalid_move move, board
+      should_be_invalid_move move, game
     end
     
     it 'is illegal with x set to 0' do
       move = Rubykon::StoneFactory.build x: 0
-      should_be_invalid_move move, board
+      should_be_invalid_move move, game
     end
     
     it 'is illegal with y set to 0' do
       move = Rubykon::StoneFactory.build y: 0
-      should_be_invalid_move move, board
+      should_be_invalid_move move, game
     end
   end
   
   describe 'Moves illegal in the context of a board' do
     it 'is illegal with x bigger than the board size' do
-      move = Rubykon::StoneFactory.build x: DEFAULT_BOARD_SIZE + 1
-      should_be_invalid_move move, board
+      move = Rubykon::StoneFactory.build x: board_size + 1
+      should_be_invalid_move move, game
     end
     
     it 'is illegal with y bigger than the board size' do
-      move = Rubykon::StoneFactory.build y: DEFAULT_BOARD_SIZE + 1
-      should_be_invalid_move move, board
+      move = Rubykon::StoneFactory.build y: board_size + 1
+      should_be_invalid_move move, game
     end
     
     it 'is illegal to set a stone at a position already occupied by a stone' do
       move = Rubykon::StoneFactory.build x: 1, y: 1
-      board.play move
-      should_be_invalid_move move, board
+      game.play move
+      should_be_invalid_move move, game
     end
     
     it 'also works for other board sizes' do
-      board = Rubykon::Board.new 5
-      should_be_invalid_move (Rubykon::StoneFactory.build x: 6), board
+      game = Rubykon::Game.new 5
+      should_be_invalid_move (Rubykon::StoneFactory.build x: 6), game
     end
   end
   
   describe 'KO' do
 
-    let(:board) {setup_ko_board}
+    let(:game) {setup_ko_board}
     let(:move_2_2) {Rubykon::StoneFactory.build x: 2, y: 2, color: :white}
 
     it 'is a valide move for white at 2-2' do
-      should_be_valid_move move_2_2, board
+      should_be_valid_move move_2_2, game
     end
     
     it 'is an invalid move to catch back for black after white played 2-2' do
       skip 'woops need to implement catching stones first'
-      board.play move_2_2
-      should_be_invalid_move Rubykon::StoneFactory.build(x: 2, y: 3, color: :black), board
+      game.play move_2_2
+      should_be_invalid_move Rubykon::StoneFactory.build(x: 2, y: 3, color: :black), game
     end
     
   end
 
-  def should_be_invalid_move move, board
-    move_validate_should_return(false, move, board)
+  def should_be_invalid_move(move, game)
+    move_validate_should_return(false, move, game)
   end
 
-  def should_be_valid_move move, board
-    move_validate_should_return(true, move, board)
+  def should_be_valid_move(move, game)
+    move_validate_should_return(true, move, game)
   end
 
-  def move_validate_should_return(bool, move, board)
-    expect(validator.validate(move, board)).to be bool
+  def move_validate_should_return(bool, move, game)
+    expect(validator.validate(move, game)).to be bool
   end
 
   def setup_ko_board
-    board = Rubykon::Board.new 5
+    game = Rubykon::Game.new 5
+    board = game.board
     board = black_star board
     white_half_star board
+    game
   end
 
   def black_star(board)
