@@ -1,4 +1,4 @@
-# Rubykon [![Build Status](https://secure.travis-ci.org/PragTob/Rubykon.png?branch=master)](https://travis-ci.org/PragTob/Rubykon)[![Code Climate](https://codeclimate.com/github/PragTob/Rubykon.png)](https://codeclimate.com/github/PragTob/Rubykon)
+# Rubykon [![Build Status](https://secure.travis-ci.org/PragTob/Rubykon.png?branch=master)](https://travis-ci.org/PragTob/Rubykon)[![Code Climate](https://codeclimate.com/github/PragTob/Rubykon.png)](https://codeclimate.com/github/PragTob/Rubykon)[![Test Coverage](https://codeclimate.com/github/PragTob/Rubykon/badges/coverage.svg)](https://codeclimate.com/github/PragTob/Rubykon/coverage)
 A Go-Engine being built in Ruby. 
 
 ### Status?
