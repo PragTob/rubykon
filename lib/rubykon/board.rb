@@ -3,14 +3,15 @@
 module Rubykon
   class Board
     include Enumerable
-    
-    EMPTY_SYMBOL = nil
-    
+
+    EMPTY_COLOR = nil
+    EMPTY_FIELD = Stone.new(nil, nil, EMPTY_COLOR).freeze
+
     attr_reader :size, :board
     
     def initialize(size)
       @size           = size
-      @board = Array.new(@size) {Array.new @size}
+      @board = Array.new(@size) {Array.new(@size) {EMPTY_FIELD}}
     end
     
     def each(&block)
@@ -25,7 +26,7 @@ module Rubykon
       @board[y - 1][x - 1] = stone
     end
     
-    COLOR_TO_CHARACTER = {black: 'X', white: 'O', EMPTY_SYMBOL => '-'}
+    COLOR_TO_CHARACTER = {black: 'X', white: 'O', EMPTY_COLOR => '-'}
     CHARACTER_TO_COLOR = COLOR_TO_CHARACTER.invert
 
     def ==(other_board)
@@ -34,8 +35,8 @@ module Rubykon
 
     def to_s
       @board.map do |row|
-        row.map do |color|
-          COLOR_TO_CHARACTER[color]
+        row.map do |stone|
+          COLOR_TO_CHARACTER[stone.color]
         end.join
       end.join("\n") << "\n"
     end
@@ -45,7 +46,11 @@ module Rubykon
       new_board = new rows.size
       rows.each_with_index do |row, y|
         row.chars.each_with_index do |character, x|
-          new_board[x + 1, y + 1] = CHARACTER_TO_COLOR[character]
+          x_coord = x + 1
+          y_coord = y + 1
+          new_board[x_coord, y_coord] = Stone.new x_coord, y_coord,
+                                                  CHARACTER_TO_COLOR[character]
+
         end
       end
       new_board

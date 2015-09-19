@@ -80,7 +80,7 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs a board with a black move" do
-      board[4, 4] = :black
+      board[4, 4] = Rubykon::StoneFactory.build x: 4, y: 4, color: :black
       expected = <<-BOARD
 -------
 -------
@@ -96,7 +96,7 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs a board with a white move" do
-      board[4, 4] = :white
+      board[4, 4] = Rubykon::StoneFactory.build x: 4, y: 4, color: :white
       expected = <<-BOARD
 -------
 -------
@@ -112,12 +112,12 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs multiple moves played" do
-      board[1, 1] = :white
-      board[7, 7] = :black
-      board[1, 7] = :white
-      board[7, 1] = :black
-      board[5, 5] = :white
-      board[3, 3] = :black
+      board[1, 1] = Rubykon::StoneFactory.build x: 1, y: 1, color: :white
+      board[7, 7] = Rubykon::StoneFactory.build x: 7, y: 7, color: :black
+      board[1, 7] = Rubykon::StoneFactory.build x: 1, y: 7, color: :white
+      board[7, 1] = Rubykon::StoneFactory.build x: 7, y: 1, color: :black
+      board[5, 5] = Rubykon::StoneFactory.build x: 5, y: 5, color: :white
+      board[3, 3] = Rubykon::StoneFactory.build x: 3, y: 3, color: :black
 
       expected = <<-BOARD
 O-----X
