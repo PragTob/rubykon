@@ -113,7 +113,7 @@ describe Rubykon::MoveValidator do
   end
 
   def move_validate_should_return(bool, move, game)
-    expect(validator.validate(move, game)).to be bool
+    expect(validator.valid?(move, game)).to be bool
   end
 
   def setup_ko_board

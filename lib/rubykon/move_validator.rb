@@ -1,7 +1,7 @@
 module Rubykon
   class MoveValidator
     
-    def validate(move, game)
+    def valid?(move, game)
       board = game.board
       validate_move_on_board(move, board) && spot_unoccupied(move, board)
     end

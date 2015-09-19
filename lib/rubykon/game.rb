@@ -9,7 +9,7 @@ module Rubykon
     end
 
     def play(move)
-      if @move_validator.validate(move, self)
+      if @move_validator.valid?(move, self)
         @board[move.x, move.y] = move
         @moves << move
         true
