@@ -1,3 +1,3 @@
 module Rubykon
-  Stone = Struct.new :x, :y, :color
+  Stone = Struct.new :color
 end

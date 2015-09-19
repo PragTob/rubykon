@@ -7,13 +7,13 @@ describe Rubykon::Board do
   context 'setting and retrieving LOOKUP' do
     it 'has the empty symbol for every LOOKUP' do
       all_empty = board.all? do |cutting_point|
-        cutting_point == Rubykon::Board::EMPTY_SYMBOL
+        cutting_point == Rubykon::Board::EMPTY_FIELD
       end
       expect(all_empty).to be true
     end
     
     it 'can retrive the empty values via #[]' do
-      expect(board[1, 1]).to be Rubykon::Board::EMPTY_SYMBOL
+      expect(board[1, 1]).to be Rubykon::Board::EMPTY_FIELD
     end
     
     it 'can set values with []= and geht them with []' do
@@ -39,23 +39,23 @@ describe Rubykon::Board do
     it "is false if one of the boards has a move played" do
       board = Rubykon::Board.new 5
       other_board = Rubykon::Board.new 5
-      board[1, 1] = Rubykon::StoneFactory.build
+      board[1, 1] = Rubykon::MoveFactory.build
       expect(board == other_board).to be false
     end
 
     it "is true if both boards has a move played" do
       board = Rubykon::Board.new 5
       other_board = Rubykon::Board.new 5
-      board[1, 1] = Rubykon::StoneFactory.build
-      other_board[1, 1] = Rubykon::StoneFactory.build
+      board[1, 1] = Rubykon::MoveFactory.build
+      other_board[1, 1] = Rubykon::MoveFactory.build
       expect(board == other_board).to be true
     end
 
     it "is false if both boards have a move played but different colors" do
       board = Rubykon::Board.new 5
       other_board = Rubykon::Board.new 5
-      board[1, 1] = Rubykon::StoneFactory.build color: :white
-      other_board[1, 1] = Rubykon::StoneFactory.build color: :black
+      board[1, 1] = Rubykon::MoveFactory.build color: :white
+      other_board[1, 1] = Rubykon::MoveFactory.build color: :black
       expect(board == other_board).to be false
     end
   end
@@ -80,7 +80,7 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs a board with a black move" do
-      board[4, 4] = Rubykon::StoneFactory.build x: 4, y: 4, color: :black
+      board[4, 4] = Rubykon::Stone.new :black
       expected = <<-BOARD
 -------
 -------
@@ -96,7 +96,7 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs a board with a white move" do
-      board[4, 4] = Rubykon::StoneFactory.build x: 4, y: 4, color: :white
+      board[4, 4] = Rubykon::Stone.new :white
       expected = <<-BOARD
 -------
 -------
@@ -112,12 +112,12 @@ describe Rubykon::Board do
     end
 
     it "correctly outputs multiple moves played" do
-      board[1, 1] = Rubykon::StoneFactory.build x: 1, y: 1, color: :white
-      board[7, 7] = Rubykon::StoneFactory.build x: 7, y: 7, color: :black
-      board[1, 7] = Rubykon::StoneFactory.build x: 1, y: 7, color: :white
-      board[7, 1] = Rubykon::StoneFactory.build x: 7, y: 1, color: :black
-      board[5, 5] = Rubykon::StoneFactory.build x: 5, y: 5, color: :white
-      board[3, 3] = Rubykon::StoneFactory.build x: 3, y: 3, color: :black
+      board[1, 1] = Rubykon::Stone.new :white
+      board[7, 7] = Rubykon::Stone.new :black
+      board[1, 7] = Rubykon::Stone.new :white
+      board[7, 1] = Rubykon::Stone.new :black
+      board[5, 5] = Rubykon::Stone.new :white
+      board[3, 3] = Rubykon::Stone.new :black
 
       expected = <<-BOARD
 O-----X

@@ -5,7 +5,7 @@ module Rubykon
     include Enumerable
 
     EMPTY_COLOR = nil
-    EMPTY_FIELD = Stone.new(nil, nil, EMPTY_COLOR).freeze
+    EMPTY_FIELD = Stone.new(EMPTY_COLOR).freeze
 
     attr_reader :size, :board
     
@@ -48,8 +48,7 @@ module Rubykon
         row.chars.each_with_index do |character, x|
           x_coord = x + 1
           y_coord = y + 1
-          new_board[x_coord, y_coord] = Stone.new x_coord, y_coord,
-                                                  CHARACTER_TO_COLOR[character]
+          new_board[x_coord, y_coord] = Stone.new CHARACTER_TO_COLOR[character]
 
         end
       end

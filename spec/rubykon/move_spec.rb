@@ -1,11 +1,11 @@
 require_relative 'spec_helper'
 
-describe Rubykon::Stone do
+describe Rubykon::Move do
   let(:default_x) {5}
   let(:default_y) {13}
   let(:default_color) {:black}
 
-  let(:stone) {Rubykon::Stone.new default_x, default_y, default_color}
+  let(:stone) {Rubykon::Move.new default_x, default_y, default_color}
   
   subject {stone}
   it {is_expected.not_to be_nil}
@@ -21,9 +21,4 @@ describe Rubykon::Stone do
   it 'correctly sets the color' do
     expect(stone.color).to eq(default_color)
   end
-  
-  describe 'Playing it on a board' do
-  
-  end
-  
 end
