@@ -1,6 +1,6 @@
 # A simple factory generating valid moves for board sizes starting 9
 module Rubykon
-  module MoveFactory
+  module StoneFactory
     extend self
 
     DEFAULT_X     = 5
@@ -11,7 +11,7 @@ module Rubykon
       x     = options[:x]     || DEFAULT_X
       y     = options[:y]     || DEFAULT_Y
       color = options[:color] || DEFAULT_COLOR
-      Rubykon::Move.new x, y, color
+      Rubykon::Stone.new x, y, color
     end
   end
 end

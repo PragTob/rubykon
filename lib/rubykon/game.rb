@@ -8,10 +8,11 @@ module Rubykon
       @moves          = []
     end
 
-    def play(move)
-      if @move_validator.valid?(move, self)
-        @board[move.x, move.y] = move
-        @moves << move
+    def play(stone)
+      if @move_validator.valid?(stone, self)
+        @board[stone.x, stone.y] = stone
+        @moves << stone
+        Group.assign(stone, @board)
         true
       else
         false
