@@ -11,7 +11,7 @@ module Rubykon
       x     = options[:x]     || DEFAULT_X
       y     = options[:y]     || DEFAULT_Y
       color = options[:color] || DEFAULT_COLOR
-      Rubykon::Stone.new x, y, color
+      Stone.new x, y, color
     end
   end
 end

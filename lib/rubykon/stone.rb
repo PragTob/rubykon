@@ -31,5 +31,9 @@ module Rubykon
         (x == other_stone.x) &&
         (y == other_stone.y)
     end
+
+    def identifier
+      "#{x}-#{y}".freeze
+    end
   end
 end
