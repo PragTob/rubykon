@@ -11,7 +11,7 @@ module Rubykon
     def initialize(size)
       @size  = size
       @board = Array.new(@size) {Array.new(@size)}
-      each_field do |_field, x, y|
+      self.class.each_field(@board) do |_field, x, y|
         self[x, y] = Stone.new x, y, EMPTY_COLOR
       end
     end
@@ -26,6 +26,10 @@ module Rubykon
     
     def []=(x, y, stone)
       @board[y - 1][x - 1] = stone
+    end
+
+    def set(stone)
+      self[stone.x, stone.y] = stone
     end
 
     def neighbours_of(x, y)
@@ -55,19 +59,18 @@ module Rubykon
     end
 
     def self.from(string)
-      rows = string.split("\n")
-      new_board = new rows.size
-      rows.each_with_index do |row, y|
-        row.chars.each_with_index do |character, x|
-          x_coord = x + 1
-          y_coord = y + 1
-          new_board[x_coord, y_coord] = Stone.new x_coord,
-                                                  y_coord,
-                                                  CHARACTER_TO_COLOR[character]
-
-        end
+      new_board = new string.index("\n")
+      each_stone_from(string) do |stone|
+        new_board.set stone
       end
       new_board
+    end
+
+    def self.each_stone_from(string)
+      rows = string.split("\n").map &:chars
+      each_field(rows) do |character, x, y|
+        yield Stone.new(x, y, CHARACTER_TO_COLOR[character])
+      end
     end
 
     private
@@ -76,8 +79,8 @@ module Rubykon
        [x - 1, y], [x, y - 1]]
     end
 
-    def each_field
-      @board.each_with_index do |row, y|
+    def self.each_field(enumerable)
+      enumerable.each_with_index do |row, y|
         row.each_with_index do |field, x|
           yield field, x + 1, y + 1
         end

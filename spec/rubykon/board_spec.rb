@@ -30,6 +30,14 @@ module Rubykon
       end
     end
 
+    describe "#set" do
+      it "sets to the right coordinates" do
+        stone = Stone.new(3, 7, :black)
+        board.set(stone)
+        expect(board[3, 7]).to be stone
+      end
+    end
+
     describe "#neighbours_of" do
       it "returns the stones of the neighbouring fields" do
         board = Rubykon::Board.from <<-String
