@@ -10,7 +10,6 @@ module Rubykon
     end
 
     def remove
-      @color = Board::EMPTY_COLOR
       @group = nil
     end
 

@@ -20,7 +20,7 @@ module Rubykon
       @board.flatten.each &block
     end
     
-    def [](x,y)
+    def [](x, y)
       @board[y - 1][x - 1]
     end
     

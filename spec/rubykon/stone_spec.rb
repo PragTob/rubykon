@@ -67,5 +67,13 @@ module Rubykon
         expect(Stone.new(1, 1, :white).enemy_color).to eq :black
       end
     end
+
+    describe '#remove' do
+      it "removes any affiliation to a group" do
+        group = Group.new(stone)
+        stone.remove
+        expect(stone.group).to be_nil
+      end
+    end
   end
 end

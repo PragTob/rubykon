@@ -15,41 +15,73 @@ module Rubykon
       @liberties = {}
       @liberty_count = 0
       @stones = [stone]
+      stone.join(self)
     end
 
     def connect(stone)
+      return if stone.group == self
       if stone.group
         merge(stone.group)
       else
         add_stone(stone)
       end
-    end
-
-    def merge(friendly_group)
-      friendly_group.stones.each {|stone| add_stone(stone)}
-      liberties.merge! friendly_group.liberties # could the order mess anything up here?
+      remove_connector_liberty(stone)
     end
 
     def add_liberty(field)
+      return if already_counted_as_liberty?(field)
       @liberties[field.identifier] = field
       @liberty_count += 1
     end
 
     def remove_liberty(stone)
-      @liberties[field.identifier] = stone
+      return if already_counted_as_liberty?(stone)
+      @liberties[stone.identifier] = stone
       @liberty_count -= 1
     end
 
     def remove
       @stones.each &:remove
-      notify_neighbouring_groups
+      #notify_neighbouring_groups
     end
 
     private
+    def remove_connector_liberty(stone)
+      liberties.delete(stone.identifier)
+      @liberty_count -= 1
+    end
+
     def add_stone(stone)
       stone.join(self)
       @stones << stone
-      liberties.delete(stone.identifier)
+    end
+
+    def already_counted_as_liberty?(field)
+      @liberties[field.identifier] == field
+    end
+
+    def merge(friendly_group)
+      merge_stones(friendly_group)
+      merge_liberties(friendly_group)
+    end
+
+    def merge_stones(friendly_group)
+      friendly_group.stones.each { |stone| add_stone(stone) }
+    end
+
+    def merge_liberties(friendly_group)
+      @liberty_count += friendly_group.liberty_count
+      liberties.merge!(friendly_group.liberties) do |_key, my_field, other_field|
+        if shared_liberty?(my_field, other_field)
+          @liberty_count -= 1
+        end
+        my_field
+      end
+    end
+
+    def shared_liberty?(my_field, other_field)
+      my_field.color == Board::EMPTY_COLOR ||
+        other_field.color == Board::EMPTY_COLOR
     end
 
     # TODO awful lot of class methods, there ought to be a better way
@@ -62,8 +94,7 @@ module Rubykon
 
     def self.take_liberties_of_enemies(enemy_neighbours, stone)
       enemy_neighbours.each do |enemy_stone|
-        enemy_group = enemy_stone.group
-        enemy_group.remove_liberty(stone)
+        enemy_stone.group.remove_liberty(stone)
       end
     end
 

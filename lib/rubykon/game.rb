@@ -41,7 +41,6 @@ module Rubykon
       game
     end
 
-    private
     def set_valid_move(stone)
       @board.set stone
       @moves << stone
