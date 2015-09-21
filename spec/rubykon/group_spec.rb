@@ -76,6 +76,10 @@ module Rubykon
           expect(group.liberties).to eq('1-2' => liberty)
         end
 
+        it "is not caught" do
+          expect(group).not_to be_caught
+        end
+
         it 'is idempotent' do
           group.add_liberty liberty
           expect(group.liberty_count).to eq 1
@@ -96,6 +100,10 @@ module Rubykon
 
         it "adds the new stone in, in the liberties hash" do
           expect(group.liberties).to eq('1-2' => liberty_taking_stone)
+        end
+
+        it "is caught" do
+          expect(group).to be_caught
         end
 
         it 'is idempotent' do
@@ -402,12 +410,6 @@ XXXXX
       end
 
       describe "huge integration examples as well as regressions" do
-        shared_examples_for "has liberties at position" do |x, y, expected|
-          it "the group at #{x}-#{y} has #{expected} liberties" do
-            expect(board[x, y].group.liberty_count).to eq expected
-          end
-        end
-
         describe "integration" do
           let(:board_string) do
             <<-BOARD

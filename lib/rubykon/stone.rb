@@ -1,6 +1,6 @@
 module Rubykon
   class Stone
-    attr_reader :x, :y, :color, :group
+    attr_reader :x, :y, :color, :group, :captures
 
     def initialize(x, y, color)
       @x     = x
@@ -23,6 +23,15 @@ module Rubykon
       else
         :black
       end
+    end
+
+    def capture(stones)
+      @captures ||= []
+      @captures += stones
+    end
+
+    def empty?
+      color == Board::EMPTY_COLOR
     end
 
     def ==(other_stone)

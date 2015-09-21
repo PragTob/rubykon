@@ -8,7 +8,7 @@ module Rubykon
       join_group_of_friendly_stones(neighbours_by_color[stone.color], stone)
       create_own_group(stone) unless stone.group
       add_liberties(neighbours_by_color[Board::EMPTY_COLOR], stone)
-      take_liberties_of_enemies(neighbours_by_color[stone.enemy_color], stone)
+      take_liberties_of_enemies(neighbours_by_color[stone.enemy_color], stone, board)
     end
 
     def initialize(stone)
@@ -40,9 +40,29 @@ module Rubykon
       @liberty_count -= 1
     end
 
-    def remove
-      @stones.each &:remove
-      #notify_neighbouring_groups
+    def caught?
+      @liberty_count <= 0
+    end
+
+    def remove(board)
+      @stones.each do |stone|
+        empty_stone = Stone.new stone.x, stone.y, Board::EMPTY_COLOR
+        board.set empty_stone
+      end
+      # we could track that from the start
+      neighbouring_groups = liberties.values.map(&:group).compact.uniq
+      neighbouring_groups.each do |group|
+        group.gain_liberties_from_capture_of(self, board)
+      end
+      @stones
+    end
+
+    def gain_liberties_from_capture_of(group, board)
+      new_liberties = liberties.values.select {|stone| stone.group == group}
+      new_liberties.each do |stone|
+        field = board[stone.x, stone.y]
+        add_liberty(field)
+      end
     end
 
     private
@@ -92,9 +112,12 @@ module Rubykon
       neighbours_by_color
     end
 
-    def self.take_liberties_of_enemies(enemy_neighbours, stone)
+    def self.take_liberties_of_enemies(enemy_neighbours, stone, board)
       enemy_neighbours.each do |enemy_stone|
-        enemy_stone.group.remove_liberty(stone)
+        enemy_group = enemy_stone.group
+        enemy_group.remove_liberty(stone)
+        stone.group.liberties[enemy_stone.identifier] = enemy_stone
+        stone.capture enemy_group.remove(board) if enemy_group.caught?
       end
     end
 

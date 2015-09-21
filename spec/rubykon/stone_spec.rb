@@ -34,6 +34,16 @@ module Rubykon
       end
     end
 
+    describe "empty?" do
+      it "is true for the empty color" do
+        expect(Stone.new 1, 1, Board::EMPTY_COLOR).to be_empty
+      end
+
+      it "is false when there is another color" do
+        expect(Stone.new 1, 1, :black).not_to be_empty
+      end
+    end
+
     describe "#==" do
       it "is equal to itself" do
         expect(subject).to eq subject

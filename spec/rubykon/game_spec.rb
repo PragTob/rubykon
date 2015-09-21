@@ -71,5 +71,175 @@ X----
         expect(board[1, 4]).to eq Stone.new 1, 4, Board::EMPTY_COLOR
       end
     end
+
+    describe 'playing moves' do
+
+      let(:game) {Game.from board_string}
+      let(:board) {game.board}
+
+      describe 'capturing stones' do
+        let(:captures) {capturer.captures}
+
+        before :each do
+          game.set_valid_move(capturer)
+        end
+
+        describe 'simple star capture' do
+          let(:board_string) do
+            <<-BOARD
+---
+XOX
+-X-
+            BOARD
+          end
+          let(:capturer) {Stone.new 2, 1, :black}
+
+          it "removes the captured stone from the board" do
+            expect(board[1,1]).to be_empty
+          end
+
+          it "the stone made one capture" do
+            expect(captures.size).to eq 1
+          end
+
+          it "the capture is the stone" do
+            expect(captures.first).to eq Stone.new(2, 2, :white)
+          end
+
+          it_behaves_like "has liberties at position", 2, 1, 3
+          it_behaves_like "has liberties at position", 1, 2, 3
+          it_behaves_like "has liberties at position", 2, 3, 3
+          it_behaves_like "has liberties at position", 3, 2, 3
+        end
+
+        describe 'turtle capture' do
+          let(:board_string) do
+            <<-BOARD
+-----
+-OO--
+OXX--
+-OOO-
+-----
+            BOARD
+          end
+          let(:capturer) {Stone.new 4, 3, :white}
+
+          it "removes the two stones from the board" do
+            expect(board[2, 3]).to be_empty
+            expect(board[3, 3]).to be_empty
+          end
+
+          it "has 2 captures" do
+            expect(captures.size).to eq 2
+          end
+
+          it_behaves_like "has liberties at position", 1, 3, 3
+          it_behaves_like "has liberties at position", 2, 2, 6
+          it_behaves_like "has liberties at position", 4, 3, 9
+        end
+
+        describe 'capturing two distinct groups' do
+          let(:board_string) do
+            <<-BOARD
+-----
+OO-OO
+XX-XX
+OO-OO
+-----
+            BOARD
+            let(:capturer) {Stone.new 3, 3, :white}
+
+            it "makes 4 captures" do
+              expect(captures.size).to eq 4
+            end
+
+            it "removes the captured stones" do
+              [board[1, 3], board[2, 3], board[4, 3], board[5, 3]].each do |field|
+                expect(field).to be_empty
+              end
+            end
+
+            it_behaves_like "has liberties at position", 1, 2, 5
+            it_behaves_like "has liberties at position", 3, 2, 5
+            it_behaves_like "has liberties at position", 3, 3, 4
+            it_behaves_like "has liberties at position", 1, 4, 5
+            it_behaves_like "has liberties at position", 3, 4, 5
+
+          end
+        end
+      end
+
+      describe 'Playing moves on a board (old board move integration)' do
+        let(:game) {Game.new board_size}
+        let(:board) {game.board}
+        let(:board_size) {19}
+        let(:simple_x) {1}
+        let(:simple_y) {1}
+        let(:simple_color) {:black}
+
+        describe 'A simple move' do
+          let(:move) {Stone.new simple_x, simple_y, simple_color}
+
+          before :each do
+            game.play move
+          end
+
+          it 'lets the board retrieve the move at that position' do
+            expect(board[simple_x, simple_y]).to eq move
+          end
+
+          it 'sets the move_count to 1' do
+            expect(game.move_count).to eq 1
+          end
+
+          it 'should have played moves' do
+            expect(game).not_to be_no_moves_played
+          end
+
+          it 'can retrieve the played move through moves' do
+            expect(game.moves.first).to eq move
+          end
+
+          it 'returns a truthy value' do
+            legal_move = Rubykon::StoneFactory.build x: simple_x + 2 #slightly different to avoid conflicts
+            expect(game.play(legal_move)).to eq(true)
+          end
+        end
+
+        describe 'A couple of moves' do
+          let(:moves) do
+            [ StoneFactory.build(x: 3, y: 7, color: :black),
+              StoneFactory.build(x: 5, y: 7, color: :white),
+              StoneFactory.build(x: 3, y: 10, color: :black)
+            ]
+          end
+
+          before :each do
+            moves.each {|move| game.play move}
+          end
+
+          it 'sets the move_count to the number of moves played' do
+            expect(game.move_count).to eq moves.size
+          end
+
+          it 'remembers the moves in the correct order' do
+            expect(game.moves).to eq moves
+          end
+
+        end
+
+        describe 'Illegal moves' do
+          it 'is illegal to play moves with a greater x than the board size' do
+            illegal_move = StoneFactory.build x: board_size + 1
+            expect(game.play(illegal_move)).to eq(false)
+          end
+
+          it 'is illegal to play moves with a greater y than the board size' do
+            illegal_move = StoneFactory.build y: board_size + 1
+            expect(game.play(illegal_move)).to eq(false)
+          end
+        end
+      end
+    end
   end
 end
