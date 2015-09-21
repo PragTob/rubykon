@@ -12,3 +12,4 @@ Possible improvements to try out in the implementation :)
 
 ### Group
 * remove references to stones/liberties from obsolete groups (when it is merged in another group or taken off the board)
+* in liberties, don't point to stones but point to groups (be careful as no group is nil... and that then is not good with hash lookups)
