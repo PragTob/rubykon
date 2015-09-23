@@ -3,13 +3,18 @@ module Rubykon
     
     def valid?(move, game)
       board = game.board
-      move.pass? ||
-      (move_on_board?(move, board) &&
-        spot_unoccupied?(move, board) &&
-        no_suicide_move?(move, board))
+      no_double_move?(move, game) &&
+        (move.pass? ||
+        (move_on_board?(move, board) &&
+          spot_unoccupied?(move, board) &&
+          no_suicide_move?(move, board)))
     end
 
     private
+    def no_double_move?(move, game)
+      game.moves.empty? || (game.moves.last.color != move.color)
+    end
+
     def move_on_board?(move, board)
       board.on_board?(move.x, move.y)
     end

@@ -17,12 +17,16 @@ module Rubykon
       @group = group
     end
 
-    def enemy_color
+    def self.other_color(color)
       if color == :black
         :white
       else
         :black
       end
+    end
+
+    def enemy_color
+      self.class.other_color(color)
     end
 
     def capture(stones)

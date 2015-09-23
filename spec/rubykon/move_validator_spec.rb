@@ -98,6 +98,7 @@ module Rubykon
 X-X
 -X-
         BOARD
+        force_next_move_to_be :white, game
         should_be_invalid_move Stone.new(2, 2, :white), game
       end
 
@@ -107,6 +108,7 @@ X-X
 X--
 ---
         BOARD
+        force_next_move_to_be :white, game
         should_be_invalid_move Stone.new(1, 1, :white), game
       end
 
@@ -117,6 +119,7 @@ OX--
 OX--
 -X--
         BOARD
+        force_next_move_to_be :white, game
         should_be_invalid_move Stone.new(1, 4, :white), game
       end
 
@@ -127,6 +130,7 @@ OX--
 OX--
 ----
         BOARD
+        force_next_move_to_be :white, game
         should_be_valid_move Stone.new(1, 4, :white), game
       end
 
@@ -137,6 +141,7 @@ OXO-
 OXO-
 -XO-
         BOARD
+        force_next_move_to_be :white, game
         should_be_valid_move Stone.new(1, 4, :white), game
       end
 
@@ -147,6 +152,7 @@ OXO-
 X-XO
 -XO-
         BOARD
+        force_next_move_to_be :white, game
         should_be_valid_move Stone.new(2, 3, :white), game
       end
     end
@@ -157,6 +163,7 @@ X-XO
       let(:move_2_2) {Rubykon::StoneFactory.build x: 2, y: 2, color: :white}
 
       it 'is a valide move for white at 2-2' do
+        force_next_move_to_be :white, game
         should_be_valid_move move_2_2, game
       end
 
@@ -166,6 +173,19 @@ X-XO
         should_be_invalid_move Rubykon::StoneFactory.build(x: 2, y: 3, color: :black), game
       end
 
+    end
+
+    describe "double move" do
+      it "is not valid for the same color to move two times" do
+        move_1 = StoneFactory.build x: 2, y: 2, color: :black
+        move_2 = StoneFactory.build x: 1, y: 1, color: :black
+        expect(game.play move_1).to be_truthy
+        should_be_invalid_move move_2, game
+      end
+    end
+
+    def force_next_move_to_be(color, game)
+      game.play StoneFactory.pass(Stone.other_color(color))
     end
 
     def should_be_invalid_move(move, game)
