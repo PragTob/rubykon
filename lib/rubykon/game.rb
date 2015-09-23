@@ -42,9 +42,11 @@ module Rubykon
     end
 
     def set_valid_move(stone)
-      @board.set stone
       @moves << stone
-      Group.assign(stone, @board)
+      unless stone.pass?
+        @board.set stone
+        Group.assign(stone, @board)
+      end
     end
   end
 end

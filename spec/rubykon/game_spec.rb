@@ -201,8 +201,14 @@ OO-OO
           end
 
           it 'returns a truthy value' do
-            legal_move = Rubykon::StoneFactory.build x: simple_x + 2 #slightly different to avoid conflicts
+            legal_move = Rubykon::StoneFactory.build x: simple_x + 2, color: :white
             expect(game.play(legal_move)).to eq(true)
+          end
+
+          it "can play a pass move" do
+            pass = StoneFactory.pass(:white)
+            game.play pass
+            expect(game.moves.last).to eq pass
           end
         end
 
