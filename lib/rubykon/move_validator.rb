@@ -3,9 +3,10 @@ module Rubykon
     
     def valid?(move, game)
       board = game.board
-      move_on_board?(move, board) &&
+      move.pass? ||
+      (move_on_board?(move, board) &&
         spot_unoccupied?(move, board) &&
-        no_suicide_move?(move, board)
+        no_suicide_move?(move, board))
     end
 
     private

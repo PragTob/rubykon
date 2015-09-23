@@ -36,6 +36,9 @@ module Rubykon
         should_be_valid_move (Rubykon::StoneFactory.build x: 37, y: 37), game
       end
 
+      it "allows for pass moves" do
+        should_be_valid_move StoneFactory.pass, game
+      end
     end
 
     describe 'Moves illegal of their own' do

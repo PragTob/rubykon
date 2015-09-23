@@ -34,6 +34,10 @@ module Rubykon
       color == Board::EMPTY_COLOR
     end
 
+    def pass?
+      @x.nil? || @y.nil?
+    end
+
     def ==(other_stone)
       (color == other_stone.color) &&
         (x == other_stone.x) &&

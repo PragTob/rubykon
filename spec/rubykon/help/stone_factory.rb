@@ -8,10 +8,14 @@ module Rubykon
     DEFAULT_COLOR = :black
 
     def build(options = {})
-      x     = options[:x]     || DEFAULT_X
-      y     = options[:y]     || DEFAULT_Y
-      color = options[:color] || DEFAULT_COLOR
+      x     = options.fetch(:x,     DEFAULT_X)
+      y     = options.fetch(:y,     DEFAULT_Y)
+      color = options.fetch(:color, DEFAULT_COLOR)
       Stone.new x, y, color
+    end
+
+    def pass(color = DEFAULT_COLOR)
+      build x: nil, y: nil, color: color
     end
   end
 end

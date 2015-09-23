@@ -44,6 +44,16 @@ module Rubykon
       end
     end
 
+    describe "pass?" do
+      it "is false for a normal move" do
+        expect(StoneFactory.build).not_to be_pass
+      end
+
+      it "is true when the move represents a pass (no x/y)" do
+        expect(StoneFactory.build x: nil, y: nil).to be_pass
+      end
+    end
+
     describe "#==" do
       it "is equal to itself" do
         expect(subject).to eq subject
