@@ -39,6 +39,17 @@ module Rubykon
       end
     end
 
+    def diagonal_colors_of(x, y)
+      diagonal_coordinates(x, y).inject([]) do |res, (n_x, n_y)|
+        res << self[n_x, n_y].color if on_board?(n_x, n_y)
+        res
+      end
+    end
+
+    def on_edge?(x, y)
+      (x == 1) || (y == 1) || (x == size) || (y == size)
+    end
+
     def on_board?(x, y)
       (x >= 1) && (y >= 1) && (x <= size) && (y <= size)
     end
@@ -77,6 +88,10 @@ module Rubykon
     def neighbour_coordinates(x, y)
       [[x + 1, y], [x, y + 1],
        [x - 1, y], [x, y - 1]]
+    end
+
+    def diagonal_coordinates(x, y)
+      [[x - 1, y - 1], [x - 1, y + 1], [x + 1, y - 1], [x + 1, y + 1]]
     end
 
     def self.each_field(enumerable)

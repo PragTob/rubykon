@@ -77,6 +77,72 @@ O-X
       end
     end
 
+    describe "#diagonal_colors_of" do
+      it "returns the colors in the diagonal fields" do
+        board = Board.from <<-BOARD
+O-X
+---
+X--
+        BOARD
+        expect(board.diagonal_colors_of(2, 2)).to contain_exactly :white,
+                                                                  :black,
+                                                                  :black,
+                                                                  Board::EMPTY_COLOR
+      end
+
+      it "does not contain the neighbors" do
+        board = Board.from <<-BOARD
+-X-
+O-X
+-O-
+        BOARD
+        expect(board.diagonal_colors_of(2, 2)).to contain_exactly Board::EMPTY_COLOR,
+                                                                  Board::EMPTY_COLOR,
+                                                                  Board::EMPTY_COLOR,
+                                                                  Board::EMPTY_COLOR
+      end
+
+      it "works on the edge" do
+        board = Board.from <<-BOARD
+---
+O-X
+---
+        BOARD
+        expect(board.diagonal_colors_of(2, 1)).to contain_exactly :white,
+                                                                  :black
+      end
+
+      it "works in the corner" do
+        board = Board.from <<-BOARD
+---
+-X-
+---
+        BOARD
+        expect(board.diagonal_colors_of(1, 1)).to contain_exactly :black
+      end
+    end
+
+    describe "on_edge?" do
+      let(:board) {Board.new 5}
+
+      it "is false for coordinates close to the edge" do
+        expect(board.on_edge?(2, 2)).to be_falsey
+        expect(board.on_edge?(4, 4)).to be_falsey
+      end
+
+      it "is true if one coordinate is 1" do
+        expect(board.on_edge?(1, 3)).to be_truthy
+        expect(board.on_edge?(2, 1)).to be_truthy
+        expect(board.on_edge?(1, 1)).to be_truthy
+      end
+
+      it "is true if one coordinate is boardsize" do
+        expect(board.on_edge?(2, 5)).to be_truthy
+        expect(board.on_edge?(5, 1)).to be_truthy
+        expect(board.on_edge?(5, 5)).to be_truthy
+      end
+    end
+
     describe '#==' do
       it "is true for two empty boards" do
         expect(Rubykon::Board.new(5) == Rubykon::Board.new(5)).to be true
