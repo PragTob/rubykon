@@ -8,8 +8,8 @@ module Rubykon
     describe "#play" do
       it "returns some score" do
         result = playouter.play original_game
-        expect(result[:black]).to be >= 0
-        expect(result[:white]).to be >= 0
+        expect(result[:black]).to be > 0
+        expect(result[:white]).to be > 0
       end
     end
 

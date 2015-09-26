@@ -9,8 +9,8 @@ module Rubykon
     end
 
     def play(game)
-      playout_for(game)
-      score(game)
+      played_out_game = playout_for(game)
+      score(played_out_game)
     end
 
     def score(game)
