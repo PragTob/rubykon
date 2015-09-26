@@ -38,7 +38,7 @@ module Rubykon
       end
     end
 
-    describe "#neighbours_of" do
+    describe "#neighbours_of and neighbour_colors_of" do
       it "returns the stones of the neighbouring fields" do
         board = Rubykon::Board.from <<-String
 -X-
@@ -50,6 +50,9 @@ O-X
                                             Stone.new(3, 2, :black),
                                             Stone.new(1, 2, :white),
                                             Stone.new(2, 3, Board::EMPTY_COLOR))
+        expect(board.neighbour_colors_of(2, 2)).to contain_exactly(
+                                                    :black, :black, :white,
+                                                    Board::EMPTY_COLOR)
       end
 
 
@@ -63,6 +66,9 @@ O-X
                                             Stone.new(3, 1, :black),
                                             Stone.new(2, 2, :white),
                                             Stone.new(1, 1, Board::EMPTY_COLOR))
+        expect(board.neighbour_colors_of(2, 1)).to contain_exactly(
+                                                     :black, :white,
+                                                     Board::EMPTY_COLOR)
       end
 
       it "returns fewer stones when in the corner" do
@@ -74,6 +80,8 @@ O-X
         expect(board.neighbours_of(1, 1)).to contain_exactly(
                                            Stone.new(2, 1, :black),
                                            Stone.new(1, 2, Board::EMPTY_COLOR))
+        expect(board.neighbour_colors_of(1, 1)).to contain_exactly(
+                                                     :black, Board::EMPTY_COLOR)
       end
     end
 

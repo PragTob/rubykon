@@ -1,11 +1,15 @@
 module Rubykon
   class Game
     attr_reader :moves, :board
+    attr_accessor :komi
 
-    def initialize(size = 19)
+    DEFAULT_KOMI = 6.5
+
+    def initialize(size = 19, komi = DEFAULT_KOMI)
       @board = Board.new(size)
       @move_validator = MoveValidator.new
       @moves          = []
+      @komi           = komi
     end
 
     def play(stone)

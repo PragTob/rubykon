@@ -4,6 +4,8 @@ module Rubykon
   class Board
     include Enumerable
 
+    BLACK_COLOR = :black
+    WHITE_COLOR = :white
     EMPTY_COLOR = nil
 
     attr_reader :size, :board
@@ -37,6 +39,10 @@ module Rubykon
         res << self[n_x, n_y] if on_board?(n_x, n_y)
         res
       end
+    end
+
+    def neighbour_colors_of(x, y)
+      neighbours_of(x, y).map &:color
     end
 
     def diagonal_colors_of(x, y)

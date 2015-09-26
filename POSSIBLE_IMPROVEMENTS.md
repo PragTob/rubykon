@@ -17,3 +17,6 @@ Possible improvements to try out in the implementation :)
 
 ### Move gen
 * check self atari?
+
+### Scoring
+* use more efficient scoring algorithm (michi floodfill like?)
