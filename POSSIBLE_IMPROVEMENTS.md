@@ -20,3 +20,6 @@ Possible improvements to try out in the implementation :)
 
 ### Scoring
 * use more efficient scoring algorithm (michi floodfill like?)
+
+### Move generation
+* sensibly choose moves and not just that random barrage... possiby using an Enumerator
