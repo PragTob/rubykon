@@ -30,6 +30,40 @@ module Rubykon
       end
     end
 
+    describe "next_turn_color" do
+      it "is black for starters" do
+        expect(game.next_turn_color).to eq Board::BLACK_COLOR
+      end
+
+      it "is white after a black move" do
+        game.play! StoneFactory.build color: Board::BLACK_COLOR
+        expect(game.next_turn_color).to eq Board::WHITE_COLOR
+      end
+
+      it "is black again after a white move" do
+        game.play! StoneFactory.build color: Board::BLACK_COLOR
+        game.play! StoneFactory.build x: 4, y: 5, color: Board::WHITE_COLOR
+        expect(game.next_turn_color).to eq Board::BLACK_COLOR
+      end
+    end
+
+    describe "#finished?" do
+      it "an empty game is not over" do
+        expect(game).not_to be_finished
+      end
+
+      it "a game with one pass is not over" do
+        game.set_valid_move(StoneFactory.pass color: :black)
+        expect(game).not_to be_finished
+      end
+
+      it "a game with two passes is over" do
+        game.set_valid_move(StoneFactory.pass color: :black)
+        game.set_valid_move(StoneFactory.pass color: :white)
+        expect(game).to be_finished
+      end
+    end
+
     describe ".from" do
       let(:string) do
         <<-GAME

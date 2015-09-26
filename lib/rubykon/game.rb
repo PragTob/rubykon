@@ -37,6 +37,14 @@ module Rubykon
       @moves.empty?
     end
 
+    def next_turn_color
+      move_count.even? ? Board::BLACK_COLOR : Board::WHITE_COLOR
+    end
+
+    def finished?
+      @moves.size >= 2 && @moves[-1].pass? && @moves[-2].pass?
+    end
+
     def self.from(string)
       game = new(string.index("\n"))
       Board.each_stone_from(string) do |stone|

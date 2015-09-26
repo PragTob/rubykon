@@ -28,7 +28,6 @@ X-X
         BOARD
         expect_no_eye 2, 2, board
       end
-
     end
 
     describe "false eyes" do
