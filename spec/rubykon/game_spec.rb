@@ -77,6 +77,20 @@ X----
       let(:game) {Game.from board_string}
       let(:board) {game.board}
 
+      describe 'play!' do
+        let(:game) {Game.new 5}
+
+        it "plays moves" do
+          game.play!(Stone.new 2, 2, :black)
+        end
+
+        it "raises if the move is invalid" do
+          expect do
+            game.play!(Stone.new 0, 0, :black)
+          end.to raise_error(IllegalMoveException)
+        end
+      end
+
       describe 'capturing stones' do
         let(:captures) {capturer.captures}
 

@@ -9,11 +9,19 @@ module Rubykon
     end
 
     def play(stone)
-      if @move_validator.valid?(stone, self)
+      if valid_move?(stone)
         set_valid_move(stone)
         true
       else
         false
+      end
+    end
+
+    def play!(stone)
+      if valid_move?(stone)
+        set_valid_move(stone)
+      else
+        raise IllegalMoveException.new
       end
     end
 
@@ -23,14 +31,6 @@ module Rubykon
 
     def no_moves_played?
       @moves.empty?
-    end
-
-    def safe_set_move(stone)
-      if stone.color == Board::EMPTY_COLOR
-        @board.set stone
-      else
-        set_valid_move(stone)
-      end
     end
 
     def self.from(string)
@@ -47,6 +47,19 @@ module Rubykon
         @board.set stone
         Group.assign(stone, @board)
       end
+    end
+
+    def safe_set_move(stone)
+      if stone.color == Board::EMPTY_COLOR
+        @board.set stone
+      else
+        set_valid_move(stone)
+      end
+    end
+
+    private
+    def valid_move?(stone)
+      @move_validator.valid?(stone, self)
     end
   end
 end

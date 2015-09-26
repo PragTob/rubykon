@@ -169,17 +169,58 @@ X-XO
 ----
         BOARD
       end
-      let(:move_2_2) {Rubykon::StoneFactory.build x: 2, y: 2, color: :white}
+      let(:white_ko_capture) {StoneFactory.build x: 2, y: 2, color: :white}
+      let(:black_ko_capture) {StoneFactory.build x: 3, y: 2, color: :black}
+      let(:black_tenuki) {StoneFactory.build x: 1, y: 4, color: :black}
+      let(:white_closes) {StoneFactory.build x: 3, y: 2, color: :white}
+      let(:white_tenuki) {StoneFactory.build x: 2, y: 4, color: :white}
 
-      it 'is a valid move for white at 2-2' do
+      before :each do
         force_next_move_to_be :white, game
-        should_be_valid_move move_2_2, game
       end
 
-      it 'is an invalid move to catch back for black after white played 2-2' do
-        force_next_move_to_be :white, game
-        game.play move_2_2
-        should_be_invalid_move StoneFactory.build(x: 2, y: 3, color: :black), game
+      it 'is a valid move for white at 2-2' do
+        should_be_valid_move white_ko_capture, game
+      end
+
+      describe "white caputres ko" do
+
+        before :each do
+          game.play! white_ko_capture
+        end
+
+        it 'is an invalid move to catch back for black' do
+          should_be_invalid_move black_ko_capture, game
+        end
+        
+        it "black can tenuki" do
+          should_be_valid_move black_tenuki, game
+        end
+
+        describe "black tenuki" do
+
+          before :each do
+            game.play! black_tenuki
+          end
+
+          it "white can close the ko" do
+            should_be_valid_move white_closes, game
+          end
+          
+          it "white can tenuki" do
+            should_be_valid_move white_tenuki, game
+          end
+
+          describe "white tenuki" do
+            before :each do
+              game.play! white_tenuki
+            end
+            
+            it "black can capture" do
+              should_be_valid_move black_ko_capture, game
+            end
+          end
+        end
       end
 
     end
