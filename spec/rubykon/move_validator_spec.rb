@@ -159,18 +159,27 @@ X-XO
 
     describe 'KO' do
 
-      let(:game) {setup_ko_board}
+      let(:game) {Game.from board_string}
+
+      let(:board_string) do
+        <<-BOARD
+-XO-
+X-XO
+-XO-
+----
+        BOARD
+      end
       let(:move_2_2) {Rubykon::StoneFactory.build x: 2, y: 2, color: :white}
 
-      it 'is a valide move for white at 2-2' do
+      it 'is a valid move for white at 2-2' do
         force_next_move_to_be :white, game
         should_be_valid_move move_2_2, game
       end
 
       it 'is an invalid move to catch back for black after white played 2-2' do
-        skip 'woops need to implement catching stones first'
+        force_next_move_to_be :white, game
         game.play move_2_2
-        should_be_invalid_move Rubykon::StoneFactory.build(x: 2, y: 3, color: :black), game
+        should_be_invalid_move StoneFactory.build(x: 2, y: 3, color: :black), game
       end
 
     end
@@ -198,15 +207,6 @@ X-XO
 
     def move_validate_should_return(bool, move, game)
       expect(validator.valid?(move, game)).to be bool
-    end
-
-    def setup_ko_board
-      Game.from <<-BOARD
--XO-
-X-XO
--XO-
-----
-      BOARD
     end
   end
 end
