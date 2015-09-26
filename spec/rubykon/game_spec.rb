@@ -295,5 +295,132 @@ OO-OO
         end
       end
     end
+
+    describe '#dup' do
+
+      let(:dupped) {game.dup}
+      let(:move1) {StoneFactory.build x: 1, y:1, color: :black}
+      let(:move2) {StoneFactory.build x: 3, y:1, color: :white}
+      let(:move3) {StoneFactory.build x: 5, y:1, color: :black}
+      let(:board) {game.board}
+
+      before :each do
+        dupped.play! move1
+        dupped.play! move2
+        dupped.play! move3
+      end
+
+
+
+      describe "empty game" do
+        let(:game) {Game.new 5}
+
+        it "does not change the board" do
+          expect(board.to_s).to eq <<-BOARD
+-----
+-----
+-----
+-----
+-----
+          BOARD
+        end
+
+        it "has zero moves played" do
+          expect(game.move_count).to eq 0
+        end
+
+        it "changes the board for the copy" do
+          expect(dupped.board.to_s).to eq <<-BOARD
+X-O-X
+-----
+-----
+-----
+-----
+          BOARD
+        end
+
+        it "has moves played for the copy" do
+          expect(dupped.move_count).to eq 3
+        end
+      end
+
+      describe "game with some moves" do
+        let(:game) do
+          Game.from board_string
+        end
+        let(:board_string) do
+          <<-BOARD
+-----
+O-X-X
+O-O-O
+-----
+-----
+          BOARD
+        end
+
+        describe "not changing the original" do
+          it "is still the same board" do
+            expect(game.board.to_s).to eq board_string
+          end
+
+          it "still has the old move_count" do
+            expect(game.move_count).to eq 6
+          end
+
+          it "does not modify the group of the stones" do
+            group = board[5, 2].group
+            expect(group.stones.size).to eq 1
+          end
+
+          it "stones have different identities" do
+            expect(board[5,2]).not_to be dupped.board[5, 2]
+          end
+
+          it "the group points to the right liberties" do
+            expect(board[3, 3].group.liberties['3-4']).not_to be dupped.board[3, 4]
+            expect(board[3, 3].group.liberties['3-4']).to be board[3, 4]
+          end
+
+          it "does not register the new stones" do
+            group = board[1, 2].group
+            expect(group.liberties['1-1']).to be board[1, 1]
+            expect(group.liberty_count).to eq 4
+          end
+        end
+
+        describe "the dupped entity has the changes" do
+          it "has a move count of 9" do
+            expect(dupped.move_count).to eq 9
+          end
+
+          it "has the new moves" do
+            expect(dupped.board.to_s).to eq <<-BOARD
+X-O-X
+O-X-X
+O-O-O
+-----
+-----
+            BOARD
+          end
+
+          it "handles groups" do
+            group = dupped.board[5, 2].group
+            expect(group.stones.size).to eq 2
+          end
+
+          it "has the right group liberties" do
+            expect(dupped.board[3, 3].group.liberties['3-4']).to be dupped.board[3, 4]
+            expect(dupped.board[3, 3].group.liberties['3-4']).not_to be board[3, 4]
+          end
+
+          it "registers new stones" do
+            group = dupped.board[1, 2].group
+            expect(group.liberties['1-1']).to be dupped.board[1, 1]
+            expect(group.liberty_count).to eq 3
+          end
+        end
+
+      end
+    end
   end
 end

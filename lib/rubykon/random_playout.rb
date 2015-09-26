@@ -18,7 +18,8 @@ module Rubykon
       scorer.score(game)
     end
 
-    def playout_for(game)
+    def playout_for(original_game)
+      game = original_game.dup
       until game.finished?
         # we ensure the validity of the move
         game.set_valid_move generate_random_move(game)

@@ -11,11 +11,15 @@ module Rubykon
       take_liberties_of_enemies(neighbours_by_color[stone.enemy_color], stone, board)
     end
 
-    def initialize(stone)
-      @liberties = {}
-      @liberty_count = 0
-      @stones = [stone]
-      stone.join(self)
+    def initialize(stone, liberty_count = 0, liberties = {})
+      @liberties = liberties
+      @liberty_count = liberty_count
+      if stone.nil?
+        @stones = []
+      else
+        @stones = [stone]
+        stone.join(self)
+      end
     end
 
     def connect(stone)
@@ -63,6 +67,10 @@ module Rubykon
         field = board[stone.x, stone.y]
         add_liberty(field)
       end
+    end
+
+    def dup
+      self.class.new(nil, @liberty_count, {})
     end
 
     private

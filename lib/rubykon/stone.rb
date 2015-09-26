@@ -2,11 +2,11 @@ module Rubykon
   class Stone
     attr_reader :x, :y, :color, :group, :captures
 
-    def initialize(x, y, color)
+    def initialize(x, y, color, group = nil)
       @x     = x
       @y     = y
       @color = color
-      @group = nil
+      @group = group
     end
 
     def remove
@@ -50,6 +50,11 @@ module Rubykon
 
     def identifier
       "#{x}-#{y}".freeze
+    end
+
+    def dup
+      # group is dupped elsewhere as it references stone...
+      self.class.new x, y, color, @group
     end
   end
 end

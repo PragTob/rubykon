@@ -5,10 +5,11 @@ module Rubykon
 
     DEFAULT_KOMI = 6.5
 
-    def initialize(size = 19, komi = DEFAULT_KOMI)
-      @board = Board.new(size)
-      @move_validator = MoveValidator.new
-      @moves          = []
+    # the freakish constructor is here so that we can have a decent dup
+    def initialize(size = 19, komi = DEFAULT_KOMI, board = Board.new(size), move_validator = MoveValidator.new, moves = [])
+      @board           = board
+      @move_validator = move_validator
+      @moves          = moves
       @komi           = komi
     end
 
@@ -62,11 +63,12 @@ module Rubykon
     end
 
     def safe_set_move(stone)
-      if stone.color == Board::EMPTY_COLOR
-        @board.set stone
-      else
-        set_valid_move(stone)
-      end
+      return if stone.color == Board::EMPTY_COLOR
+      set_valid_move(stone)
+    end
+
+    def dup
+      self.class.new @size, @komi, @board.dup, @move_validator, @moves.dup
     end
 
     private

@@ -14,9 +14,23 @@ module Rubykon
     end
 
     describe "#playout_for" do
+      let!(:played_out) {playouter.playout_for(original_game)}
+
       it "sets a lot of moves... " do
-        played_out = playouter.playout_for(original_game)
         expect(played_out.move_count).to be >= 150
+      end
+
+      describe "not modifying the original" do
+        it "makes no moves" do
+          expect(original_game.no_moves_played?).to be_truthy
+        end
+
+        it "the associated board is empty" do
+          board_empty = original_game.board.all? do |cutting_point|
+            cutting_point.empty?
+          end
+          expect(board_empty).to be_truthy
+        end
       end
     end
   end

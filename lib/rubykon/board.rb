@@ -9,19 +9,17 @@ module Rubykon
     EMPTY_COLOR = nil
 
     attr_reader :size, :board
-    
-    def initialize(size)
+
+    # weird constructor for dup
+    def initialize(size, board = initialize_board(size))
       @size  = size
-      @board = Array.new(@size) {Array.new(@size)}
-      self.class.each_field(@board) do |_field, x, y|
-        self[x, y] = Stone.new x, y, EMPTY_COLOR
-      end
+      @board = board
     end
-    
+
     def each(&block)
       @board.flatten.each &block
     end
-    
+
     def [](x, y)
       @board[y - 1][x - 1]
     end
@@ -90,7 +88,39 @@ module Rubykon
       end
     end
 
+    def dup
+      dupped_board = self.class.new @size, dup_board
+      dupped_board.reassign_groups
+      dupped_board
+    end
+
+    # not my usual slow methods, but this copying is a mess, looking forward
+    # to throwing it away somehow and replacing it with simple data structures
+    # straight on board/game
+    def reassign_groups
+      groups = map(&:group).compact!.uniq!
+      return if groups.nil?
+      groups.each do |original_group|
+        group_dup = original_group.dup
+        original_group.stones.each do |stone|
+          new_stone = self[stone.x, stone.y]
+          new_stone.join(group_dup)
+          group_dup.stones << new_stone
+        end
+        original_group.liberties.each do |identifier, stone|
+          group_dup.liberties[identifier] = self[stone.x, stone.y]
+        end
+      end
+    end
+
     private
+    def initialize_board(size)
+      @board = Array.new(size) { Array.new(size) }
+      self.class.each_field(@board) do |_field, x, y|
+        self[x, y] = Stone.new x, y, EMPTY_COLOR
+      end
+    end
+
     def neighbour_coordinates(x, y)
       [[x + 1, y], [x, y + 1],
        [x - 1, y], [x, y - 1]]
@@ -99,6 +129,13 @@ module Rubykon
     def diagonal_coordinates(x, y)
       [[x - 1, y - 1], [x - 1, y + 1], [x + 1, y - 1], [x + 1, y + 1]]
     end
+
+    def dup_board
+      @board.map do |row|
+        row.map {|cutting_point| cutting_point.dup}
+      end
+    end
+
 
     def self.each_field(enumerable)
       enumerable.each_with_index do |row, y|
