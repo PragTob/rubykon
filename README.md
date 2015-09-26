@@ -2,7 +2,7 @@
 A Go-Engine being built in Ruby. 
 
 ### Status?
-Not much yet, just a basic modeling of the game.
+A naive very slow implementation of random playouts. Next up making it faster... or implementing the mcts bits. We'll see. Don't use and judge yet, some pretty inefficient stuff in here :D
 
 ### Why would you build a Go-Bot in Ruby?
 Cause it's fun.
