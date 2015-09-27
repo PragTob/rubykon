@@ -12,7 +12,7 @@ module Rubykon
       board = game.board
       board.each do |identifier, color|
         if color == Board::EMPTY
-          score_empty_cutting_point(cutting_point, board, game_score)
+          score_empty_cutting_point(identifier, board, game_score)
         else
           game_score[color] += 1
         end
