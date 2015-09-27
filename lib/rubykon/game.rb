@@ -41,7 +41,7 @@ module Rubykon
     end
 
     def finished?
-      @moves.size >= 2 && @moves[-1].pass? && @moves[-2].pass?
+      @moves.size >= 2 && Stone.pass?(@moves[-1]) && Stone.pass?(@moves[-2])
     end
 
     def self.from(string)

@@ -38,10 +38,6 @@ module Rubykon
         end
       end
 
-      def group_from(x, y)
-        group_overseer.group_of(board.identifier_for(x, y))
-      end
-
       describe 'group of a lonely stone' do
         let(:board_string) do
           <<-BOARD

@@ -115,8 +115,11 @@ module Rubykon
       end
     end
 
+    MAKE_IT_OUT_OF_BOUNDS = 1000
+
     def identifier_for(x, y)
       return nil if x.nil? || y.nil?
+      x = MAKE_IT_OUT_OF_BOUNDS if x > @size
       (y - 1) * @size + (x - 1)
     end
 
