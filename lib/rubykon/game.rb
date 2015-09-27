@@ -1,6 +1,6 @@
 module Rubykon
   class Game
-    attr_reader :moves, :board
+    attr_reader :moves, :board, :group_overseer
     attr_accessor :komi
 
     DEFAULT_KOMI = 6.5
@@ -11,6 +11,7 @@ module Rubykon
       @move_validator = move_validator
       @moves          = moves
       @komi           = komi
+      @group_overseer = GroupOverseer.new
     end
 
     def play(x, y, color)
@@ -55,7 +56,7 @@ module Rubykon
       @moves << identifier
       unless Stone.pass?(identifier)
         @board[identifier] = color
-        Group.assign(identifier, color, @board)
+        @group_overseer.assign(identifier, color, board)
       end
     end
 

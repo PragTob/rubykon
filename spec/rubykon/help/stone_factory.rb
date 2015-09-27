@@ -11,7 +11,7 @@ module Rubykon
       x     = options.fetch(:x,     DEFAULT_X)
       y     = options.fetch(:y,     DEFAULT_Y)
       color = options.fetch(:color, DEFAULT_COLOR)
-      Stone.new x, y, color
+      [x, y, color]
     end
 
     def pass(color = DEFAULT_COLOR)

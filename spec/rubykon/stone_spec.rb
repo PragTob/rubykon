@@ -28,7 +28,7 @@ module Rubykon
 
     describe "#join" do
       it "joins the given group" do
-        group = Group.new(stone)
+        group = GroupOverseer.new(stone)
         stone.join group
         expect(stone.group).to be group
       end
@@ -90,7 +90,7 @@ module Rubykon
 
     describe '#remove' do
       it "removes any affiliation to a group" do
-        group = Group.new(stone)
+        group = GroupOverseer.new(stone)
         stone.remove
         expect(stone.group).to be_nil
       end
