@@ -1,7 +1,7 @@
 module Rubykon
   class GameScorer
     def score(game)
-      game_score = {Board::BLACK_COLOR => 0, Board::WHITE_COLOR => game.komi}
+      game_score = {Board::BLACK => 0, Board::WHITE => game.komi}
       score_board(game, game_score)
       determine_winner(game_score)
       game_score
@@ -30,7 +30,7 @@ module Rubykon
 
     def find_candidate_color(neighbor_colors)
       neighbor_colors.find do |color|
-        color != Board::EMPTY_COLOR
+        color != Board::EMPTY
       end
     end
 
@@ -43,14 +43,14 @@ module Rubykon
 
     def determine_winner(game_score)
       game_score[:winner] = if black_won?(game_score)
-                              Board::BLACK_COLOR
+                              Board::BLACK
                             else
-                              Board::WHITE_COLOR
+                              Board::WHITE
                             end
     end
 
     def black_won?(game_score)
-      game_score[Board::BLACK_COLOR] > game_score[Board::WHITE_COLOR]
+      game_score[Board::BLACK] > game_score[Board::WHITE]
     end
   end
 end

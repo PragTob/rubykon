@@ -4,43 +4,47 @@ module Rubykon
   class Board
     include Enumerable
 
-    BLACK_COLOR = :black
-    WHITE_COLOR = :white
-    EMPTY_COLOR = nil
+    BLACK = :black
+    WHITE = :white
+    EMPTY = nil
 
     attr_reader :size, :board
 
     # weird constructor for dup
-    def initialize(size, board = initialize_board(size))
+    def initialize(size)
       @size  = size
-      @board = board
+      @board = Array.new(size * size, EMPTY)
     end
 
     def each(&block)
-      @board.flatten.each &block
+      @board.each_with_index &block
     end
 
     def [](x, y)
-      @board[y - 1][x - 1]
-    end
-    
-    def []=(x, y, stone)
-      @board[y - 1][x - 1] = stone
+      get(identifier_for(x, y))
     end
 
-    def set(stone)
-      self[stone.x, stone.y] = stone
+    def []=(x, y, color)
+      set(identifier_for(x, y), color)
     end
 
-    def neighbours_of(x, y)
-      neighbour_coordinates(x, y).inject([]) do |res, (n_x, n_y)|
-        res << self[n_x, n_y] if on_board?(n_x, n_y)
+    def set(identifier, color)
+      @board[identifier] = color
+    end
+
+    def get(identifier)
+      @board[identifier]
+    end
+
+    def neighbours_of(identifier)
+      neighbour_coordinates(identifier).inject([]) do |res, identifier|
+        res << get(identifier) if on_board?(identifier)
         res
       end
     end
 
-    def neighbour_colors_of(x, y)
-      neighbours_of(x, y).map &:color
+    def neighbour_colors_of(identifier)
+      neighbours_of(identifier)
     end
 
     def diagonal_colors_of(x, y)
@@ -50,15 +54,17 @@ module Rubykon
       end
     end
 
-    def on_edge?(x, y)
-      (x == 1) || (y == 1) || (x == size) || (y == size)
+    def on_edge?(identifier)
+      x = identifier % @size
+      y = identifier / size
+      x == 0 || x == (size - 1) || y == 0 || y == (size - 1)
     end
 
-    def on_board?(x, y)
-      (x >= 1) && (y >= 1) && (x <= size) && (y <= size)
+    def on_board?(identifier)
+      identifier >= 0 && identifier < @board.size
     end
     
-    COLOR_TO_CHARACTER = {black: 'X', white: 'O', EMPTY_COLOR => '-'}
+    COLOR_TO_CHARACTER = {BLACK => 'X', WHITE => 'O', EMPTY => '-'}
     CHARACTER_TO_COLOR = COLOR_TO_CHARACTER.invert
 
     def ==(other_board)
@@ -66,25 +72,27 @@ module Rubykon
     end
 
     def to_s
-      @board.map do |row|
-        row.map do |stone|
-          COLOR_TO_CHARACTER[stone.color]
+      @board.each_slice(@size) do |row|
+        row.map do |color|
+          COLOR_TO_CHARACTER[color]
         end.join
       end.join("\n") << "\n"
     end
 
     def self.from(string)
       new_board = new string.index("\n")
-      each_stone_from(string) do |stone|
-        new_board.set stone
+      each_move_from(string) do |index, color|
+        new_board.set(index, color)
+      end
+      string.chars.each_with_index do |char, i|
       end
       new_board
     end
 
-    def self.each_stone_from(string)
+    def self.each_move_from(string)
       rows = string.split("\n").map &:chars
-      each_field(rows) do |character, x, y|
-        yield Stone.new(x, y, CHARACTER_TO_COLOR[character])
+      string.chars.each_with_index do |char, index|
+        yield index, CHARACTER_TO_COLOR[char]
       end
     end
 
@@ -94,7 +102,7 @@ module Rubykon
       dupped_board
     end
 
-    # not my usual slow methods, but this copying is a mess, looking forward
+    # not my usual short methods, but this copying is a mess, looking forward
     # to throwing it away somehow and replacing it with simple data structures
     # straight on board/game
     def reassign_groups
@@ -113,29 +121,29 @@ module Rubykon
       end
     end
 
+    def identifier_for(x, y)
+      (y - 1) * @size + (x - 1)
+    end
+
     private
-    def initialize_board(size)
-      @board = Array.new(size) { Array.new(size) }
-      self.class.each_field(@board) do |_field, x, y|
-        self[x, y] = Stone.new x, y, EMPTY_COLOR
-      end
+
+    # def x_y_from(identifier)
+    #
+    # end
+
+    def neighbour_coordinates(identifier)
+      [identifier + 1, identifier + @size,
+       identifier - 1, identifier - @size]
     end
 
-    def neighbour_coordinates(x, y)
-      [[x + 1, y], [x, y + 1],
-       [x - 1, y], [x, y - 1]]
-    end
-
-    def diagonal_coordinates(x, y)
-      [[x - 1, y - 1], [x - 1, y + 1], [x + 1, y - 1], [x + 1, y + 1]]
+    def diagonal_coordinates(identifier)
+      [identifier - 1 - @size, identifier - 1 + @size,
+       identifier + 1 - @size, identifier + 1 + @size]
     end
 
     def dup_board
-      @board.map do |row|
-        row.map {|cutting_point| cutting_point.dup}
-      end
+      @board.dup
     end
-
 
     def self.each_field(enumerable)
       enumerable.each_with_index do |row, y|

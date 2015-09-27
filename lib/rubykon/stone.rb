@@ -35,11 +35,11 @@ module Rubykon
     end
 
     def empty?
-      color == Board::EMPTY_COLOR
+      color == Board::EMPTY
     end
 
-    def pass?
-      @x.nil? || @y.nil?
+    def self.pass?(identifier)
+      identifier.nil?
     end
 
     def ==(other_stone)
