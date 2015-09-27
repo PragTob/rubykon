@@ -1,11 +1,11 @@
 require_relative 'spec_helper'
 
 module Rubykon
-  describe Rubykon::MoveValidator do
+  describe MoveValidator do
 
-    let(:validator) {Rubykon::MoveValidator.new}
+    let(:validator) {MoveValidator.new}
     let(:board_size) {19}
-    let(:game) {Rubykon::Game.new board_size}
+    let(:game) {Game.new board_size}
     let(:baord) {game.board}
 
     it 'can be created' do
@@ -14,26 +14,27 @@ module Rubykon
 
     describe 'legal moves' do
       it 'is accepts normal moves' do
-        should_be_valid_move Rubykon::StoneFactory.build, game
+        should_be_valid_move StoneFactory.build, game
       end
 
       it 'accepts 1-1' do
-        should_be_valid_move (Rubykon::StoneFactory.build x: 1, y: 1), game
+        should_be_valid_move (StoneFactory.build x: 1, y: 1), game
       end
 
       it 'accepts the move in the top right corner (19-19)' do
-        should_be_valid_move Rubykon::StoneFactory.build(x: board_size,
+        should_be_valid_move StoneFactory.build(x: board_size,
                                                          y: board_size),
                               game
       end
 
-      it 'accepts a different color' do
-        should_be_valid_move (Rubykon::StoneFactory.build color: :white), game
+      it 'accepts a different color after the first move was played' do
+        game.play! *StoneFactory.build(color: :black, x: 1, y: 1)
+        should_be_valid_move (StoneFactory.build color: :white), game
       end
 
       it 'also works correctly with bigger boards' do
-        game = Rubykon::Game.new 37
-        should_be_valid_move (Rubykon::StoneFactory.build x: 37, y: 37), game
+        game = Game.new 37
+        should_be_valid_move (StoneFactory.build x: 37, y: 37), game
       end
 
       it "allows for pass moves" do
@@ -43,51 +44,51 @@ module Rubykon
 
     describe 'Moves illegal of their own' do
       it 'is illegal with negative x and y' do
-        move = Rubykon::StoneFactory.build x: -3, y: -4
+        move = StoneFactory.build x: -3, y: -4
         should_be_invalid_move move, game
       end
 
       it 'is illegal with negative x' do
-        move = Rubykon::StoneFactory.build x: -1
+        move = StoneFactory.build x: -1
         should_be_invalid_move move, game
       end
 
       it 'is illegal with negative y' do
-        move = Rubykon::StoneFactory.build y: -1
+        move = StoneFactory.build y: -1
         should_be_invalid_move move, game
       end
 
       it 'is illegal with x set to 0' do
-        move = Rubykon::StoneFactory.build x: 0
+        move = StoneFactory.build x: 0
         should_be_invalid_move move, game
       end
 
       it 'is illegal with y set to 0' do
-        move = Rubykon::StoneFactory.build y: 0
+        move = StoneFactory.build y: 0
         should_be_invalid_move move, game
       end
     end
 
     describe 'Moves illegal in the context of a board' do
       it 'is illegal with x bigger than the board size' do
-        move = Rubykon::StoneFactory.build x: board_size + 1
+        move = StoneFactory.build x: board_size + 1
         should_be_invalid_move move, game
       end
 
       it 'is illegal with y bigger than the board size' do
-        move = Rubykon::StoneFactory.build y: board_size + 1
+        move = StoneFactory.build y: board_size + 1
         should_be_invalid_move move, game
       end
 
       it 'is illegal to set a stone at a position already occupied by a stone' do
-        move = Rubykon::StoneFactory.build x: 1, y: 1
-        game.play move
+        move = StoneFactory.build x: 1, y: 1
+        game.play *move
         should_be_invalid_move move, game
       end
 
       it 'also works for other board sizes' do
-        game = Rubykon::Game.new 5
-        should_be_invalid_move (Rubykon::StoneFactory.build x: 6), game
+        game = Game.new 5
+        should_be_invalid_move (StoneFactory.build x: 6), game
       end
     end
 
@@ -99,7 +100,7 @@ X-X
 -X-
         BOARD
         force_next_move_to_be :white, game
-        should_be_invalid_move Stone.new(2, 2, :white), game
+        should_be_invalid_move [2, 2, :white], game
       end
 
       it "is forbidden in the corner as well" do
@@ -109,7 +110,7 @@ X--
 ---
         BOARD
         force_next_move_to_be :white, game
-        should_be_invalid_move Stone.new(1, 1, :white), game
+        should_be_invalid_move [1, 1, :white], game
       end
 
       it "is forbidden when it robs a friendly group of its last liberty" do
@@ -120,7 +121,7 @@ OX--
 -X--
         BOARD
         force_next_move_to_be :white, game
-        should_be_invalid_move Stone.new(1, 4, :white), game
+        should_be_invalid_move [1, 4, :white], game
       end
 
       it "is valid if the group still has liberties with the move" do
@@ -131,7 +132,7 @@ OX--
 ----
         BOARD
         force_next_move_to_be :white, game
-        should_be_valid_move Stone.new(1, 4, :white), game
+        should_be_valid_move [1, 4, :white], game
       end
 
       it "is valid if it captures the group" do
@@ -142,7 +143,7 @@ OXO-
 -XO-
         BOARD
         force_next_move_to_be :white, game
-        should_be_valid_move Stone.new(1, 4, :white), game
+        should_be_valid_move [1, 4, :white], game
       end
 
       it "is allowed when it captures a stone first (e.g. no suicide)" do
@@ -153,7 +154,7 @@ X-XO
 -XO-
         BOARD
         force_next_move_to_be :white, game
-        should_be_valid_move Stone.new(2, 3, :white), game
+        should_be_valid_move [2, 3, :white], game
       end
     end
 
@@ -186,7 +187,7 @@ X-XO
       describe "white caputres ko" do
 
         before :each do
-          game.play! white_ko_capture
+          game.play! *white_ko_capture
         end
 
         it 'is an invalid move to catch back for black' do
@@ -200,7 +201,7 @@ X-XO
         describe "black tenuki" do
 
           before :each do
-            game.play! black_tenuki
+            game.play! *black_tenuki
           end
 
           it "white can close the ko" do
@@ -213,7 +214,7 @@ X-XO
 
           describe "white tenuki" do
             before :each do
-              game.play! white_tenuki
+              game.play! *white_tenuki
             end
             
             it "black can capture" do
@@ -229,13 +230,14 @@ X-XO
       it "is not valid for the same color to move two times" do
         move_1 = StoneFactory.build x: 2, y: 2, color: :black
         move_2 = StoneFactory.build x: 1, y: 1, color: :black
-        expect(game.play move_1).to be_truthy
+        game.play! *move_1
         should_be_invalid_move move_2, game
       end
     end
 
     def force_next_move_to_be(color, game)
-      game.play StoneFactory.pass(Stone.other_color(color))
+      return if game.next_turn_color == color
+      game.set_valid_move nil, Stone.other_color(color)
     end
 
     def should_be_invalid_move(move, game)
@@ -247,7 +249,9 @@ X-XO
     end
 
     def move_validate_should_return(bool, move, game)
-      expect(validator.valid?(move, game)).to be bool
+      identifier = game.board.identifier_for(move[0], move[1])
+      color = move[2]
+      expect(validator.valid?(identifier, color, game)).to be bool
     end
   end
 end
