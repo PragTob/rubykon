@@ -1,13 +1,14 @@
 module Rubykon
   class GroupOverseer
 
-    attr_reader :groups, :stone_to_group
+    attr_reader :groups, :stone_to_group, :prisoners
 
     NOT_SET = :not_set
 
     def initialize(groups = {}, stone_to_group = {})
       @groups         = groups # group_id to stones, liberty count, liberties
       @stone_to_group = stone_to_group # stone identifier to group identifier
+      @prisoners = {Board::BLACK => 0, Board::WHITE => 0}
     end
 
     def assign(identifier, color, board)
@@ -15,7 +16,7 @@ module Rubykon
       join_group_of_friendly_stones(neighbours_by_color[color], identifier)
       create_own_group(identifier) unless group_id_of(identifier)
       add_liberties(neighbours_by_color[Board::EMPTY], identifier)
-      take_liberties_of_enemies(neighbours_by_color[Stone.other_color(color)], identifier, board)
+      take_liberties_of_enemies(neighbours_by_color[Stone.other_color(color)], identifier, board, color)
     end
 
     def liberty_count_at(identifier)
@@ -68,17 +69,17 @@ module Rubykon
       enemy_group[:liberty_count] <= 0
     end
 
-    def remove(captured_group, board)
+    def remove(captured_group, board, capturer_color)
       captured_group[:stones].each do |identifier|
         board[identifier] = Board::EMPTY
-        @stones.delete identifier
+        @stone_to_group.delete identifier
       end
-      prisoners = captured_group[:stones].size # TODO USE ME
+      @prisoners[capturer_color] += captured_group[:stones].size
       # we could track that from the start
       neighbouring_group_ids = captured_group[:liberties].values.compact.uniq
       neighbouring_group_ids.each do |neighbor_group_id|
         neighbor_group = group(neighbor_group_id)
-        gain_liberties_from_capture(neighbor_group, captured_group)
+        gain_liberties_from_capture_of(neighbor_group, captured_group)
       end
       @groups.delete(captured_group[:id])
     end
@@ -158,13 +159,13 @@ module Rubykon
       hash
     end
 
-    def take_liberties_of_enemies(enemy_neighbours, identifier, board)
+    def take_liberties_of_enemies(enemy_neighbours, identifier, board, capturer_color)
       enemy_neighbours.each do |enemy_identifier|
         enemy_group = group_of(enemy_identifier)
         remove_liberty(enemy_group, identifier)
         my_group = group_of(identifier)
         my_group[:liberties][enemy_identifier] = enemy_group[:id]
-        remove(enemy_group, board) if caught?(enemy_group)
+        remove(enemy_group, board, capturer_color) if caught?(enemy_group)
       end
     end
 
