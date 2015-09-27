@@ -1,7 +1,7 @@
 require_relative '../lib/rubykon'
 
 def truffle? # truffle can't do gem install
-  RUBY_DESCRIPTION.match(/graal/)
+  defined?(RUBY_DESCRIPTION) && RUBY_DESCRIPTION.match(/graal/)
 end
 
 if truffle?
