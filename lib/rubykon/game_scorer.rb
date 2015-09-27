@@ -10,17 +10,17 @@ module Rubykon
     private
     def score_board(game, game_score)
       board = game.board
-      board.each do |cutting_point|
-        if cutting_point.empty?
+      board.each do |identifier, color|
+        if color == Board::EMPTY
           score_empty_cutting_point(cutting_point, board, game_score)
         else
-          game_score[cutting_point.color] += 1
+          game_score[color] += 1
         end
       end
     end
 
-    def score_empty_cutting_point(cutting_point, board, game_score)
-      neighbor_colors = board.neighbour_colors_of(cutting_point.x, cutting_point.y)
+    def score_empty_cutting_point(identifier, board, game_score)
+      neighbor_colors = board.neighbour_colors_of(identifier)
       candidate_color = find_candidate_color(neighbor_colors)
       return unless candidate_color
       if only_one_color_adjacent?(neighbor_colors, candidate_color)

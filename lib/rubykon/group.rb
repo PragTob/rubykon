@@ -3,15 +3,15 @@ module Rubykon
 
     attr_reader :liberty_count, :stones, :liberties
 
-    def self.assign(x, y, color, board)
-      neighbours_by_color = color_to_neighbour(board, x, y, color)
-      join_group_of_friendly_stones(neighbours_by_color[stone.color], x, y, color)
-      create_own_group(x, y, color) unless stone.group
-      add_liberties(neighbours_by_color[Board::EMPTY], x, y, color)
-      take_liberties_of_enemies(neighbours_by_color[stone.enemy_color], x, y, color, board)
+    def self.assign(identifier, color, board)
+      neighbours_by_color = color_to_neighbour(board, identifier, color)
+      join_group_of_friendly_stones(neighbours_by_color[stone.color], identifier, color)
+      create_own_group(identifier, color) unless stone.group
+      add_liberties(neighbours_by_color[Board::EMPTY], identifier, color)
+      take_liberties_of_enemies(neighbours_by_color[stone.enemy_color], identifier, color, board)
     end
 
-    def initialize(x, y, color, liberty_count = 0, liberties = {})
+    def initialize(identifier, color, liberty_count = 0, liberties = {})
       @liberties = liberties
       @liberty_count = liberty_count
       if stone.nil?
@@ -22,14 +22,14 @@ module Rubykon
       end
     end
 
-    def connect(x, y, color)
+    def connect(identifier, color)
       return if stone.group == self
       if stone.group
         merge(stone.group)
       else
-        add_stone(x, y, color)
+        add_stone(identifier, color)
       end
-      remove_connector_liberty(x, y, color)
+      remove_connector_liberty(identifier, color)
     end
 
     def add_liberty(field)
@@ -38,8 +38,8 @@ module Rubykon
       @liberty_count += 1
     end
 
-    def remove_liberty(x, y, color)
-      return if already_counted_as_liberty?(x, y, color)
+    def remove_liberty(identifier, color)
+      return if already_counted_as_liberty?(identifier, color)
       @liberties[stone.identifier] = stone
       @liberty_count -= 1
     end
@@ -74,14 +74,14 @@ module Rubykon
     end
 
     private
-    def remove_connector_liberty(x, y, color)
+    def remove_connector_liberty(identifier, color)
       liberties.delete(stone.identifier)
       @liberty_count -= 1
     end
 
-    def add_stone(x, y, color)
+    def add_stone(identifier, color)
       stone.join(self)
-      @stones << x, y, color
+      @stones << identifier
     end
 
     def already_counted_as_liberty?(field)
@@ -113,7 +113,7 @@ module Rubykon
     end
 
     # TODO awful lot of class methods, there ought to be a better way
-    def self.color_to_neighbour(board, x, y, color)
+    def self.color_to_neighbour(board, identifier, color)
       neighbours                  = board.neighbours_of(stone.x, stone.y)
       neighbours_by_color         = neighbours.group_by &:color
       neighbours_by_color.default = []
@@ -129,7 +129,7 @@ module Rubykon
       end
     end
 
-    def self.add_liberties(liberties, x, y, color)
+    def self.add_liberties(liberties, identifier, color)
       liberties.each do |field|
         stone.group.add_liberty(field)
       end
