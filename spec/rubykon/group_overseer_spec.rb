@@ -4,8 +4,6 @@ module Rubykon
   RSpec.describe GroupOverseer do
 
     let(:overseer) {described_class.new}
-    let(:stone) {Stone.new 1, 1, :black}
-    let(:other_stone) {Stone.new 1, 2, :black}
     let(:group) do
       {
         id: 0,

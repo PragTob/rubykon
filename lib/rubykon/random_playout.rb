@@ -22,7 +22,7 @@ module Rubykon
       game = original_game.dup
       until game.finished?
         # we ensure the validity of the move
-        game.set_valid_move generate_random_move(game)
+        game.set_valid_move *generate_random_move(game)
       end
       game
     end
@@ -33,12 +33,13 @@ module Rubykon
       color = game.next_turn_color
       tries = 0
       size  = game.board.size
-      max_tries = size * size * MAX_TRIES_MODIFIER
-      move = random_move(color, size)
+      cp_count   = size * size
+      max_tries = cp_count * MAX_TRIES_MODIFIER
+      move = random_move(color, cp_count)
       until plausible_move?(move, game) do
         tries += 1
         move =  if tries <= max_tries
-                  random_move(color, size)
+                  random_move(color, cp_count)
                 else
                   pass_move(color)
                 end
@@ -47,11 +48,11 @@ module Rubykon
     end
 
     def pass_move(color)
-      Stone.new nil, nil, color
+      [nil, color]
     end
 
-    def random_move(color, size)
-      Stone.new(rand(size) + 1, rand(size) + 1, color)
+    def random_move(color, cp_count)
+      [rand(cp_count), color]
     end
 
     def plausible_move?(move, game)

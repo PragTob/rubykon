@@ -35,7 +35,7 @@ module Rubykon
     end
 
     def only_one_color_adjacent?(neighbor_colors, candidate_color)
-      enemy_color = Stone.other_color(candidate_color)
+      enemy_color = Game.other_color(candidate_color)
       neighbor_colors.all? do |color|
         color != enemy_color
       end

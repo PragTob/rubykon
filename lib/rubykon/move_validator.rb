@@ -4,7 +4,7 @@ module Rubykon
     def valid?(identifier, color, game)
       board = game.board
       no_double_move?(color, game) &&
-        (Stone.pass?(identifier) ||
+        (Game.pass?(identifier) ||
         (move_on_board?(identifier, board) &&
           spot_unoccupied?(identifier, board) &&
           no_suicide_move?(identifier, color, game) &&
@@ -25,7 +25,7 @@ module Rubykon
     end
 
     def no_suicide_move?(identifier, color, game)
-      enemy_color = Stone.other_color(color)
+      enemy_color = Game.other_color(color)
       board = game.board
       board.neighbours_of(identifier).any? do |n_identifier, n_color|
         (n_color == Board::EMPTY) ||

@@ -237,7 +237,7 @@ X-XO
 
     def force_next_move_to_be(color, game)
       return if game.next_turn_color == color
-      game.set_valid_move nil, Stone.other_color(color)
+      game.set_valid_move nil, Game.other_color(color)
     end
 
     def should_be_invalid_move(move, game)
