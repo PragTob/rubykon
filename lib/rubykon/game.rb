@@ -13,21 +13,18 @@ module Rubykon
       @komi           = komi
     end
 
-    def play(stone)
-      if valid_move?(stone)
-        set_valid_move(stone)
+    def play(x, y, color)
+      identifier = @board.identifier_for(x, y)
+      if valid_move?(identifier, color)
+        set_valid_move(identifier, color)
         true
       else
         false
       end
     end
 
-    def play!(stone)
-      if valid_move?(stone)
-        set_valid_move(stone)
-      else
-        raise IllegalMoveException.new
-      end
+    def play!(x, y, color)
+      raise IllegalMoveException unless play(x, y, color)
     end
 
     def move_count
@@ -39,7 +36,7 @@ module Rubykon
     end
 
     def next_turn_color
-      move_count.even? ? Board::BLACK_COLOR : Board::WHITE_COLOR
+      move_count.even? ? Board::BLACK : Board::WHITE
     end
 
     def finished?
@@ -48,23 +45,23 @@ module Rubykon
 
     def self.from(string)
       game = new(string.index("\n"))
-      Board.each_stone_from(string) do |stone|
-        game.safe_set_move(stone)
+      Board.each_move_from(string) do |identifier, color|
+        game.safe_set_move(identifier, color)
       end
       game
     end
 
-    def set_valid_move(stone)
-      @moves << stone
-      unless stone.pass?
-        @board.set stone
-        Group.assign(stone, @board)
+    def set_valid_move(identifier, color)
+      @moves << identifier
+      unless Stone.pass?(identifier)
+        @board[identifier] = color
+        Group.assign(identifier, color, @board)
       end
     end
 
-    def safe_set_move(stone)
-      return if stone.color == Board::EMPTY_COLOR
-      set_valid_move(stone)
+    def safe_set_move(identifier, color)
+      return if color == Board::EMPTY
+      set_valid_move(identifier, color)
     end
 
     def dup
@@ -72,8 +69,8 @@ module Rubykon
     end
 
     private
-    def valid_move?(stone)
-      @move_validator.valid?(stone, self)
+    def valid_move?(identifier, color)
+      @move_validator.valid?(identifier, color, self)
     end
   end
 end

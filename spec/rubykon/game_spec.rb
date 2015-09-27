@@ -32,18 +32,18 @@ module Rubykon
 
     describe "next_turn_color" do
       it "is black for starters" do
-        expect(game.next_turn_color).to eq Board::BLACK_COLOR
+        expect(game.next_turn_color).to eq Board::BLACK
       end
 
       it "is white after a black move" do
-        game.play! StoneFactory.build color: Board::BLACK_COLOR
-        expect(game.next_turn_color).to eq Board::WHITE_COLOR
+        game.play! StoneFactory.build color: Board::BLACK
+        expect(game.next_turn_color).to eq Board::WHITE
       end
 
       it "is black again after a white move" do
-        game.play! StoneFactory.build color: Board::BLACK_COLOR
-        game.play! StoneFactory.build x: 4, y: 5, color: Board::WHITE_COLOR
-        expect(game.next_turn_color).to eq Board::BLACK_COLOR
+        game.play! StoneFactory.build color: Board::BLACK
+        game.play! StoneFactory.build x: 4, y: 5, color: Board::WHITE
+        expect(game.next_turn_color).to eq Board::BLACK
       end
     end
 
@@ -101,8 +101,8 @@ X----
         expect(board[1, 3]).to eq Stone.new 1, 3, :black
         expect(board[2, 5]).to eq Stone.new 2, 5, :black
         expect(board[5, 5]).to eq Stone.new 5, 5, :white
-        expect(board[2, 2]).to eq Stone.new 2, 2, Board::EMPTY_COLOR
-        expect(board[1, 4]).to eq Stone.new 1, 4, Board::EMPTY_COLOR
+        expect(board[2, 2]).to eq Stone.new 2, 2, Board::EMPTY
+        expect(board[1, 4]).to eq Stone.new 1, 4, Board::EMPTY
       end
     end
 

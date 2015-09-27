@@ -7,21 +7,21 @@ module Rubykon
     context 'setting and retrieving LOOKUP' do
       it 'has the empty symbol for every LOOKUP' do
         all_empty = board.all? do |field|
-          field.color == Board::EMPTY_COLOR
+          field.color == Board::EMPTY
         end
         expect(all_empty).to be true
       end
 
       it 'can retrive the empty values via #[]' do
-        expect(board[1, 1].color).to eq Board::EMPTY_COLOR
+        expect(board[1, 1].color).to eq Board::EMPTY
       end
 
       it "gives the initially set stones the right coordinates" do
-        expect(board[1, 1]).to eq Stone.new 1, 1, Board::EMPTY_COLOR
-        expect(board[1, 7]).to eq Stone.new 1, 7, Board::EMPTY_COLOR
-        expect(board[7, 1]).to eq Stone.new 7, 1, Board::EMPTY_COLOR
-        expect(board[19, 19]).to eq Stone.new 19, 19, Board::EMPTY_COLOR
-        expect(board[3, 5]).to eq Stone.new 3, 5, Board::EMPTY_COLOR
+        expect(board[1, 1]).to eq Stone.new 1, 1, Board::EMPTY
+        expect(board[1, 7]).to eq Stone.new 1, 7, Board::EMPTY
+        expect(board[7, 1]).to eq Stone.new 7, 1, Board::EMPTY
+        expect(board[19, 19]).to eq Stone.new 19, 19, Board::EMPTY
+        expect(board[3, 5]).to eq Stone.new 3, 5, Board::EMPTY
       end
 
       it 'can set values with []= and geht them with []' do
@@ -49,10 +49,10 @@ O-X
                                             Stone.new(2, 1, :black),
                                             Stone.new(3, 2, :black),
                                             Stone.new(1, 2, :white),
-                                            Stone.new(2, 3, Board::EMPTY_COLOR))
+                                            Stone.new(2, 3, Board::EMPTY))
         expect(board.neighbour_colors_of(2, 2)).to contain_exactly(
                                                     :black, :black, :white,
-                                                    Board::EMPTY_COLOR)
+                                                    Board::EMPTY)
       end
 
 
@@ -65,10 +65,10 @@ O-X
         expect(board.neighbours_of(2, 1)).to contain_exactly(
                                             Stone.new(3, 1, :black),
                                             Stone.new(2, 2, :white),
-                                            Stone.new(1, 1, Board::EMPTY_COLOR))
+                                            Stone.new(1, 1, Board::EMPTY))
         expect(board.neighbour_colors_of(2, 1)).to contain_exactly(
                                                      :black, :white,
-                                                     Board::EMPTY_COLOR)
+                                                     Board::EMPTY)
       end
 
       it "returns fewer stones when in the corner" do
@@ -79,9 +79,9 @@ O-X
         String
         expect(board.neighbours_of(1, 1)).to contain_exactly(
                                            Stone.new(2, 1, :black),
-                                           Stone.new(1, 2, Board::EMPTY_COLOR))
+                                           Stone.new(1, 2, Board::EMPTY))
         expect(board.neighbour_colors_of(1, 1)).to contain_exactly(
-                                                     :black, Board::EMPTY_COLOR)
+                                                     :black, Board::EMPTY)
       end
     end
 
@@ -95,7 +95,7 @@ X--
         expect(board.diagonal_colors_of(2, 2)).to contain_exactly :white,
                                                                   :black,
                                                                   :black,
-                                                                  Board::EMPTY_COLOR
+                                                                  Board::EMPTY
       end
 
       it "does not contain the neighbors" do
@@ -104,10 +104,10 @@ X--
 O-X
 -O-
         BOARD
-        expect(board.diagonal_colors_of(2, 2)).to contain_exactly Board::EMPTY_COLOR,
-                                                                  Board::EMPTY_COLOR,
-                                                                  Board::EMPTY_COLOR,
-                                                                  Board::EMPTY_COLOR
+        expect(board.diagonal_colors_of(2, 2)).to contain_exactly Board::EMPTY,
+                                                                  Board::EMPTY,
+                                                                  Board::EMPTY,
+                                                                  Board::EMPTY
       end
 
       it "works on the edge" do

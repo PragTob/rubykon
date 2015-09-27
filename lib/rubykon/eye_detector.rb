@@ -10,7 +10,7 @@ module Rubykon
     def candidate_eye_color(x, y, board)
       neighbor_colors = board.neighbour_colors_of(x, y)
       candidate_eye_color = neighbor_colors.first
-      return false if candidate_eye_color == Board::EMPTY_COLOR
+      return false if candidate_eye_color == Board::EMPTY
       if neighbor_colors.all? {|color| color == candidate_eye_color}
         candidate_eye_color
       else

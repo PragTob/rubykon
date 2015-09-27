@@ -36,7 +36,7 @@ module Rubykon
 
     describe "empty?" do
       it "is true for the empty color" do
-        expect(Stone.new 1, 1, Board::EMPTY_COLOR).to be_empty
+        expect(Stone.new 1, 1, Board::EMPTY).to be_empty
       end
 
       it "is false when there is another color" do

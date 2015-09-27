@@ -61,7 +61,7 @@ module Rubykon
 
     describe 'liberties' do
 
-      let(:liberty) {Stone.new 1, 2, Board::EMPTY_COLOR}
+      let(:liberty) {Stone.new 1, 2, Board::EMPTY}
 
       before :each do
         group.add_liberty liberty
@@ -121,7 +121,7 @@ module Rubykon
       def liberties_at(*identifiers)
         identifiers.inject({}) do |hash, identifier|
           x, y = identifier.split('-').map &:to_i
-          hash[identifier] = Stone.new(x, y, Board::EMPTY_COLOR)
+          hash[identifier] = Stone.new(x, y, Board::EMPTY)
           hash
         end
       end
