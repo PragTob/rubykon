@@ -53,6 +53,11 @@ module Rubykon
         expect(x).to eq 7
         expect(y).to eq 9
       end
+
+      it "handles passing moves" do
+        x, y, _color = StoneFactory.pass
+        expect(board.identifier_for(x, y)).to eq nil
+      end
     end
 
     describe "#neighbours_of and neighbour_colors_of" do

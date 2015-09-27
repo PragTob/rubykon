@@ -21,11 +21,11 @@ module Rubykon
     end
     
     def spot_unoccupied?(identifier, board)
-      board.get(identifier) == Board::EMPTY
+      board[identifier] == Board::EMPTY
     end
 
     def no_suicide_move?(identifier, color, board)
-      enemy_color == Stone.other_color(color)
+      enemy_color = Stone.other_color(color)
       board.neighbours_of(identifier).any? do |n_identifier, n_color|
         (n_color == Board::EMPTY) ||
           (n_color == color) && (liberties_at(identifier, board) > 1) ||

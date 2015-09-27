@@ -116,6 +116,7 @@ module Rubykon
     end
 
     def identifier_for(x, y)
+      return nil if x.nil? || y.nil?
       (y - 1) * @size + (x - 1)
     end
 

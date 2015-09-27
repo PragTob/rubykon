@@ -36,13 +36,13 @@ module Rubykon
       end
 
       it "is white after a black move" do
-        game.play! StoneFactory.build color: Board::BLACK
+        game.play! *StoneFactory.build(color: Board::BLACK)
         expect(game.next_turn_color).to eq Board::WHITE
       end
 
       it "is black again after a white move" do
-        game.play! StoneFactory.build color: Board::BLACK
-        game.play! StoneFactory.build x: 4, y: 5, color: Board::WHITE
+        game.play! *StoneFactory.build(color: Board::BLACK)
+        game.play! *StoneFactory.build(x: 4, y: 5, color: Board::WHITE)
         expect(game.next_turn_color).to eq Board::BLACK
       end
     end
@@ -53,13 +53,13 @@ module Rubykon
       end
 
       it "a game with one pass is not over" do
-        game.set_valid_move(StoneFactory.pass color: :black)
+        game.set_valid_move*StoneFactory.pass(color: :black)
         expect(game).not_to be_finished
       end
 
       it "a game with two passes is over" do
-        game.set_valid_move(StoneFactory.pass color: :black)
-        game.set_valid_move(StoneFactory.pass color: :white)
+        game.set_valid_move *StoneFactory.pass(color: :black)
+        game.set_valid_move *StoneFactory.pass(color: :white)
         expect(game).to be_finished
       end
     end
@@ -249,12 +249,12 @@ OO-OO
           end
 
           it 'returns a truthy value' do
-            legal_move = Rubykon::StoneFactory.build x: simple_x + 2, color: :white
+            legal_move = Rubykon::*StoneFactory.build x: simple_x + 2, color: :white
             expect(game.play(legal_move)).to eq(true)
           end
 
           it "can play a pass move" do
-            pass = StoneFactory.pass(:white)
+            pass = *StoneFactory.pass(:white)
             game.play pass
             expect(game.moves.last).to eq pass
           end
@@ -269,7 +269,7 @@ OO-OO
           end
 
           before :each do
-            moves.each {|move| game.play move}
+            moves.each {|move| game.play *move}
           end
 
           it 'sets the move_count to the number of moves played' do
@@ -284,12 +284,12 @@ OO-OO
 
         describe 'Illegal moves' do
           it 'is illegal to play moves with a greater x than the board size' do
-            illegal_move = StoneFactory.build x: board_size + 1
+            illegal_move = *StoneFactory.build(x: board_size + 1)
             expect(game.play(illegal_move)).to eq(false)
           end
 
           it 'is illegal to play moves with a greater y than the board size' do
-            illegal_move = StoneFactory.build y: board_size + 1
+            illegal_move = *StoneFactory.build(y: board_size + 1)
             expect(game.play(illegal_move)).to eq(false)
           end
         end
@@ -299,15 +299,15 @@ OO-OO
     describe '#dup' do
 
       let(:dupped) {game.dup}
-      let(:move1) {StoneFactory.build x: 1, y:1, color: :black}
+      let(:move1) {StoneFactory.build(x: 1, y:1, color: :black)}
       let(:move2) {StoneFactory.build x: 3, y:1, color: :white}
       let(:move3) {StoneFactory.build x: 5, y:1, color: :black}
       let(:board) {game.board}
 
       before :each do
-        dupped.play! move1
-        dupped.play! move2
-        dupped.play! move3
+        dupped.play! *move1
+        dupped.play! *move2
+        dupped.play! *move3
       end
 
 
