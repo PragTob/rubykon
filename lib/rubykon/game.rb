@@ -41,7 +41,7 @@ module Rubykon
     end
 
     def finished?
-      @moves.size >= 2 && Stone.pass?(@moves[-1]) && Stone.pass?(@moves[-2])
+      @moves.size >= 2 && Game.pass?(@moves[-1]) && Game.pass?(@moves[-2])
     end
 
     def self.from(string)
@@ -54,7 +54,7 @@ module Rubykon
 
     def set_valid_move(identifier, color)
       @moves << identifier
-      unless Stone.pass?(identifier)
+      unless Game.pass?(identifier)
         @board[identifier] = color
         @group_overseer.assign(identifier, color, board)
       end
@@ -67,6 +67,18 @@ module Rubykon
 
     def dup
       self.class.new @size, @komi, @board.dup, @move_validator, @moves.dup
+    end
+
+    def self.other_color(color)
+      if color == :black
+        :white
+      else
+        :black
+      end
+    end
+
+    def self.pass?(identifier)
+      identifier.nil?
     end
 
     private

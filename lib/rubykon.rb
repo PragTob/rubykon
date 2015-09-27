@@ -1,4 +1,3 @@
-require_relative 'rubykon/stone'
 require_relative 'rubykon/group_overseer'
 require_relative 'rubykon/game'
 require_relative 'rubykon/board'

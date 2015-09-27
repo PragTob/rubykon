@@ -19,7 +19,7 @@ module Rubykon
     end
 
     def is_real_eye?(identifier, board, candidate_eye_color)
-      enemy_color = Stone.other_color(candidate_eye_color)
+      enemy_color = Game.other_color(candidate_eye_color)
       enemy_count = board.diagonal_colors_of(identifier).count(enemy_color)
       (enemy_count < 1) || (!board.on_edge?(identifier) && enemy_count < 2)
     end
