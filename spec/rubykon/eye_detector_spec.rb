@@ -141,11 +141,11 @@ X--
     end
 
     def expect_eye(x, y, board)
-      expect(subject.is_eye?(x, y, board)).to be_truthy
+      expect(subject.is_eye?(board.identifier_for(x, y), board)).to be_truthy
     end
 
     def expect_no_eye(x, y, board)
-      expect(subject.is_eye?(x, y, board)).to be_falsey
+      expect(subject.is_eye?(board.identifier_for(x, y), board)).to be_falsey
     end
   end
 end
