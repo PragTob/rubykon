@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 module Rubykon
-  RSpec.describe GroupOverseer do
+  RSpec.describe GroupTracker do
 
     let(:overseer) {described_class.new}
     let(:group) do
@@ -10,13 +10,13 @@ module Rubykon
         stones: [0]
       }
     end
-    let(:other_group) {GroupOverseer.new other_stone}
+    let(:other_group) {GroupTracker.new other_stone}
 
     describe '#assign (integration style)' do
       let(:game) {Game.from board_string}
       let(:board) {game.board}
-      let(:group_overseer) {game.group_overseer}
-      let(:group) {group_overseer.group_of(identifier)}
+      let(:group_tracker) {game.group_tracker}
+      let(:group) {group_tracker.group_of(identifier)}
       let(:identifier) {board.identifier_for(*coords)}
       let(:other_group) do
         group_from(*other_coords)
@@ -151,7 +151,7 @@ XX-XX
 
           let(:all_stone_group_ids) do
             all_stones.map do |identifier|
-              group_overseer.group_id_of(identifier)
+              group_tracker.group_id_of(identifier)
             end
           end
 

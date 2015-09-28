@@ -1,5 +1,5 @@
 module Rubykon
-  class GroupOverseer
+  class GroupTracker
 
     attr_reader :groups, :stone_to_group, :prisoners
 
@@ -24,7 +24,7 @@ module Rubykon
     end
 
     def dup
-      self.class.new(@groups.dup, @stone_to_group.dup)
+      self.class.new(dup_groups, @stone_to_group.dup)
     end
 
     def group_id_of(identifier)
@@ -143,6 +143,20 @@ module Rubykon
         liberty_count: 0,
         liberties: {}
       }
+    end
+
+    def dup_groups
+      @groups.inject({}) do |dupped, (key, group)|
+        dupped[key] = copy_group(group)
+        dupped
+      end
+    end
+
+    def copy_group(group)
+      dupped = group.dup
+      dupped[:stones] = group[:stones].dup
+      dupped[:liberties] = group[:liberties].dup
+      dupped
     end
 
     def shared_liberty?(my_color, other_color)

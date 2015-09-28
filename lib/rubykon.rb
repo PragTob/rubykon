@@ -1,4 +1,4 @@
-require_relative 'rubykon/group_overseer'
+require_relative 'rubykon/group_tracker'
 require_relative 'rubykon/game'
 require_relative 'rubykon/board'
 require_relative 'rubykon/move_validator'
