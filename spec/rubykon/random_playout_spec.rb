@@ -26,8 +26,8 @@ module Rubykon
         end
 
         it "the associated board is empty" do
-          board_empty = original_game.board.all? do |cutting_point|
-            cutting_point.empty?
+          board_empty = original_game.board.all? do |id, color|
+            color == Board::EMPTY
           end
           expect(board_empty).to be_truthy
         end

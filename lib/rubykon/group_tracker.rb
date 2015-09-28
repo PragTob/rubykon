@@ -36,7 +36,7 @@ module Rubykon
     end
 
     def group(id)
-      @groups[id]
+      @groups.fetch(id) {p id; raise}
     end
 
     private
@@ -59,9 +59,8 @@ module Rubykon
     end
 
     def remove_liberty(group, identifier)
-      enemy_group_id = group_id_of identifier
-      return if already_counted_as_liberty?(group, identifier, enemy_group_id)
-      group[:liberties][identifier] = enemy_group_id
+      return if already_counted_as_liberty?(group, identifier, identifier)
+      group[:liberties][identifier] = identifier
       group[:liberty_count] -= 1
     end
 
@@ -70,23 +69,24 @@ module Rubykon
     end
 
     def remove(captured_group, board, capturer_color)
-      captured_group[:stones].each do |identifier|
-        board[identifier] = Board::EMPTY
-        @stone_to_group.delete identifier
-      end
       @prisoners[capturer_color] += captured_group[:stones].size
-      # we could track that from the start
-      neighbouring_group_ids = captured_group[:liberties].values.compact.uniq
-      neighbouring_group_ids.each do |neighbor_group_id|
-        neighbor_group = group(neighbor_group_id)
+      liberties           = captured_group[:liberties].values
+      neighbouring_groups = liberties.map do |identifier|
+        group_of(identifier)
+      end.compact.uniq
+      neighbouring_groups.each do |neighbor_group|
         gain_liberties_from_capture_of(neighbor_group, captured_group)
+      end
+      captured_group[:stones].each do |identifier|
+        @stone_to_group.delete identifier
+        board[identifier] = Board::EMPTY
       end
       @groups.delete(captured_group[:id])
     end
 
     def gain_liberties_from_capture_of(my_group, captured_group)
-      new_liberties = my_group[:liberties].select do |_identifier, other_group_id|
-        other_group_id == captured_group[:id]
+      new_liberties = my_group[:liberties].select do |_identifier, stone_identifier|
+        group_id_of(stone_identifier) == captured_group[:id]
       end
       new_liberties.each do |identifier, _group_id|
         add_liberty(my_group, identifier)
@@ -103,8 +103,8 @@ module Rubykon
       group[:stones] << identifier
     end
 
-    def already_counted_as_liberty?(group, identifier, group_id)
-      group[:liberties].fetch(identifier, NOT_SET) == group_id
+    def already_counted_as_liberty?(group, identifier, value)
+      group[:liberties].fetch(identifier, NOT_SET) == value
     end
 
     def merge(group_1_id, group_2_id)
@@ -120,11 +120,11 @@ module Rubykon
 
     def merge_liberties(group_1, group_2)
       group_1[:liberty_count] += group_2[:liberty_count]
-      group_1[:liberties].merge!(group_2[:liberties]) do |_key, my_color, other_color|
-        if shared_liberty?(my_color, other_color)
+      group_1[:liberties].merge!(group_2[:liberties]) do |_key, my_identifier, other_identifier|
+        if shared_liberty?(my_identifier, other_identifier)
           group_1[:liberty_count] -= 1
         end
-        my_color
+        my_identifier
       end
     end
 
@@ -159,14 +159,14 @@ module Rubykon
       dupped
     end
 
-    def shared_liberty?(my_color, other_color)
-      my_color == Board::EMPTY || other_color == Board::EMPTY
+    def shared_liberty?(my_identifier, other_identifier)
+      my_identifier == Board::EMPTY || other_identifier == Board::EMPTY
     end
 
     def color_to_neighbour(board, identifier)
       neighbors = board.neighbours_of(identifier)
-      hash = neighbors.inject({}) do |hash, (identifier, color)|
-        (hash[color] ||= []) << identifier
+      hash = neighbors.inject({}) do |hash, (n_identifier, color)|
+        (hash[color] ||= []) << n_identifier
         hash
       end
       hash.default = []
@@ -174,13 +174,31 @@ module Rubykon
     end
 
     def take_liberties_of_enemies(enemy_neighbours, identifier, board, capturer_color)
+      caught = []
+      my_group = group_of(identifier)
       enemy_neighbours.each do |enemy_identifier|
         enemy_group = group_of(enemy_identifier)
-        remove_liberty(enemy_group, identifier)
-        my_group = group_of(identifier)
-        my_group[:liberties][enemy_identifier] = enemy_group[:id]
-        remove(enemy_group, board, capturer_color) if caught?(enemy_group)
+        remove_liberties(enemy_identifier, enemy_group, identifier, my_group)
+        collect_captured_groups(caught, enemy_group)
       end
+      remove_caught_groups(board, capturer_color, caught)
+    end
+
+    def remove_liberties(enemy_identifier, enemy_group, identifier, my_group)
+      remove_liberty(enemy_group, identifier)
+      # this needs to be the identifier and not the group, as groups
+      # might get merged
+      my_group[:liberties][enemy_identifier] = enemy_identifier
+    end
+
+    def collect_captured_groups(caught, enemy_group)
+      if caught?(enemy_group) && !caught.include?(enemy_group)
+        caught << enemy_group
+      end
+    end
+
+    def remove_caught_groups(board, capturer_color, caught)
+      caught.each { |enemy_group| remove(enemy_group, board, capturer_color) }
     end
 
     def add_liberties(liberties, identifier)
