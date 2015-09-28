@@ -11,9 +11,9 @@ module Rubykon
     attr_reader :size, :board
 
     # weird constructor for dup
-    def initialize(size)
+    def initialize(size, board = create_board(size))
       @size  = size
-      @board = Array.new(size * size, EMPTY)
+      @board = board
     end
 
     def each
@@ -91,28 +91,7 @@ module Rubykon
     end
 
     def dup
-      dupped_board = self.class.new @size, dup_board
-      dupped_board.reassign_groups
-      dupped_board
-    end
-
-    # not my usual short methods, but this copying is a mess, looking forward
-    # to throwing it away somehow and replacing it with simple data structures
-    # straight on board/game
-    def reassign_groups
-      groups = map(&:group).compact!.uniq!
-      return if groups.nil?
-      groups.each do |original_group|
-        group_dup = original_group.dup
-        original_group.stones.each do |stone|
-          new_stone = self[stone.x, stone.y]
-          new_stone.join(group_dup)
-          group_dup.stones << new_stone
-        end
-        original_group.liberties.each do |identifier, stone|
-          group_dup.liberties[identifier] = self[stone.x, stone.y]
-        end
-      end
+      self.class.new @size, @board.dup
     end
 
     MAKE_IT_OUT_OF_BOUNDS = 1000
@@ -130,6 +109,10 @@ module Rubykon
     end
 
     private
+
+    def create_board(size)
+      Array.new(size * size, EMPTY)
+    end
 
     def neighbour_coordinates(identifier)
       x = identifier % size

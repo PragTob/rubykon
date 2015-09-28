@@ -35,7 +35,7 @@ module Rubykon
     end
 
     def liberties_at(identifier, game)
-      game.group_overseer.group_of(identifier)[:liberty_count]
+      game.group_tracker.group_of(identifier)[:liberty_count]
     end
 
     # we have to do a big fat revisit on Ko...

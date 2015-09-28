@@ -1,17 +1,21 @@
 module Rubykon
   class Game
-    attr_reader :moves, :board, :group_overseer
+    attr_reader :board, :group_tracker, :move_count
     attr_accessor :komi
 
     DEFAULT_KOMI = 6.5
 
     # the freakish constructor is here so that we can have a decent dup
-    def initialize(size = 19, komi = DEFAULT_KOMI, board = Board.new(size), move_validator = MoveValidator.new, moves = [])
-      @board           = board
-      @move_validator = move_validator
-      @moves          = moves
-      @komi           = komi
-      @group_overseer = GroupOverseer.new
+    def initialize(size = 19, komi = DEFAULT_KOMI, board = Board.new(size),
+                   move_count = 0, consecutive_passes = 0,
+                   move_validator = MoveValidator.new,
+                   group_tracker = GroupTracker.new)
+      @board              = board
+      @move_validator     = move_validator
+      @move_count         = move_count
+      @consecutive_passes = consecutive_passes
+      @komi               = komi
+      @group_tracker      = group_tracker
     end
 
     def play(x, y, color)
@@ -28,12 +32,8 @@ module Rubykon
       raise IllegalMoveException unless play(x, y, color)
     end
 
-    def move_count
-      @moves.size
-    end
-
     def no_moves_played?
-      @moves.empty?
+      @move_count == 0
     end
 
     def next_turn_color
@@ -41,7 +41,7 @@ module Rubykon
     end
 
     def finished?
-      @moves.size >= 2 && Game.pass?(@moves[-1]) && Game.pass?(@moves[-2])
+      @consecutive_passes >= 2
     end
 
     def self.from(string)
@@ -53,10 +53,11 @@ module Rubykon
     end
 
     def set_valid_move(identifier, color)
-      @moves << identifier
-      unless Game.pass?(identifier)
-        @board[identifier] = color
-        @group_overseer.assign(identifier, color, board)
+      @move_count += 1
+      if Game.pass?(identifier)
+        @consecutive_passes += 1
+      else
+        set_move(color, identifier)
       end
     end
 
@@ -66,7 +67,8 @@ module Rubykon
     end
 
     def dup
-      self.class.new @size, @komi, @board.dup, @move_validator, @moves.dup
+      self.class.new @size, @komi, @board.dup, @move_count, @consecutive_passes,
+                     @move_validator, @group_tracker.dup
     end
 
     def self.other_color(color)
@@ -84,6 +86,12 @@ module Rubykon
     private
     def valid_move?(identifier, color)
       @move_validator.valid?(identifier, color, self)
+    end
+
+    def set_move(color, identifier)
+      @board[identifier] = color
+      @group_tracker.assign(identifier, color, board)
+      @consecutive_passes = 0
     end
   end
 end

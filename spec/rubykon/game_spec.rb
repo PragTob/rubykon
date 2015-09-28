@@ -77,14 +77,10 @@ X----
 
       let(:new_game)  {Game.from string}
       let(:board)     {new_game.board}
-      let(:group_overseer) {new_game.group_overseer}
+      let(:group_tracker) {new_game.group_tracker}
 
       it "sets the right number of moves" do
         expect(new_game.move_count).to eq 6
-      end
-
-      it "also populates moves" do
-        expect(new_game.moves).not_to be_empty
       end
 
       it "assigns the stones a group" do
@@ -111,7 +107,7 @@ X----
 
       let(:game) {Game.from board_string}
       let(:board) {game.board}
-      let(:group_overseer) {game.group_overseer}
+      let(:group_tracker) {game.group_tracker}
 
       describe 'play!' do
         let(:game) {Game.new 5}
@@ -129,7 +125,7 @@ X----
       end
 
       describe 'capturing stones' do
-        let(:captures) {group_overseer.prisoners}
+        let(:captures) {group_tracker.prisoners}
         let(:identifier) {board.identifier_for(capturer[0], capturer[1])}
         let(:color) {capturer.last}
 
@@ -153,7 +149,7 @@ XOX
           end
 
           it "the stone made one capture" do
-            expect(group_overseer.prisoners[:black]).to eq 1
+            expect(group_tracker.prisoners[:black]).to eq 1
           end
 
           it_behaves_like "has liberties at position", 2, 1, 3
@@ -253,8 +249,7 @@ OO-OO
 
           it "can play a pass move" do
             pass = StoneFactory.pass(:white)
-            game.play *pass
-            expect(game.moves.last).to eq nil
+            expect(game.play *pass).to be true
           end
         end
 
@@ -303,8 +298,6 @@ OO-OO
         dupped.play! *move3
       end
 
-
-
       describe "empty game" do
         let(:game) {Game.new 5}
 
@@ -350,6 +343,9 @@ O-O-O
 -----
           BOARD
         end
+        let(:group_tracker) {game.group_tracker}
+        let(:dupped_tracker) {dupped.group_tracker}
+        let(:identifier_5_2) {board.identifier_for(5, 2)}
 
         describe "not changing the original" do
           it "is still the same board" do
@@ -361,27 +357,31 @@ O-O-O
           end
 
           it "does not modify the group of the stones" do
-            group = board[5, 2].group
-            expect(group.stones.size).to eq 1
+            expect(group_from(5, 2)[:stones].size).to eq 1
           end
 
-          it "stones have different identities" do
-            expect(board[5,2]).not_to be dupped.board[5, 2]
+          it "color at same position can be different" do
+            expect(board_at(5,1)).not_to eq from_board_at(dupped.board, 5, 1)
           end
 
           it "the group points to the right liberties" do
-            expect(board[3, 3].group.liberties['3-4']).not_to be dupped.board[3, 4]
-            expect(board[3, 3].group.liberties['3-4']).to be board[3, 4]
+            identifier_5_1 = board.identifier_for(5, 1)
+            expect(group_from(5, 2)[:liberties].fetch(identifier_5_1)).to eq Board::EMPTY
+            dupped_5_2_group = dupped_tracker.group_of(identifier_5_2)
+            expect(dupped_5_2_group[:liberties]).not_to have_key(identifier_5_1)
           end
 
           it "does not register the new stones" do
-            group = board[1, 2].group
-            expect(group.liberties['1-1']).to be board[1, 1]
-            expect(group.liberty_count).to eq 4
+            group = group_from(1, 2)
+            expect(group[:liberties].fetch(board.identifier_for(1, 1))).to eq Board::EMPTY
+            expect(group[:liberty_count]).to eq 4
           end
         end
 
         describe "the dupped entity has the changes" do
+
+          let(:group) {dupped_tracker.group_of(identifier_5_2)}
+
           it "has a move count of 9" do
             expect(dupped.move_count).to eq 9
           end
@@ -397,19 +397,21 @@ O-O-O
           end
 
           it "handles groups" do
-            group = dupped.board[5, 2].group
-            expect(group.stones.size).to eq 2
+            expect(group[:stones].size).to eq 2
           end
 
           it "has the right group liberties" do
-            expect(dupped.board[3, 3].group.liberties['3-4']).to be dupped.board[3, 4]
-            expect(dupped.board[3, 3].group.liberties['3-4']).not_to be board[3, 4]
+            expect(group[:liberties].fetch(board.identifier_for(4, 2))).to eq Board::EMPTY
+            identifier = board.identifier_for(5, 3)
+            group_id = dupped_tracker.group_id_of(identifier)
+            expect(group[:liberties][identifier]).to eq group_id
           end
 
           it "registers new stones" do
-            group = dupped.board[1, 2].group
-            expect(group.liberties['1-1']).to be dupped.board[1, 1]
-            expect(group.liberty_count).to eq 3
+            group                = dupped_tracker.group_of(board.identifier_for(1, 2))
+            identifier_1_1 = board.identifier_for(1, 1)
+            expect(group[:liberties].fetch(identifier_1_1)).to eq dupped_tracker.group_id_of(identifier_1_1)
+            expect(group[:liberty_count]).to eq 3
           end
         end
 
