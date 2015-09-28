@@ -36,7 +36,7 @@ module Rubykon
       cp_count   = size * size
       max_tries = cp_count * MAX_TRIES_MODIFIER
       move = random_move(color, cp_count)
-      until plausible_move?(move, game) do
+      until plausible_move?(*move, game) do
         tries += 1
         move =  if tries <= max_tries
                   random_move(color, cp_count)
@@ -55,10 +55,10 @@ module Rubykon
       [rand(cp_count), color]
     end
 
-    def plausible_move?(move, game)
-      return true if move.pass?
-      @validator.valid?(move, game) &&
-        !@eye_detector.is_eye?(move.x, move.y, game.board)
+    def plausible_move?(identifier, color, game)
+      return true if Game.pass?(identifier)
+      @validator.valid?(identifier, color, game) &&
+        !@eye_detector.is_eye?(identifier, game.board)
     end
   end
 end

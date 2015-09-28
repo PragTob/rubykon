@@ -343,6 +343,115 @@ XXXXX
         end
       end
 
+      describe "captures" do
+        describe "multiple stones next to the capturing stone" do
+          let(:board_string) do
+            <<-BOARD
+-XX--
+XOOX-
+--OX-
+--X--
+            BOARD
+          end
+
+          before :each do
+            game.set_valid_move board.identifier_for(2, 3), :black
+          end
+
+          it "clears the caught stones" do
+            expect(board_at(2, 2)).to eq Board::EMPTY
+            expect(board_at(3, 2)).to eq Board::EMPTY
+            expect(board_at(3, 3)).to eq Board::EMPTY
+          end
+
+          it "gives surrounding stones their liberties back" do
+            expect(group_from(2, 1)[:liberty_count]).to eq 4
+            expect(group_from(2, 3)[:liberty_count]).to eq 4
+          end
+
+          it "has liberties where the enemy stones used to be" do
+            liberties = group_from(2, 3)[:liberties]
+            expect(liberties.size).to eq 4
+            expect(liberties.fetch(board.identifier_for(2, 2))).to eq Board::EMPTY
+            expect(liberties.fetch(board.identifier_for(3, 3))).to eq Board::EMPTY
+
+          end
+
+          it "increases the captures count" do
+            expect(group_tracker.prisoners[:black]).to eq 3
+          end
+        end
+
+        describe "capturing 2 birds with one stone" do
+          let(:board_string) do
+            <<-BOARD
+-----
+XX-XX
+OO-OO
+XX-XX
+-----
+            BOARD
+          end
+
+          before :each do
+            game.set_valid_move board.identifier_for(3, 3), :black
+          end
+
+          it "clears the caught stones" do
+            expect(board_at(1, 3)).to eq Board::EMPTY
+            expect(board_at(2, 3)).to eq Board::EMPTY
+            expect(board_at(4, 3)).to eq Board::EMPTY
+            expect(board_at(5, 3)).to eq Board::EMPTY
+          end
+
+          it "gives surrounding stones their liberties back" do
+            expect(group_from(2, 2)[:liberty_count]).to eq 5
+            expect(group_from(3, 3)[:liberty_count]).to eq 4
+            expect(group_from(4, 4)[:liberty_count]).to eq 5
+          end
+
+          it "has liberties where the enemy stones used to be" do
+            liberties = group_from(3, 3)[:liberties]
+            expect(liberties.size).to eq 4
+            expect(liberties.fetch(board.identifier_for(2, 3))).to eq Board::EMPTY
+            expect(liberties.fetch(board.identifier_for(4, 3))).to eq Board::EMPTY
+
+          end
+
+          it "increases the captures count" do
+            expect(group_tracker.prisoners[:black]).to eq 4
+          end
+        end
+
+        describe "capturing a stone after the assigned group of a neighbor changed" do
+          let(:board_string) do
+            <<-BOARD
+X-XO
+----
+----
+----
+            BOARD
+          end
+
+          let(:group) {group_from(1, 1)}
+
+          before :each do
+            game.set_valid_move(board.identifier_for(2, 1), :black) #connects
+            game.set_valid_move(board.identifier_for(4, 2), :black) #captures
+          end
+
+          it "group has 4 liberties" do
+            expect(group[:liberty_count]).to eq 4
+          end
+
+          it "group has a liberty where the white stone used to be" do
+            expect(group[:liberties].fetch(board.identifier_for(4, 1))).to eq Board::EMPTY
+          end
+
+        end
+
+      end
+
       describe "huge integration examples as well as regressions" do
         describe "integration" do
           let(:board_string) do
