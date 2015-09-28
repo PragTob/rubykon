@@ -1,14 +1,4 @@
 require_relative '../lib/rubykon'
-
-def truffle? # truffle can't do gem install
-  RUBY_DESCRIPTION.match(/graal/)
-end
-
-if truffle?
-  embedded_path = File.expand_path('benchmark-ips/lib/', File.dirname(__FILE__))
-  $LOAD_PATH << embedded_path
-end
-
 require 'benchmark/ips'
 
 Benchmark.ips do |benchmark|
