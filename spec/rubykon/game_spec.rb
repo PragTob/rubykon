@@ -3,6 +3,7 @@ require_relative 'spec_helper'
 module Rubykon
   RSpec.describe Rubykon::Game do
     let(:game) {described_class.new}
+    let(:validator) {MoveValidator.new}
 
     context 'creation' do
       subject {game}
@@ -189,9 +190,43 @@ O--O-
             expect(captures[:white]).to eq 2
           end
 
+          it "black can move into that space again (left)" do
+            force_next_move_to_be :black, game
+            should_be_valid_move [2, 3, :black], game
+          end
+
+          it "black can move into that space again (right)" do
+            force_next_move_to_be :black, game
+            should_be_valid_move [3, 3, :black], game
+          end
+
           it_behaves_like "has liberties at position", 1, 3, 3
           it_behaves_like "has liberties at position", 2, 2, 6
           it_behaves_like "has liberties at position", 4, 3, 9
+
+          describe "black playing left in the space" do
+            before :each do
+              force_next_move_to_be :black, game
+              game.play! 2, 3, :black
+            end
+
+            it_behaves_like "has liberties at position", 2, 3, 1
+            it_behaves_like "has liberties at position", 1, 3, 2
+            it_behaves_like "has liberties at position", 2, 2, 5
+            it_behaves_like "has liberties at position", 2, 4, 8
+          end
+
+          describe "black playing right in the space" do 
+            before :each do
+              force_next_move_to_be :black, game
+              game.play! 3, 3, :black
+            end
+
+            it_behaves_like "has liberties at position", 3, 3, 1
+            it_behaves_like "has liberties at position", 1, 3, 3
+            it_behaves_like "has liberties at position", 2, 2, 5
+            it_behaves_like "has liberties at position", 2, 4, 8
+          end
         end
 
         describe 'capturing two distinct groups' do
@@ -442,8 +477,12 @@ O-O-O
           end
         end
 
-        it "let's see" do
+        it "does not allow the suicide move" do
           expect(MoveValidator.new.valid?(5, :white, game)).to be_falsey
+        end
+
+        it "has the right liberty)count for the neighboring group" do
+          expect(game.group_tracker.group_of(4)[:liberty_count]).to eq 3
         end
 
       end

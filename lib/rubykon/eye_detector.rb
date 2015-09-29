@@ -6,7 +6,6 @@ module Rubykon
       is_real_eye?(identifier, board, candidate_eye_color)
     end
 
-    private
     def candidate_eye_color(identifier, board)
       neighbor_colors = board.neighbour_colors_of(identifier)
       candidate_eye_color = neighbor_colors.first
@@ -18,6 +17,7 @@ module Rubykon
       end
     end
 
+    private
     def is_real_eye?(identifier, board, candidate_eye_color)
       enemy_color = Game.other_color(candidate_eye_color)
       enemy_count = board.diagonal_colors_of(identifier).count(enemy_color)
