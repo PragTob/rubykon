@@ -53,7 +53,6 @@ module Rubykon
     end
 
     def set_valid_move(identifier, color)
-      # print [identifier, color].inspect
       @move_count += 1
       if Game.pass?(identifier)
         @consecutive_passes += 1

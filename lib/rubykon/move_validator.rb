@@ -8,7 +8,7 @@ module Rubykon
         (move_on_board?(identifier, board) &&
           spot_unoccupied?(identifier, board) &&
           no_suicide_move?(identifier, color, game) &&
-          no_ko_move?(identifier, color, game)))
+          no_ko_move?(identifier, game)))
     end
 
     private
@@ -38,18 +38,8 @@ module Rubykon
       game.group_tracker.group_of(identifier)[:liberty_count]
     end
 
-    # we have to do a big fat revisit on Ko...
-    KO_MIN_MOVES = 4 # good gut feeling that there at least need to be that many
-    def no_ko_move?(identifier, color, game)
-      return true
-      moves = game.moves
-      return true unless ko_possible?(moves)
-      last_capture = moves.last.captures.first
-      not(last_capture == identifier)
-    end
-
-    def ko_possible?(moves)
-      (moves.size >= KO_MIN_MOVES) && (moves.last.captures) && (moves.last.captures.size == 1)
+    def no_ko_move?(identifier, game)
+      identifier != game.group_tracker.ko
     end
   end
 end

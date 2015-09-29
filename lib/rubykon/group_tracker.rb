@@ -1,14 +1,15 @@
 module Rubykon
   class GroupTracker
 
-    attr_reader :groups, :stone_to_group, :prisoners
+    attr_reader :groups, :stone_to_group, :prisoners, :ko
 
     NOT_SET = :not_set
 
-    def initialize(groups = {}, stone_to_group = {})
+    def initialize(groups = {}, stone_to_group = {}, prisoners = initial_prisoners, ko = nil )
       @groups         = groups # group_id to stones, liberty count, liberties
       @stone_to_group = stone_to_group # stone identifier to group identifier
-      @prisoners = {Board::BLACK => 0, Board::WHITE => 0}
+      @prisoners = prisoners
+      @ko       = ko
     end
 
     def assign(identifier, color, board)
@@ -16,7 +17,13 @@ module Rubykon
       join_group_of_friendly_stones(neighbours_by_color[color], identifier)
       create_own_group(identifier) unless group_id_of(identifier)
       add_liberties(neighbours_by_color[Board::EMPTY], identifier)
-      take_liberties_of_enemies(neighbours_by_color[Game.other_color(color)], identifier, board, color)
+      potential_eye = EyeDetector.new.candidate_eye_color(identifier, board)
+      captures = take_liberties_of_enemies(neighbours_by_color[Game.other_color(color)], identifier, board, color)
+      if captures.size == 1 && potential_eye
+        @ko = captures[0]
+      else
+        @ko = nil
+      end
     end
 
     def liberty_count_at(identifier)
@@ -24,7 +31,7 @@ module Rubykon
     end
 
     def dup
-      self.class.new(dup_groups, @stone_to_group.dup)
+      self.class.new(dup_groups, @stone_to_group.dup, @prisoners.dup, @ko)
     end
 
     def group_id_of(identifier)
@@ -40,6 +47,10 @@ module Rubykon
     end
 
     private
+    def initial_prisoners
+      {Board::BLACK => 0, Board::WHITE => 0}
+    end
+
     def connect(friendly_group_id, stone_identifier)
       stone_group_id = group_id_of(stone_identifier)
       return if stone_group_id == friendly_group_id
@@ -69,7 +80,6 @@ module Rubykon
     end
 
     def remove(captured_group, board, capturer_color)
-      @prisoners[capturer_color] += captured_group[:stones].size
       liberties           = captured_group[:liberties].values
       neighbouring_groups = liberties.map do |identifier|
         group_of(identifier)
@@ -77,11 +87,14 @@ module Rubykon
       neighbouring_groups.each do |neighbor_group|
         gain_liberties_from_capture_of(neighbor_group, captured_group)
       end
-      captured_group[:stones].each do |identifier|
+      captured_stones = captured_group[:stones]
+      @prisoners[capturer_color] += captured_stones.size
+      captured_stones.each do |identifier|
         @stone_to_group.delete identifier
         board[identifier] = Board::EMPTY
       end
       @groups.delete(captured_group[:id])
+      captured_stones
     end
 
     def gain_liberties_from_capture_of(my_group, captured_group)
@@ -198,7 +211,9 @@ module Rubykon
     end
 
     def remove_caught_groups(board, capturer_color, caught)
-      caught.each { |enemy_group| remove(enemy_group, board, capturer_color) }
+      caught.inject([]) do |captures, enemy_group|
+        captures + remove(enemy_group, board, capturer_color)
+      end
     end
 
     def add_liberties(liberties, identifier)
