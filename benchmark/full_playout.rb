@@ -2,7 +2,7 @@ require_relative '../lib/rubykon'
 require 'benchmark/ips'
 
 Benchmark.ips do |benchmark|
-  benchmark.config time: 20, warmup: 5
+  benchmark.config time: 30, warmup: 60
 
   game_9 = Rubykon::Game.new 9
   game_13 = Rubykon::Game.new 13
