@@ -31,28 +31,27 @@ module Rubykon
     # Move generation as a lazy iterator?
     def generate_random_move(game)
       color = game.next_turn_color
-      tries = 0
       size  = game.board.size
       cp_count   = size * size
-      max_tries = cp_count * MAX_TRIES_MODIFIER
-      move = random_move(color, cp_count)
-      until plausible_move?(*move, game) do
-        tries += 1
-        move =  if tries <= max_tries
-                  random_move(color, cp_count)
-                else
-                  pass_move(color)
-                end
+      start_point = rand(cp_count)
+      range = game.board[start_point..-1] + game.board[0..start_point]
+      _color, identifier = range.each_with_index.find do |field_color,
+        identifier|
+        (field_color == Board::EMPTY) && plausible_move?((identifier + start_point) % cp_count, color, game)
       end
-      move
+      if identifier.nil?
+        [identifier, color]
+      else
+        [(identifier + start_point) % cp_count, color]
+      end
     end
 
     def pass_move(color)
       [nil, color]
     end
 
-    def random_move(color, cp_count)
-      [rand(cp_count), color]
+    def random_move(cp_count)
+      rand(cp_count)
     end
 
     def plausible_move?(identifier, color, game)
