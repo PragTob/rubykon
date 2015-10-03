@@ -1,3 +1,4 @@
+require_relative 'rubykon/group'
 require_relative 'rubykon/group_tracker'
 require_relative 'rubykon/game'
 require_relative 'rubykon/board'
