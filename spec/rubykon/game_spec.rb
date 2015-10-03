@@ -402,7 +402,7 @@ O-O-O
           end
 
           it "does not modify the group of the stones" do
-            expect(group_from(5, 2)[:stones].size).to eq 1
+            expect(group_from(5, 2).stones.size).to eq 1
           end
 
           it "color at same position can be different" do
@@ -411,15 +411,15 @@ O-O-O
 
           it "the group points to the right liberties" do
             identifier_5_1 = board.identifier_for(5, 1)
-            expect(group_from(5, 2)[:liberties].fetch(identifier_5_1)).to eq Board::EMPTY
+            expect(group_from(5, 2).liberties.fetch(identifier_5_1)).to eq Board::EMPTY
             dupped_5_2_group = dupped_tracker.group_of(identifier_5_2)
-            expect(dupped_5_2_group[:liberties]).not_to have_key(identifier_5_1)
+            expect(dupped_5_2_group.liberties).not_to have_key(identifier_5_1)
           end
 
           it "does not register the new stones" do
             group = group_from(1, 2)
-            expect(group[:liberties].fetch(board.identifier_for(1, 1))).to eq Board::EMPTY
-            expect(group[:liberty_count]).to eq 4
+            expect(group.liberties.fetch(board.identifier_for(1, 1))).to eq Board::EMPTY
+            expect(group.liberty_count).to eq 4
           end
         end
 
@@ -442,21 +442,21 @@ O-O-O
           end
 
           it "handles groups" do
-            expect(group[:stones].size).to eq 2
+            expect(group.stones.size).to eq 2
           end
 
           it "has the right group liberties" do
-            expect(group[:liberties].fetch(board.identifier_for(4, 2))).to eq Board::EMPTY
+            expect(group.liberties.fetch(board.identifier_for(4, 2))).to eq Board::EMPTY
             identifier = board.identifier_for(5, 3)
             group_id = dupped_tracker.group_id_of(identifier)
-            expect(group[:liberties][identifier]).to eq group_id
+            expect(group.liberties[identifier]).to eq group_id
           end
 
           it "registers new stones" do
             group                = dupped_tracker.group_of(board.identifier_for(1, 2))
             identifier_1_1 = board.identifier_for(1, 1)
-            expect(group[:liberties].fetch(identifier_1_1)).to eq dupped_tracker.group_id_of(identifier_1_1)
-            expect(group[:liberty_count]).to eq 3
+            expect(group.liberties.fetch(identifier_1_1)).to eq dupped_tracker.group_id_of(identifier_1_1)
+            expect(group.liberty_count).to eq 3
           end
         end
 
@@ -482,7 +482,7 @@ O-O-O
         end
 
         it "has the right liberty)count for the neighboring group" do
-          expect(game.group_tracker.group_of(4)[:liberty_count]).to eq 3
+          expect(game.group_tracker.group_of(4).liberty_count).to eq 3
         end
 
       end
