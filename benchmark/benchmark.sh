@@ -6,6 +6,7 @@ for ruby in "${!RUBY_TO_ARG[@]}"
 do
   echo Running $ruby with ${RUBY_TO_ARG[$ruby]}
   rvm use $ruby
+  ruby -v
   ruby ${RUBY_TO_ARG[$ruby]} benchmark/full_playout.rb
 done
 
