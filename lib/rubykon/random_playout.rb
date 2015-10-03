@@ -34,16 +34,28 @@ module Rubykon
       size  = game.board.size
       cp_count   = size * size
       start_point = rand(cp_count)
-      range = game.board[start_point..-1] + game.board[0..start_point]
-      _color, identifier = range.each_with_index.find do |field_color,
-        identifier|
-        (field_color == Board::EMPTY) && plausible_move?((identifier + start_point) % cp_count, color, game)
+      identifier = start_point
+      passes = 0
+
+      until searched_whole_board?(identifier, passes, start_point) ||
+        plausible_move?(identifier, color, game) do
+        if identifier > cp_count
+          identifier = 0
+          passes += 1
+        else
+          identifier += 1
+        end
       end
-      if identifier.nil?
-        [identifier, color]
+
+      if searched_whole_board?(identifier, passes, start_point)
+        pass_move(color)
       else
-        [(identifier + start_point) % cp_count, color]
+        [identifier, color]
       end
+    end
+
+    def searched_whole_board?(identifier, passes, start_point)
+      passes > 0 && identifier >= start_point
     end
 
     def pass_move(color)
@@ -55,9 +67,7 @@ module Rubykon
     end
 
     def plausible_move?(identifier, color, game)
-      return true if Game.pass?(identifier)
-      @validator.valid?(identifier, color, game) &&
-        !@eye_detector.is_eye?(identifier, game.board)
+      @validator.trusted_valid?(identifier, color, game) && !@eye_detector.is_eye?(identifier, game.board)
     end
   end
 end

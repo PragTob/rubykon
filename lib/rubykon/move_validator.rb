@@ -11,6 +11,14 @@ module Rubykon
           no_ko_move?(identifier, game)))
     end
 
+    def trusted_valid?(identifier, color, game)
+      board = game.board
+      spot_unoccupied?(identifier, board) &&
+        no_ko_move?(identifier, game) &&
+        no_suicide_move?(identifier, color, game)
+
+    end
+
     private
     def no_double_move?(color, game)
       color == game.next_turn_color
@@ -35,7 +43,7 @@ module Rubykon
     end
 
     def liberties_at(identifier, game)
-      game.group_tracker.group_of(identifier).liberty_count
+      game.group_tracker.liberty_count_at(identifier)
     end
 
     def no_ko_move?(identifier, game)

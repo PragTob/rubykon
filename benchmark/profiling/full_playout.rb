@@ -4,4 +4,4 @@ require_relative '../../lib/rubykon/'
 
 game = Rubykon::Game.new
 playouter = Rubykon::RandomPlayout.new
-playouter.play(game)
+p playouter.play(game)
