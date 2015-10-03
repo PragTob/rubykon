@@ -378,7 +378,7 @@ XOOX-
           end
 
           it "increases the captures count" do
-            expect(group_tracker.prisoners[:black]).to eq 3
+            expect(game.captures[:black]).to eq 3
           end
         end
 
@@ -419,7 +419,7 @@ XX-XX
           end
 
           it "increases the captures count" do
-            expect(group_tracker.prisoners[:black]).to eq 4
+            expect(game.captures[:black]).to eq 4
           end
         end
 
