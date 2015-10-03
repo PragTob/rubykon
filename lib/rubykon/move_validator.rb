@@ -39,7 +39,7 @@ module Rubykon
     end
 
     def no_ko_move?(identifier, game)
-      identifier != game.group_tracker.ko
+      identifier != game.ko
     end
   end
 end

@@ -1,6 +1,6 @@
 module Rubykon
   class Game
-    attr_reader :board, :group_tracker, :move_count
+    attr_reader :board, :group_tracker, :move_count, :ko
     attr_accessor :komi
 
     DEFAULT_KOMI = 6.5
@@ -8,6 +8,7 @@ module Rubykon
     # the freakish constructor is here so that we can have a decent dup
     def initialize(size = 19, komi = DEFAULT_KOMI, board = Board.new(size),
                    move_count = 0, consecutive_passes = 0,
+                   ko = nil,
                    move_validator = MoveValidator.new,
                    group_tracker = GroupTracker.new)
       @board              = board
@@ -16,6 +17,7 @@ module Rubykon
       @consecutive_passes = consecutive_passes
       @komi               = komi
       @group_tracker      = group_tracker
+      @ko                 = ko
     end
 
     def play(x, y, color)
@@ -68,7 +70,7 @@ module Rubykon
 
     def dup
       self.class.new @size, @komi, @board.dup, @move_count, @consecutive_passes,
-                     @move_validator, @group_tracker.dup
+                     @ko, @move_validator, @group_tracker.dup
     end
 
     def self.other_color(color)
@@ -90,8 +92,18 @@ module Rubykon
 
     def set_move(color, identifier)
       @board[identifier] = color
-      @group_tracker.assign(identifier, color, board)
+      potential_eye = EyeDetector.new.candidate_eye_color(identifier, @board)
+      captures = @group_tracker.assign(identifier, color, board)
+      determine_ko(captures, potential_eye)
       @consecutive_passes = 0
+    end
+
+    def determine_ko(captures, potential_eye)
+      if captures.size == 1 && potential_eye
+        @ko = captures[0]
+      else
+        @ko = nil
+      end
     end
   end
 end

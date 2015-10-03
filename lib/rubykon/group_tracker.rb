@@ -1,14 +1,12 @@
 module Rubykon
   class GroupTracker
 
-    attr_reader :groups, :stone_to_group, :prisoners, :ko
+    attr_reader :groups, :stone_to_group, :prisoners
 
-    def initialize(groups = {}, stone_to_group = {},
-                   prisoners = initial_prisoners, ko = nil )
+    def initialize(groups = {}, stone_to_group = {}, prisoners = initial_prisoners)
       @groups         = groups
       @stone_to_group = stone_to_group
       @prisoners      = prisoners
-      @ko             = ko
     end
 
     def assign(identifier, color, board)
@@ -16,13 +14,7 @@ module Rubykon
       join_group_of_friendly_stones(neighbours_by_color[color], identifier)
       create_own_group(identifier) unless group_id_of(identifier)
       add_liberties(neighbours_by_color[Board::EMPTY], identifier)
-      potential_eye = EyeDetector.new.candidate_eye_color(identifier, board)
-      captures = take_liberties_of_enemies(neighbours_by_color[Game.other_color(color)], identifier, board, color)
-      if captures.size == 1 && potential_eye
-        @ko = captures[0]
-      else
-        @ko = nil
-      end
+      take_liberties_of_enemies(neighbours_by_color[Game.other_color(color)], identifier, board, color)
     end
 
     def liberty_count_at(identifier)
@@ -46,7 +38,7 @@ module Rubykon
     end
 
     def dup
-      self.class.new(dup_groups, @stone_to_group.dup, @prisoners.dup, @ko)
+      self.class.new(dup_groups, @stone_to_group.dup, @prisoners.dup)
     end
 
     private
