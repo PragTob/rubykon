@@ -3,6 +3,7 @@ module Rubykon
     def score(game)
       game_score = {Board::BLACK => 0, Board::WHITE => game.komi}
       score_board(game, game_score)
+      add_captures(game, game_score)
       determine_winner(game_score)
       game_score
     end
@@ -39,6 +40,11 @@ module Rubykon
       neighbor_colors.all? do |color|
         color != enemy_color
       end
+    end
+
+    def add_captures(game, game_score)
+      game_score[Board::BLACK] += game.captures[Board::BLACK]
+      game_score[Board::WHITE] += game.captures[Board::WHITE]
     end
 
     def determine_winner(game_score)

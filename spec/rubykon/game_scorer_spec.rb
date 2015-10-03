@@ -89,6 +89,21 @@ XXX-XXXO-
         end
 
       end
+
+      context 'it takes prisoners into account' do
+        let(:captures) {{black: 6, white: 4}}
+
+        before :each do
+          allow(game).to receive(:captures).and_return captures
+        end
+
+        it_behaves_like "correctly scored", :black => 43 + 6,
+                                            :white => 38 + Game::DEFAULT_KOMI + 4
+
+        it "gets the right winner" do
+          expect(winner).to eq :black
+        end
+      end
     end
 
   end
