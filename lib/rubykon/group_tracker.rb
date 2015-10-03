@@ -1,12 +1,11 @@
 module Rubykon
   class GroupTracker
 
-    attr_reader :groups, :stone_to_group, :prisoners
+    attr_reader :groups, :stone_to_group
 
-    def initialize(groups = {}, stone_to_group = {}, prisoners = initial_prisoners)
+    def initialize(groups = {}, stone_to_group = {})
       @groups         = groups
       @stone_to_group = stone_to_group
-      @prisoners      = prisoners
     end
 
     def assign(identifier, color, board)
@@ -38,14 +37,10 @@ module Rubykon
     end
 
     def dup
-      self.class.new(dup_groups, @stone_to_group.dup, @prisoners.dup)
+      self.class.new(dup_groups, @stone_to_group.dup)
     end
 
     private
-    def initial_prisoners
-      {Board::BLACK => 0, Board::WHITE => 0}
-    end
-
     def color_to_neighbour(board, identifier)
       neighbors = board.neighbours_of(identifier)
       hash = neighbors.inject({}) do |hash, (n_identifier, color)|
@@ -84,7 +79,6 @@ module Rubykon
       captures = caught.inject([]) do |captures, enemy_group|
         captures + remove(enemy_group, board)
       end
-      @prisoners[capturer_color] += captures.size
       captures
     end
 
@@ -146,6 +140,5 @@ module Rubykon
         dupped
       end
     end
-
   end
 end

@@ -126,7 +126,7 @@ X----
       end
 
       describe 'capturing stones' do
-        let(:captures) {group_tracker.prisoners}
+        let(:captures) {game.captures}
         let(:identifier) {board.identifier_for(capturer[0], capturer[1])}
         let(:color) {capturer.last}
 
@@ -150,7 +150,7 @@ XOX
           end
 
           it "the stone made one capture" do
-            expect(group_tracker.prisoners[:black]).to eq 1
+            expect(game.captures[:black]).to eq 1
           end
 
           it_behaves_like "has liberties at position", 2, 1, 3
