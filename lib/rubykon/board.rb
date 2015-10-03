@@ -137,17 +137,5 @@ module Rubykon
          identifier + 1 - @size, identifier + 1 + @size]
       end
     end
-
-    def dup_board
-      @board.dup
-    end
-
-    def self.each_field(enumerable)
-      enumerable.each_with_index do |row, y|
-        row.each_with_index do |field, x|
-          yield field, x + 1, y + 1
-        end
-      end
-    end
   end
 end
