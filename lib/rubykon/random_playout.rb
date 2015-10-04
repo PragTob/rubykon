@@ -62,10 +62,6 @@ module Rubykon
       [nil, color]
     end
 
-    def random_move(cp_count)
-      rand(cp_count)
-    end
-
     def plausible_move?(identifier, color, game)
       @validator.trusted_valid?(identifier, color, game) && !@eye_detector.is_eye?(identifier, game.board)
     end
