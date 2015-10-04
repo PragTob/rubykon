@@ -54,6 +54,10 @@ module Rubykon
       it "can select the best move" do
         expect(root.best_move).not_to be_nil
       end
+
+      it "does not touch the original game" do
+        expect(original_game.game.move_count).to eq 0
+      end
     end
 
   end
