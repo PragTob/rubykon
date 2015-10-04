@@ -14,10 +14,10 @@ module MCTS
     end
 
     def uct_value
-      win_average + UCT_BIAS_FACTOR * Math.sqrt(Math.log(parent.visits)/@visits)
+      win_percentage + UCT_BIAS_FACTOR * Math.sqrt(Math.log(parent.visits)/@visits)
     end
 
-    def win_average
+    def win_percentage
       @wins/@visits
     end
 

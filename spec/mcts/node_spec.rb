@@ -46,25 +46,25 @@ module MCTS
     describe "#win_average" do
       it "is still 0 after losing" do
         subject.lost
-        expect(subject.win_average).to eq 0
+        expect(subject.win_percentage).to eq 0
       end
 
       it "is one after it won" do
         subject.won
-        expect(subject.win_average).to eq 1
+        expect(subject.win_percentage).to eq 1
       end
 
       it "is 0.5 after a win and a los" do
         subject.won
         subject.lost
-        expect(subject.win_average).to be_within(0.01).of 0.5
+        expect(subject.win_percentage).to be_within(0.01).of 0.5
       end
 
       it "is 0.33 after a win and two losses" do
         subject.won
         subject.lost
         subject.lost
-        expect(subject.win_average).to be_within(0.01).of 0.33
+        expect(subject.win_percentage).to be_within(0.01).of 0.33
       end
     end
 

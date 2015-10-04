@@ -6,9 +6,7 @@ module MCTS
       playouts.times do |i|
         root.explore_tree
       end
-
-      best_node = root.best_child
-      best_node.move
+      root
     end
   end
 end

@@ -9,7 +9,11 @@ module MCTS
     end
 
     def best_child
-      children.max_by &:win_average
+      children.max_by &:win_percentage
+    end
+
+    def best_move
+      best_child.move
     end
 
     def explore_tree
