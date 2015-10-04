@@ -39,7 +39,7 @@ module Rubykon
 
       until searched_whole_board?(identifier, passes, start_point) ||
         plausible_move?(identifier, color, game) do
-        if identifier > cp_count
+        if identifier >= cp_count - 1
           identifier = 0
           passes += 1
         else

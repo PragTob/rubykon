@@ -30,15 +30,29 @@ module Rubykon
       @board[identifier] = color
     end
 
+    # this method is rather raw and explicit, it gets called a lot
     def neighbours_of(identifier)
-      neighbour_coordinates(identifier).inject([]) do |res, identifier|
-        res << [identifier, self[identifier]] if on_board?(identifier)
-        res
+      x                        = identifier % size
+      y                        = identifier / size
+      right                    = identifier + 1
+      below                    = identifier + @size
+      left                     = identifier - 1
+      above                    = identifier - @size
+      board_edge               = @size - 1
+      not_on_x_edge            = x > 0 && x < board_edge
+      not_on_y_edge            = y > 0 && y < board_edge
+
+      if not_on_x_edge && not_on_y_edge
+        [[right, @board[right]], [below, @board[below]],
+         [left, @board[left]], [above, @board[above]]]
+      else
+        handle_edge_cases(x, y, above, below, left, right, board_edge,
+                          not_on_x_edge, not_on_y_edge)
       end
     end
 
     def neighbour_colors_of(identifier)
-      neighbours_of(identifier).map! &:last
+      neighbours_of(identifier).map {|identifier, color| color}
     end
 
     def diagonal_colors_of(identifier)
@@ -73,23 +87,6 @@ module Rubykon
       end.join("\n") << "\n"
     end
 
-    def self.from(string)
-      new_board = new string.index("\n")
-      each_move_from(string) do |index, color|
-        new_board[index] = color
-      end
-      new_board
-    end
-
-    def self.each_move_from(string)
-      relevant_chars = string.chars.select do |char|
-        CHARACTER_TO_COLOR.has_key?(char)
-      end
-      relevant_chars.each_with_index do |char, index|
-        yield index, CHARACTER_TO_COLOR.fetch(char)
-      end
-    end
-
     def dup
       self.class.new @size, @board.dup
     end
@@ -108,21 +105,60 @@ module Rubykon
       [x, y]
     end
 
+    def self.from(string)
+      new_board = new string.index("\n")
+      each_move_from(string) do |index, color|
+        new_board[index] = color
+      end
+      new_board
+    end
+
+    def self.each_move_from(string)
+      relevant_chars = string.chars.select do |char|
+        CHARACTER_TO_COLOR.has_key?(char)
+      end
+      relevant_chars.each_with_index do |char, index|
+        yield index, CHARACTER_TO_COLOR.fetch(char)
+      end
+    end
+
     private
 
     def create_board(size)
       Array.new(size * size, EMPTY)
     end
 
-    def neighbour_coordinates(identifier)
-      x = identifier % size
-      if x == 0
-        [identifier + 1, identifier + @size, identifier - @size]
-      elsif x == @size - 1
-        [identifier + @size, identifier - 1, identifier - @size]
+    def handle_edge_cases(x, y, above, below, left, right, board_edge, not_on_x_edge, not_on_y_edge)
+      left_edge   = x == 0
+      right_edge  = x == board_edge
+      top_edge    = y == 0
+      bottom_edge = y == board_edge
+      if left_edge && not_on_y_edge
+        [[right, @board[right]], [below, @board[below]],
+         [above, @board[above]]]
+      elsif right_edge && not_on_y_edge
+        [[below, @board[below]],
+         [left, @board[left]], [above, @board[above]]]
+      elsif top_edge && not_on_x_edge
+        [[right, @board[right]], [below, @board[below]],
+         [left, @board[left]]]
+      elsif bottom_edge && not_on_x_edge
+        [[right, @board[right]],
+         [left, @board[left]], [above, @board[above]]]
       else
-        [identifier + 1, identifier + @size,
-         identifier - 1, identifier - @size]
+        handle_corner_case(above, below, left, right, bottom_edge, left_edge, right_edge, top_edge)
+      end
+    end
+
+    def handle_corner_case(above, below, left, right, bottom_edge, left_edge, right_edge, top_edge)
+      if left_edge && top_edge
+        [[right, @board[right]], [below, @board[below]]]
+      elsif left_edge && bottom_edge
+        [[above, @board[above]], [right, @board[right]]]
+      elsif right_edge && top_edge
+        [[left, @board[left]], [below, @board[below]]]
+      elsif right_edge && bottom_edge
+        [[left, @board[left]], [above, @board[above]]]
       end
     end
 

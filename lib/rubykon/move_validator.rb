@@ -33,9 +33,11 @@ module Rubykon
     end
 
     def no_suicide_move?(identifier, color, game)
-      enemy_color = Game.other_color(color)
-      board = game.board
-      board.neighbours_of(identifier).any? do |n_identifier, n_color|
+      enemy_color         = Game.other_color(color)
+      board               = game.board
+      board_neighbours_of = board.neighbours_of(identifier)
+      p identifier if board_neighbours_of.nil?
+      board_neighbours_of.any? do |n_identifier, n_color|
         (n_color == Board::EMPTY) ||
           (n_color == color) && (liberties_at(n_identifier, game) > 1) ||
           (n_color == enemy_color) && (liberties_at(n_identifier, game) <= 1)
