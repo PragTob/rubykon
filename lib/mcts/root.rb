@@ -14,16 +14,20 @@ module MCTS
 
     def explore_tree
       selected_node = select
-      new_child = selected_node.expand
-      won = new_child.rollout
-      new_child.backpropagate(won)
+      playout_node =  if selected_node.leaf?
+                        selected_node
+                      else
+                        selected_node.expand
+                      end
+      won = playout_node.rollout
+      playout_node.backpropagate(won)
     end
 
     private
     def select
       node = self
-      until node.untried_moves? do
-        node.uct_select_child
+      until node.untried_moves? || node.leaf? do
+        node = node.uct_select_child
       end
       node
     end

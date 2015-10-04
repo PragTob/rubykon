@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 module MCTS
   RSpec.describe Node do
-    let(:game_state) {double 'game_state', all_valid_moves: []}
+    let(:game_state) {double 'game_state', all_valid_moves: [], finished?: false}
     let(:move) {double 'move'}
     let(:root) {Root.new game_state}
     subject {Node.new game_state, move, root}
@@ -96,7 +96,7 @@ module MCTS
 
     describe '#expand' do
       let(:game_state) {double('game_state', dup: dupped,
-                                             all_valid_moves: [move_2])}
+                                             all_valid_moves: [move_2]).as_null_object}
       let(:dupped) do
         mine = double('dupped').as_null_object
       end

@@ -3,7 +3,8 @@ require_relative 'spec_helper'
 module MCTS
   RSpec.describe Root do
     let(:game_state) {double 'game_state', dup: dupped,
-                                           all_valid_moves: [move_1, move_2]}
+                                           all_valid_moves: [move_1, move_2],
+                                           finished?: false}
     let(:dupped) {double('dupped', dup: duppie).as_null_object}
     let(:duppie) {double('duppie',finished?: true, won?: true, dup: dupped2).as_null_object}
     let(:dupped2) {double("dupped2", dup: duppie2).as_null_object}
@@ -40,7 +41,8 @@ module MCTS
       describe 'one more expand' do
 
         let(:game_state) do
-          mine = double 'game_state', all_valid_moves: [move_1, move_2]
+          mine = double 'game_state', all_valid_moves: [move_1, move_2],
+                                      finished?: false
           allow(mine).to receive(:dup).and_return(dupped, dupped2)
           mine
         end

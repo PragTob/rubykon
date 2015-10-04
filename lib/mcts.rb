@@ -1,5 +1,5 @@
 require_relative 'mcts/node'
-require_relative 'mcts/root_node'
+require_relative 'mcts/root'
 require_relative 'mcts/playout'
 require_relative 'mcts/mcts'
 

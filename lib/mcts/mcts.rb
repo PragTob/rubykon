@@ -2,9 +2,8 @@ module MCTS
   class MCTS
     def start(game_state, playouts = DEFAULT_PLAYOUTS)
       root = Root.new(game_state)
-      own_color = game_state.next_turn_color
 
-      playouts.times do
+      playouts.times do |i|
         root.explore_tree
       end
 

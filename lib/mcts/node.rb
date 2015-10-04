@@ -1,15 +1,16 @@
 module MCTS
   class Node
-    attr_reader :parent,  :move, :wins, :visits, :children
+    attr_reader :parent,  :move, :wins, :visits, :children, :game_state
 
     def initialize(game_state, move, parent)
-      @parent     = parent
-      @game_state = game_state
-      @move       = move
-      @wins       = 0.0
-      @visits     = 0
-      @children   = []
+      @parent        = parent
+      @game_state    = game_state
+      @move          = move
+      @wins          = 0.0
+      @visits        = 0
+      @children      = []
       @untried_moves = game_state.all_valid_moves
+      @leaf          = game_state.finished?
     end
 
     def uct_value
@@ -22,6 +23,10 @@ module MCTS
 
     def root?
       false
+    end
+
+    def leaf?
+      @leaf
     end
 
     def uct_select_child
