@@ -17,7 +17,7 @@ module MCTS
         @positions.any? {|_color, position| position >= FINAL_POSITION }
       end
 
-      def random_move
+      def generate_move
         rand(MAX_STEP)
       end
 

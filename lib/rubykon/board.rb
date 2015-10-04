@@ -22,6 +22,10 @@ module Rubykon
       end
     end
 
+    def cutting_point_count
+      @board.size
+    end
+
     def [](identifier)
       @board[identifier]
     end

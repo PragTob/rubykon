@@ -10,7 +10,7 @@ module MCTS
       @visits        = 0
       @children      = []
       @untried_moves = game_state.all_valid_moves
-      @leaf          = game_state.finished?
+      @leaf          = game_state.finished? || @untried_moves.empty?
     end
 
     def uct_value
@@ -41,8 +41,8 @@ module MCTS
 
     def rollout
       playout = Playout.new(@game_state)
-      playout.play # returns score
-      # should return of won or not
+      final_game_state = playout.play
+      final_game_state.won?
     end
 
     def won

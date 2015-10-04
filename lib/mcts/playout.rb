@@ -6,9 +6,9 @@ module MCTS
 
     def play
       until @game_state.finished?
-        @game_state.set_move @game_state.random_move
+        @game_state.set_move @game_state.generate_move
       end
-      @game_state.won?
+      @game_state
     end
   end
 end
