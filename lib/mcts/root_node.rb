@@ -12,7 +12,7 @@ module MCTS
       children.max_by &:win_average
     end
 
-    def explore_tree(own_color)
+    def explore_tree
       selected_node = select
       new_child = selected_node.expand
       won = new_child.rollout

@@ -5,7 +5,7 @@ module MCTS
       own_color = game_state.next_turn_color
 
       playouts.times do
-        explore_tree(root, own_color)
+        root.explore_tree
       end
 
       best_node = root.best_child

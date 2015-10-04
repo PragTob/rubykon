@@ -4,7 +4,7 @@ module MCTS
 
     def initialize(game_state, move, parent)
       @parent     = parent
-      @game_state = game_state.dup
+      @game_state = game_state
       @move       = move
       @wins       = 0.0
       @visits     = 0
@@ -75,7 +75,7 @@ module MCTS
     def create_child(move)
       game_state = @game_state.dup
       game_state.set_move(move)
-      child = self.class.new game_state, move, self
+      child = Node.new game_state, move, self
       @children << child
       child
     end
