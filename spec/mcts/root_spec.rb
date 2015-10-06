@@ -31,7 +31,7 @@ module MCTS
 
       it "gives the root a visit" do
         expect(subject.visits).to eq 1
-        expect(subject.wins).to eq 1
+        expect(subject.wins).to eq 0
       end
 
       it "selects it as the best node" do
