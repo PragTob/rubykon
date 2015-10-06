@@ -147,12 +147,12 @@ module MCTS
           expect(child_1_1.visits).to eq 4
         end
 
-        it "propagates the change to its parent" do
-          expect(child_1.wins).to eq 3
+        it "results in a loss for the parent" do
+          expect(child_1.wins).to eq 2
           expect(child_1.visits).to eq 5
         end
 
-        it "propagates the change to the root" do
+        it "results in a win in the root" do
           expect(root.wins).to eq 4
           expect(root.visits).to eq 8
         end
@@ -165,6 +165,40 @@ module MCTS
           expect(child_2.visits).to eq 3
         end
       end
+
+      describe 'winning child_1_2_1 gets a loss in the root' do
+        let!(:child_1) {create_test_node(2, 4, root)}
+        let!(:child_2) {create_test_node 1, 3, root}
+        let!(:child_1_1) {create_test_node 2, 2, child_1}
+        let!(:child_1_2) {create_test_node 1, 2, child_1}
+        let!(:child_1_2_1) {create_test_node(0, 1, child_1_2)}
+
+        before :each do
+          child_1_2_1.backpropagate true
+        end
+
+        it "updates the node itself" do
+          expect(child_1_2_1.wins).to eq 1
+          expect(child_1_2_1.visits).to eq 2
+        end
+
+        it "propagates the change to its parent as a loss" do
+          expect(child_1_2.wins).to eq 1
+          expect(child_1_2.visits).to eq 3
+        end
+
+        it "propagates the change to the parent's parent as a win" do
+          expect(child_1.wins).to eq 3
+          expect(child_1.visits).to eq 5
+        end
+
+        it "propagates the change to the root as a loss" do
+          expect(root.wins).to eq 3
+          expect(root.visits).to eq 8
+        end
+
+      end
+
     end
   end
 end

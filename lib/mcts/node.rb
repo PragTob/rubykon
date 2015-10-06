@@ -58,6 +58,7 @@ module MCTS
       node = self
       update_node_won(node, won)
       until node.root? do
+        won = !won # switching players perspective
         node = node.parent
         update_node_won(node, won)
       end
