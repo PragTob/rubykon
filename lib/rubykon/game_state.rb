@@ -43,8 +43,7 @@ module Rubykon
     end
 
     def score
-      scorer = GameScorer.new
-      scorer.score(@game)
+      @score ||= GameScorer.new.score(@game)
     end
 
     private
