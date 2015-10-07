@@ -3,7 +3,7 @@ module Rubykon
 
     EXIT = /exit/i
 
-    def initialize(output = STDOUT, input = STDIN)
+    def initialize(output = $stdout, input = $stdin)
       @output     = output
       @input      = input
       @state      = :init
@@ -62,7 +62,7 @@ module Rubykon
       root = @mcts.start @game_state
       move = root.best_move
       best_children = root.children.sort_by(&:win_percentage).reverse.take(10)
-      puts best_children.map {|child| "#{@board.x_y_from(child.move.first)} => #{child.win_percentage}"}.join "\n"
+      @output.puts best_children.map {|child| "#{@board.x_y_from(child.move.first)} => #{child.win_percentage}"}.join "\n"
       make_move(move)
     end
 
