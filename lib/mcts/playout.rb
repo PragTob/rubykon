@@ -8,10 +8,14 @@ module MCTS
     end
 
     def play
+      playout
+      @game_state.won?
+    end
+
+    def playout
       until @game_state.finished?
         @game_state.set_move @game_state.generate_move
       end
-      @game_state.won?
     end
   end
 end
