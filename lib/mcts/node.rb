@@ -41,8 +41,7 @@ module MCTS
 
     def rollout
       playout = Playout.new(@game_state)
-      final_game_state = playout.play
-      final_game_state.won?
+      playout.play
     end
 
     def won

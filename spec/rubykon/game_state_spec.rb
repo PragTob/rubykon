@@ -6,7 +6,10 @@ module Rubykon
     let(:playouter) {MCTS::Playout.new original_game}
 
     describe "#play" do
-      let!(:played_out) {playouter.play}
+      let!(:played_out) do
+        playouter.play
+        playouter.game_state
+      end
 
       it "gets right scores" do
         result = played_out.score
