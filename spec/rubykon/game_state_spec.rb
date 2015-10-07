@@ -37,7 +37,7 @@ module Rubykon
       let(:original_game) {GameState.new Game.new(9)}
       let(:mcts) {MCTS::MCTS.new}
       let!(:root) {mcts.start(original_game, playouts)}
-      let(:playouts) {500}
+      let(:playouts) {100}
 
       it "creates the right number of children" do
         expect(root.children.size).to eq original_game.game.board.cutting_point_count
