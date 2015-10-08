@@ -1,5 +1,4 @@
 Gemfile.lock
-benchmark/benchmark-ips
 profiling.html
 .bundle
 .jruby+truffle_bundle
