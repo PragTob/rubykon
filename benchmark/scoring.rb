@@ -1,6 +1,6 @@
 require_relative 'support'
 require_relative '../lib/rubykon'
-require 'benchmark/ips'
+require_relative 'support/benchmark-ips'
 
 Benchmark.ips do |benchmark|
   game_9 = playout_for(9).game_state.game

@@ -7,7 +7,6 @@ A naive very slow implementation of random playouts. Next up making it faster...
 ### Why would you build a Go-Bot in Ruby?
 Cause it's fun.
 
-
 ### Running truffle
 
 Go ahead and [install from source](https://github.com/jruby/jruby/wiki/Truffle#from-source). Then you have to specify the graal VM when you execute something like this:
