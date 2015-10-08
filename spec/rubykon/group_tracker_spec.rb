@@ -1,127 +1,37 @@
 require_relative 'spec_helper'
 
 module Rubykon
-  RSpec.describe Group do
+  RSpec.describe GroupTracker do
 
-    let(:stone) {Stone.new 1, 1, :black}
-    let(:other_stone) {Stone.new 1, 2, :black}
-    let(:group) {Group.new stone}
-    let(:other_group) {Group.new other_stone}
-
-    describe 'initialization' do
-      it 'starts with no liberties' do
-        expect(group.liberty_count).to eq 0
-        expect(group.liberties).to be_empty
-      end
-
-      it 'has the stone it was initialized with' do
-        expect(group.stones).to contain_exactly stone
-      end
-
-      it 'also sets the group of the stone' do
-        group
-        expect(stone.group).to be group
-      end
+    let(:overseer) {described_class.new}
+    let(:group) do
+      {
+        id: 0,
+        stones: [0]
+      }
     end
+    let(:other_group) {GroupTracker.new other_stone}
 
-    describe 'connect' do
-      it "connects another stone without a group to the group" do
-        group.connect(other_stone)
-        expect(group.stones).to contain_exactly(stone, other_stone)
-        expect(other_stone.group).to be group
-      end
-
-      it "connects another stone that already has a group to the group" do
-        other_group
-        group.connect(other_stone)
-        expect(group.stones).to contain_exactly(stone, other_stone)
-        expect(other_stone.group).to be group
-      end
-
-      describe 'connecting a group with multiple stones' do
-        let(:new_stones) {[StoneFactory.build, StoneFactory.build]}
-        let(:all_grouped_stones) {new_stones << other_stone << stone}
-
-        before :each do
-          new_stones.each {|stone| other_group.connect(stone)}
-          group.connect(other_stone)
-        end
-
-        it "connects all stones of another group to the new group" do
-          all_grouped_stones.each do |stone|
-            expect(stone.group).to be group
-          end
-        end
-
-        it "gives the group all the stones" do
-          expect(group.stones).to match_array(all_grouped_stones)
-        end
-      end
-    end
-
-    describe 'liberties' do
-
-      let(:liberty) {Stone.new 1, 2, Board::EMPTY_COLOR}
-
-      before :each do
-        group.add_liberty liberty
-      end
-
-      describe '#add_liberty' do
-        it "increases the liberty count" do
-          expect(group.liberty_count).to eq 1
-        end
-
-        it "adds it to the liberties hash" do
-          expect(group.liberties).to eq('1-2' => liberty)
-        end
-
-        it "is not caught" do
-          expect(group).not_to be_caught
-        end
-
-        it 'is idempotent' do
-          group.add_liberty liberty
-          expect(group.liberty_count).to eq 1
-          expect(group.liberties).to eq('1-2' => liberty)
-        end
-      end
-
-      describe "#remove_liberty" do
-        let(:liberty_taking_stone) {Stone.new 1, 2, :white}
-
-        before :each do
-          group.remove_liberty(liberty_taking_stone)
-        end
-
-        it "decreases the liberty count back to 0" do
-          expect(group.liberty_count).to eq 0
-        end
-
-        it "adds the new stone in, in the liberties hash" do
-          expect(group.liberties).to eq('1-2' => liberty_taking_stone)
-        end
-
-        it "is caught" do
-          expect(group).to be_caught
-        end
-
-        it 'is idempotent' do
-          group.remove_liberty liberty_taking_stone
-          expect(group.liberty_count).to eq 0
-          expect(group.liberties).to eq('1-2' => liberty_taking_stone)
-        end
-      end
-    end
-
-    describe '.assign (integration style)' do
+    describe '#assign (integration style)' do
       let(:game) {Game.from board_string}
       let(:board) {game.board}
+      let(:group_tracker) {game.group_tracker}
+      let(:group) {group_tracker.group_of(identifier)}
+      let(:identifier) {board.identifier_for(*coords)}
+      let(:other_group) do
+        group_from(*other_coords)
+      end
+      let(:another_group) do
+        group_from(*another_coords)
+      end
+      let(:coords) {[connector[0], connector[1]]}
+      let(:color) {connector.last}
 
       def liberties_at(*identifiers)
-        identifiers.inject({}) do |hash, identifier|
-          x, y = identifier.split('-').map &:to_i
-          hash[identifier] = Stone.new(x, y, Board::EMPTY_COLOR)
+        identifiers.inject({}) do |hash, string_notation|
+          x, y = string_notation.split('-').map &:to_i
+          identifier = board.identifier_for(x, y)
+          hash[identifier] = Board::EMPTY
           hash
         end
       end
@@ -134,14 +44,15 @@ module Rubykon
 ---
           BOARD
         end
-        let(:group) {board[2, 2].group}
+
+        let(:coords) {[2, 2]}
 
         it "has 4 liberties" do
           expect(group.liberty_count).to eq 4
         end
 
         it "has the stone" do
-          expect(group.stones).to contain_exactly(board[2, 2])
+          expect(group.stones).to contain_exactly(identifier)
         end
 
         it "correctly references those liberties" do
@@ -157,7 +68,7 @@ module Rubykon
 ---
           BOARD
         end
-        let(:group) {board[2, 1].group}
+        let(:coords) {[2, 1]}
 
         it "has 4 liberties" do
           expect(group.liberty_count).to eq 3
@@ -176,7 +87,9 @@ X--
 ---
           BOARD
         end
-        let(:group) {board[1, 1].group}
+
+        let(:coords) {[1, 1]}
+
 
         it "has 4 liberties" do
           expect(group.liberty_count).to eq 2
@@ -196,7 +109,7 @@ X--
 ----
           BOARD
         end
-        let(:group) {board[2, 2].group}
+        let(:coords) {[2, 2]}
 
         it "has 4 liberties" do
           expect(group.liberty_count).to eq 6
@@ -211,10 +124,8 @@ X--
       describe 'connecting through a connect move' do
 
         before :each do
-          game.set_valid_move connector
+          game.set_valid_move identifier, color
         end
-
-        let(:group) {board[connector.x, connector.y].group}
 
         describe 'merging two groups with multiple stones' do
           let(:board_string) do
@@ -227,9 +138,21 @@ XX-XX
             BOARD
           end
 
-          let(:connector) {Stone.new 3, 3, :black}
+          let(:connector) {[3, 3, :black]}
+          let(:all_stone_coords) do
+            [[1, 3], [2, 3], [3, 3], [4, 3], [5, 3]]
+          end
+
           let(:all_stones) do
-            [board[1, 3], board[2, 3], board[3, 3], board[4, 3], board[5, 3]]
+            all_stone_coords.map do |x, y|
+              board.identifier_for(x, y)
+            end
+          end
+
+          let(:all_stone_group_ids) do
+            all_stones.map do |identifier|
+              group_tracker.group_id_of(identifier)
+            end
           end
 
           it "has 10 liberties" do
@@ -237,8 +160,8 @@ XX-XX
           end
 
           it "all stones belong to the same group" do
-            all_stones.each do |stone|
-              expect(stone.group).to eq group
+            all_stone_group_ids.each do |group_id|
+              expect(group_id).to eq group.identifier
             end
           end
 
@@ -247,7 +170,7 @@ XX-XX
           end
 
           it "does not think that the connector is a liberty" do
-            expect(group.liberties[connector.identifier]).to be_nil
+            expect(group.liberties).not_to have_key(identifier)
           end
         end
 
@@ -261,14 +184,14 @@ XX-XX
             BOARD
           end
 
-          let(:connector) {Stone.new 3, 3, :black}
+          let(:connector) {[3, 3, :black]}
 
           it 'has 7 liberties' do
             expect(group.liberty_count).to eq 7
           end
 
           it "does not think that the connector is a liberty" do
-            expect(group.liberties[connector.identifier]).to be_nil
+            expect(group.liberties).not_to have_key(identifier)
           end
         end
 
@@ -282,14 +205,15 @@ XXXXX
 -----
             BOARD
           end
-          let(:connector) {Stone.new 3, 3, :black}
+          let(:connector) {[3, 3, :black]}
+          let(:other_coords) {[1, 4]}
 
           it "has 14 liberties" do
             expect(group.liberty_count).to eq 14
           end
 
           it "reports the right group for connected stones" do
-            expect(board[1, 4].group).to eq group
+            expect(other_group).to eq group
           end
         end
 
@@ -303,7 +227,7 @@ XXXXX
 -----
             BOARD
           end
-          let(:connector) {Stone.new 5,3, :black}
+          let(:connector) {[5,3, :black]}
 
           it "has the right liberty count of 13" do
             expect(group.liberty_count).to eq 13
@@ -321,13 +245,15 @@ XXXXX
 -O-
             BOARD
           end
+          let(:other_coords) {[2, 2]}
+          let(:another_coords) {[2, 3]}
 
           it "gives the black stone 3 liberties" do
-            expect(board[2, 2].group.liberty_count).to eq 3
+            expect(other_group.liberty_count).to eq 3
           end
 
           it "gives the white stone two liberties" do
-            expect(board[2, 3].group.liberty_count).to eq 2
+            expect(another_group.liberty_count).to eq 2
           end
         end
 
@@ -340,11 +266,14 @@ OXO
             BOARD
           end
 
-          let(:white_stones) {[board[1, 2], board[3, 2], board[2, 3]]}
-          let(:white_stone_groups) {white_stones.map &:group}
+          let(:white_stone_coords) {[[1, 2], [3, 2], [2, 3]]}
+          let(:white_stone_groups) do
+            white_stone_coords.map {|x, y| group_from(x, y)}
+          end
+          let(:other_coords) {[2, 2]}
 
           it "leaves the black stone just one liberty" do
-            expect(board[2, 2].group.liberty_count).to eq 1
+            expect(other_group.liberty_count).to eq 1
           end
 
           it "the white stones have all different groups" do
@@ -369,17 +298,20 @@ XXXXX
             BOARD
           end
 
-          let(:connector) {Stone.new 3, 3, :black}
+          let(:connector) {[3, 3, :black]}
+          let(:other_coords) {[2, 3]}
+          let(:another_coords) {[3, 3]}
+
           before :each do
-            game.set_valid_move connector
+            game.set_valid_move identifier, color
           end
 
           it "the white group has just one liberty" do
-            expect(board[2, 3].group.liberty_count).to eq 1
+            expect(other_group.liberty_count).to eq 1
           end
 
           it "the black group has 13 liberties" do
-            expect(board[3, 3].group.liberty_count).to eq 13
+            expect(another_group.liberty_count).to eq 13
           end
         end
 
@@ -394,19 +326,130 @@ XXXXX
             BOARD
           end
 
-          let(:taker) {Stone.new 2, 3, :white}
+          let(:taker) {[2, 3, :white]}
+          let(:taker_group) {group_from taker[0], taker[1]}
+          let(:other_coords) {[3, 3]}
           before :each do
-            game.set_valid_move taker
+            game.set_valid_move board.identifier_for(taker[0], taker[1]), taker[2]
           end
 
           it "the white group has just one liberty" do
-            expect(board[2, 3].group.liberty_count).to eq 1
+            expect(taker_group.liberty_count).to eq 1
           end
 
           it "the black group has 13 liberties" do
-            expect(board[3, 3].group.liberty_count).to eq 13
+            expect(other_group.liberty_count).to eq 13
           end
         end
+      end
+
+      describe "captures" do
+        describe "multiple stones next to the capturing stone" do
+          let(:board_string) do
+            <<-BOARD
+-XX--
+XOOX-
+--OX-
+--X--
+            BOARD
+          end
+
+          before :each do
+            game.set_valid_move board.identifier_for(2, 3), :black
+          end
+
+          it "clears the caught stones" do
+            expect(board_at(2, 2)).to eq Board::EMPTY
+            expect(board_at(3, 2)).to eq Board::EMPTY
+            expect(board_at(3, 3)).to eq Board::EMPTY
+          end
+
+          it "gives surrounding stones their liberties back" do
+            expect(group_from(2, 1).liberty_count).to eq 4
+            expect(group_from(2, 3).liberty_count).to eq 4
+          end
+
+          it "has liberties where the enemy stones used to be" do
+            liberties = group_from(2, 3).liberties
+            expect(liberties.size).to eq 4
+            expect(liberties.fetch(board.identifier_for(2, 2))).to eq Board::EMPTY
+            expect(liberties.fetch(board.identifier_for(3, 3))).to eq Board::EMPTY
+
+          end
+
+          it "increases the captures count" do
+            expect(game.captures[:black]).to eq 3
+          end
+        end
+
+        describe "capturing 2 birds with one stone" do
+          let(:board_string) do
+            <<-BOARD
+-----
+XX-XX
+OO-OO
+XX-XX
+-----
+            BOARD
+          end
+
+          before :each do
+            game.set_valid_move board.identifier_for(3, 3), :black
+          end
+
+          it "clears the caught stones" do
+            expect(board_at(1, 3)).to eq Board::EMPTY
+            expect(board_at(2, 3)).to eq Board::EMPTY
+            expect(board_at(4, 3)).to eq Board::EMPTY
+            expect(board_at(5, 3)).to eq Board::EMPTY
+          end
+
+          it "gives surrounding stones their liberties back" do
+            expect(group_from(2, 2).liberty_count).to eq 5
+            expect(group_from(3, 3).liberty_count).to eq 4
+            expect(group_from(4, 4).liberty_count).to eq 5
+          end
+
+          it "has liberties where the enemy stones used to be" do
+            liberties = group_from(3, 3).liberties
+            expect(liberties.size).to eq 4
+            expect(liberties.fetch(board.identifier_for(2, 3))).to eq Board::EMPTY
+            expect(liberties.fetch(board.identifier_for(4, 3))).to eq Board::EMPTY
+
+          end
+
+          it "increases the captures count" do
+            expect(game.captures[:black]).to eq 4
+          end
+        end
+
+        describe "capturing a stone after the assigned group of a neighbor changed" do
+          let(:board_string) do
+            <<-BOARD
+X-XO
+----
+----
+----
+            BOARD
+          end
+
+          let(:group) {group_from(1, 1)}
+
+          before :each do
+            game.set_valid_move(board.identifier_for(2, 1), :black) #connects
+            game.set_valid_move(board.identifier_for(4, 2), :black) #captures
+          end
+
+          it "group has 4 liberties" do
+            expect(group.liberty_count).to eq 4
+          end
+
+          it "group has a liberty where the white stone used to be" do
+            expect(group.liberties.fetch(board.identifier_for(4, 1))).to eq Board::EMPTY
+          end
+
+        end
+
       end
 
       describe "huge integration examples as well as regressions" do

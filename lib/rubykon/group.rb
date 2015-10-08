@@ -1,46 +1,49 @@
 module Rubykon
   class Group
 
-    attr_reader :liberty_count, :stones, :liberties
+    attr_reader :identifier, :stones, :liberties, :liberty_count
 
-    def self.assign(stone, board)
-      neighbours_by_color = color_to_neighbour(board, stone)
-      join_group_of_friendly_stones(neighbours_by_color[stone.color], stone)
-      create_own_group(stone) unless stone.group
-      add_liberties(neighbours_by_color[Board::EMPTY_COLOR], stone)
-      take_liberties_of_enemies(neighbours_by_color[stone.enemy_color], stone, board)
-    end
+    NOT_SET = :not_set
 
-    def initialize(stone, liberty_count = 0, liberties = {})
-      @liberties = liberties
+    def initialize(id, stones = [id], liberties = {}, liberty_count = 0)
+      @identifier    = id
+      @stones        = stones
+      @liberties     = liberties
       @liberty_count = liberty_count
-      if stone.nil?
-        @stones = []
+    end
+    
+    def connect(stone_identifier, stone_group, group_tracker)
+      return if stone_group == self
+      if stone_group
+        merge(stone_group, group_tracker)
       else
-        @stones = [stone]
-        stone.join(self)
+        add_stone(stone_identifier, group_tracker)
+      end
+      remove_connector_liberty(stone_identifier)
+    end
+
+    def gain_liberties_from_capture_of(captured_group, group_tracker)
+      new_liberties = @liberties.select do |_identifier, stone_identifier|
+        group_tracker.group_id_of(stone_identifier) == captured_group.identifier
+      end
+      new_liberties.each do |identifier, _group_id|
+        add_liberty(identifier)
       end
     end
 
-    def connect(stone)
-      return if stone.group == self
-      if stone.group
-        merge(stone.group)
-      else
-        add_stone(stone)
-      end
-      remove_connector_liberty(stone)
+    def dup
+      self.class.new @identifier, @stones.dup, @liberties.dup, @liberty_count
     end
 
-    def add_liberty(field)
-      return if already_counted_as_liberty?(field)
-      @liberties[field.identifier] = field
+    def add_liberty(identifier)
+      return if already_counted_as_liberty?(identifier, Board::EMPTY)
+      @liberties[identifier] = Board::EMPTY
       @liberty_count += 1
     end
 
-    def remove_liberty(stone)
-      return if already_counted_as_liberty?(stone)
-      @liberties[stone.identifier] = stone
+    def remove_liberty(identifier)
+      return if already_counted_as_liberty?(identifier, identifier)
+      @liberties[identifier] = identifier
       @liberty_count -= 1
     end
 
@@ -48,101 +51,49 @@ module Rubykon
       @liberty_count <= 0
     end
 
-    def remove(board)
-      @stones.each do |stone|
-        empty_stone = Stone.new stone.x, stone.y, Board::EMPTY_COLOR
-        board.set empty_stone
-      end
-      # we could track that from the start
-      neighbouring_groups = liberties.values.map(&:group).compact.uniq
-      neighbouring_groups.each do |group|
-        group.gain_liberties_from_capture_of(self, board)
-      end
-      @stones
+    def add_enemy_group_at(enemy_identifier)
+      liberties[enemy_identifier] = enemy_identifier
     end
-
-    def gain_liberties_from_capture_of(group, board)
-      new_liberties = liberties.values.select {|stone| stone.group == group}
-      new_liberties.each do |stone|
-        field = board[stone.x, stone.y]
-        add_liberty(field)
-      end
-    end
-
-    def dup
-      self.class.new(nil, @liberty_count, {})
-    end
-
+    
     private
-    def remove_connector_liberty(stone)
-      liberties.delete(stone.identifier)
+
+    def merge(other_group, group_tracker)
+      merge_stones(other_group, group_tracker)
+      merge_liberties(other_group)
+    end
+
+    def merge_stones(other_group, group_tracker)
+      other_group.stones.each do |identifier|
+        add_stone(identifier, group_tracker)
+      end
+    end
+
+    def merge_liberties(other_group)
+      @liberty_count += other_group.liberty_count
+      @liberties.merge!(other_group.liberties) do |_key, my_identifier, other_identifier|
+        if shared_liberty?(my_identifier, other_identifier)
+          @liberty_count -= 1
+        end
+        my_identifier
+      end
+    end
+
+    def add_stone(identifier, group_tracker)
+      group_tracker.stone_joins_group(identifier, @identifier)
+      @stones << identifier
+    end
+
+    def shared_liberty?(my_identifier, other_identifier)
+      my_identifier == Board::EMPTY || other_identifier == Board::EMPTY
+    end
+
+    def remove_connector_liberty(identifier)
+      @liberties.delete(identifier)
       @liberty_count -= 1
     end
 
-    def add_stone(stone)
-      stone.join(self)
-      @stones << stone
-    end
-
-    def already_counted_as_liberty?(field)
-      @liberties[field.identifier] == field
-    end
-
-    def merge(friendly_group)
-      merge_stones(friendly_group)
-      merge_liberties(friendly_group)
-    end
-
-    def merge_stones(friendly_group)
-      friendly_group.stones.each { |stone| add_stone(stone) }
-    end
-
-    def merge_liberties(friendly_group)
-      @liberty_count += friendly_group.liberty_count
-      liberties.merge!(friendly_group.liberties) do |_key, my_field, other_field|
-        if shared_liberty?(my_field, other_field)
-          @liberty_count -= 1
-        end
-        my_field
-      end
-    end
-
-    def shared_liberty?(my_field, other_field)
-      my_field.color == Board::EMPTY_COLOR ||
-        other_field.color == Board::EMPTY_COLOR
-    end
-
-    # TODO awful lot of class methods, there ought to be a better way
-    def self.color_to_neighbour(board, stone)
-      neighbours                  = board.neighbours_of(stone.x, stone.y)
-      neighbours_by_color         = neighbours.group_by &:color
-      neighbours_by_color.default = []
-      neighbours_by_color
-    end
-
-    def self.take_liberties_of_enemies(enemy_neighbours, stone, board)
-      enemy_neighbours.each do |enemy_stone|
-        enemy_group = enemy_stone.group
-        enemy_group.remove_liberty(stone)
-        stone.group.liberties[enemy_stone.identifier] = enemy_stone
-        stone.capture enemy_group.remove(board) if enemy_group.caught?
-      end
-    end
-
-    def self.add_liberties(liberties, stone)
-      liberties.each do |field|
-        stone.group.add_liberty(field)
-      end
-    end
-
-    def self.create_own_group(stone)
-      stone.join(new(stone))
-    end
-
-    def self.join_group_of_friendly_stones(friendly_stones, stone)
-      friendly_stones.each do |friendly_stone|
-        friendly_stone.group.connect(stone)
-      end
+    def already_counted_as_liberty?(identifier, value)
+      @liberties.fetch(identifier, NOT_SET) == value
     end
   end
 end
