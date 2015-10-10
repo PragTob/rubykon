@@ -17,6 +17,7 @@ class Rubykon::MoveValidator
   public :no_ko_move?
 end
 
+
 Benchmark.ips do |benchmark|
   empty_game = Rubykon::GameState.new Rubykon::Game.new 19
   mid_game = empty_game.dup
@@ -25,40 +26,27 @@ Benchmark.ips do |benchmark|
   end
   finished_game = playout_for(19).game_state
 
-  benchmark.report 'finished?' do
-    finished_game.finished?
-  end
+  games = {
+    empty_game    => 'empty game',
+    mid_game      => 'mid game (200 moves played)',
+    finished_game => 'finished game'
+  }
 
-  benchmark.report 'empty game generate_move' do
-    empty_game.generate_move
-  end
+  games.each do |game, description|
+    benchmark.report "#{description}: finished?" do
+      game.finished?
+    end
 
-  benchmark.report 'mid game (200 moves played) generate_move' do
-    mid_game.generate_move
-  end
+    benchmark.report "#{description}: generate_move" do
+      game.generate_move
+    end
 
-  benchmark.report 'finished game generate_move (should pass)' do
-    finished_game.generate_move
-  end
+    color = game.next_turn_color
 
-  color = empty_game.next_turn_color
-
-  benchmark.report 'empty board plausible_move?' do
-    identifier = rand(361)
-    empty_game.plausible_move?(identifier, color)
-  end
-
-  color = mid_game.next_turn_color
-
-  benchmark.report 'mid board plausible_move?' do
-    identifier = rand(361)
-    mid_game.plausible_move?(identifier, color)
-  end
-
-  color = finished_game.next_turn_color
-  benchmark.report 'finished board plausible_move?' do
-    identifier = rand(361)
-    finished_game.plausible_move?(identifier, color)
+    benchmark.report "#{description}: plausible_move?" do
+      identifier = rand(361)
+      game.plausible_move?(identifier, color)
+    end
   end
 
   #
