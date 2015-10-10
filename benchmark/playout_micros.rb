@@ -32,37 +32,37 @@ Benchmark.ips do |benchmark|
     finished_game => 'finished game'
   }
 
-  games.each do |game, description|
+  games.each do |game_state, description|
     benchmark.report "#{description}: finished?" do
-      game.finished?
+      game_state.finished?
     end
 
     benchmark.report "#{description}: generate_move" do
-      game.generate_move
+      game_state.generate_move
     end
 
-    color = game.next_turn_color
+    color = game_state.next_turn_color
 
     benchmark.report "#{description}: plausible_move?" do
       identifier = rand(361)
-      game.plausible_move?(identifier, color)
+      game_state.plausible_move?(identifier, color)
+    end
+
+    validator    = Rubykon::MoveValidator.new
+
+    benchmark.report "valid?" do
+      identifier = rand(361)
+      validator.valid?(identifier, color, game_state.game)
+    end
+
+    benchmark.report "no_suicide_move?" do
+      identifier = rand(361)
+      validator.no_suicide_move?(identifier, color, game_state.game)
     end
   end
 
-  #
-  # validator    = Rubykon::MoveValidator.new
-  #
-  # benchmark.report 'valid?' do
-  #   validator.valid?(move, game)
-  # end
-  #
-  # benchmark.report 'no_suicide_move?' do
-  #   validator.no_suicide_move?(move, board)
-  # end
-  #
-  # benchmark.report 'no_ko_move?' do
-  #   validator.no_ko_move?(move, game)
-  # end
+
+
   #
   # eye_detector = Rubykon::EyeDetector.new
   #
