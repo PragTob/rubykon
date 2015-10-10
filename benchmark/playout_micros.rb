@@ -33,6 +33,10 @@ Benchmark.ips do |benchmark|
   }
 
   games.each do |game_state, description|
+
+    game = game_state.game
+    board = game.board
+
     benchmark.report "#{description}: finished?" do
       game_state.finished?
     end
@@ -50,42 +54,41 @@ Benchmark.ips do |benchmark|
 
     validator    = Rubykon::MoveValidator.new
 
-    benchmark.report "valid?" do
+    benchmark.report "#{description}: valid?" do
       identifier = rand(361)
-      validator.valid?(identifier, color, game_state.game)
+      validator.valid?(identifier, color, game)
     end
 
-    benchmark.report "no_suicide_move?" do
+    benchmark.report "#{description}: no_suicide_move?" do
       identifier = rand(361)
-      validator.no_suicide_move?(identifier, color, game_state.game)
+      validator.no_suicide_move?(identifier, color, game)
+    end
+
+    eye_detector = Rubykon::EyeDetector.new
+
+    benchmark.report "#{description}: is_eye?" do
+      identifier = rand(361)
+      eye_detector.is_eye?(identifier, board)
+    end
+
+    benchmark.report "#{description}: candidate_eye_color" do
+      identifier = rand(361)
+      eye_detector.candidate_eye_color(identifier, board)
+    end
+
+    candidate_identifier = rand(361)
+    candidate_eye_color = eye_detector.candidate_eye_color(candidate_identifier, board)
+
+    benchmark.report "#{description}: is_real_eye?" do
+      eye_detector.is_real_eye?(candidate_identifier, board, candidate_eye_color)
+    end
+
+    benchmark.report "#{description}: diagonal_colors_of" do
+      identifier = rand(361)
+      board.diagonal_colors_of(identifier)
     end
   end
 
-
-
-  #
-  # eye_detector = Rubykon::EyeDetector.new
-  #
-  # x = move.x
-  # y = move.y
-  #
-  # benchmark.report 'is_eye?' do
-  #   eye_detector.is_eye?(x, y, board)
-  # end
-  #
-  # benchmark.report 'candidate_eye_color' do
-  #   eye_detector.candidate_eye_color(x, y, board)
-  # end
-  #
-  # candidate_eye_color = eye_detector.candidate_eye_color(x, y, board)
-  #
-  # benchmark.report 'is_real_eye?' do
-  #   eye_detector.is_real_eye?(x, y, board, candidate_eye_color)
-  # end
-  #
-  # benchmark.report 'diagonal_colors_of' do
-  #   board.diagonal_colors_of(x, y)
-  # end
   #
   # benchmark.report 'set_valid_move' do
   #   game.dup.set_valid_move move
