@@ -87,12 +87,17 @@ Benchmark.ips do |benchmark|
       identifier = rand(361)
       board.diagonal_colors_of(identifier)
     end
+
+    benchmark.report "#{description}: dup" do
+      game_state.dup
+    end
+
+    benchmark.report "#{description}: set_valid_move" do
+      game.dup.set_valid_move rand(361), color
+    end
   end
 
-  #
-  # benchmark.report 'set_valid_move' do
-  #   game.dup.set_valid_move move
-  # end
+
   #
   # benchmark.report 'set' do
   #   board.set move
