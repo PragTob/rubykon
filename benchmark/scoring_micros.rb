@@ -1,5 +1,6 @@
 require_relative '../lib/rubykon'
-require 'benchmark/ips'
+require_relative 'support/playout_help'
+require_relative 'support/benchmark-ips'
 
 class Rubykon::GameScorer
   public :score_empty_cutting_point
@@ -8,24 +9,46 @@ class Rubykon::GameScorer
 end
 
 Benchmark.ips do |benchmark|
-  benchmark.config time: 30, warmup: 60
 
-  board = Rubykon::Board.new 19
-  cutting_point = board[8, 8]
+  board = Rubykon::Board.from <<-BOARD
+OOOOO-O-OOOOOOXXXXX
+O-OOOOOO-O-OOOX-X-X
+OO-OOXOXOOOO-OOXXXX
+-OOOXXXXXXOOOOOX-X-
+OOOOOXOXXXOOOOOOXXX
+OXXOOOOOXOOOO-OOOOX
+X-XOOOXXXOOOOOO-OOO
+XXXOXXXOXXOOOOOOO-O
+XX-XXXOOOOO-OOO-OOO
+X-XXXXOXXO-OOOOOOOO
+-XXXXXXXXXO-OOO-OOO
+XXXX-X-XXXXOOXOO-O-
+XX-XX-XX-XOOXXOOOOO
+-XXXXX-XXXXOX-XOOOO
+XXX-XXXXXXXXXXXXOXO
+XXXX-XXXXX-X-XXXOXO
+-XXXX-X-XXXXXXXXXXO
+X-XX-XXXX-X-XX-XOOO
+-XXXXX-XXXXXXXXXO-O
+  BOARD
   scorer = Rubykon::GameScorer.new
+  identifier = board.identifier_for(3, 3)
+
+
 
   benchmark.report 'score_empty_cp' do
-    game_score = {Rubykon::Board::BLACK_COLOR => 0, Rubykon::Board::WHITE_COLOR => Rubykon::Game::DEFAULT_KOMI}
-    scorer.score_empty_cutting_point(cutting_point, board, game_score)
+    game_score = {Rubykon::Board::BLACK => 0,
+                  Rubykon::Board::WHITE => Rubykon::Game::DEFAULT_KOMI}
+    scorer.score_empty_cutting_point(identifier, board, game_score)
   end
 
-  benchmark.report 'neighbour_c_of' do
-    board.neighbour_colors_of(cutting_point.x, cutting_point.y)
+  benchmark.report 'Board#neighbour_colors_of' do
+    board.neighbour_colors_of(identifier)
   end
 
-  neighbour_colors = board.neighbour_colors_of(cutting_point.x, cutting_point.y)
+  neighbour_colors = board.neighbour_colors_of(identifier)
 
-  benchmark.report 'find_cand_c_of' do
+  benchmark.report 'find_candidate_color' do
     scorer.find_candidate_color(neighbour_colors)
   end
 
