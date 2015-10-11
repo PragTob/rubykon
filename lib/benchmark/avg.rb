@@ -7,8 +7,9 @@ module Benchmark
 
       yield benchmark_suite
 
-      benchmark_suite.run_warmup
-      benchmark_suite.run
+      [:warmup, :time].each do |type|
+        benchmark_suite.run type
+      end
 
       benchmark_suite.report
     end

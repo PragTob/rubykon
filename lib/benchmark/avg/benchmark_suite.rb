@@ -4,6 +4,10 @@ module Benchmark
     class BenchmarkSuite
       OUTPUT_WIDTH = 80
       PRECISION    = 2
+      BENCHMARK_DESCRIPTION = {
+        warmup: 'Warming up...',
+        time:   'Running the benchmark...'
+      }
 
       def initialize
         @options = default_options
@@ -19,17 +23,12 @@ module Benchmark
         self
       end
 
-      def run_warmup
-        puts 'Warming up'
+      def run(type)
+        puts BENCHMARK_DESCRIPTION[type]
         divider
-        run_benchmarks(warmup_time)
+        time = @options[type]
+        run_benchmarks(time)
         puts
-      end
-
-      def run
-        puts 'Running the benchmarks'
-        divider
-        run_benchmarks(run_time)
       end
 
       private
@@ -39,14 +38,6 @@ module Benchmark
           time: 60,
           min_iterations: 2
         }
-      end
-
-      def warmup_time
-        @options[:warmup]
-      end
-
-      def run_time
-        @options[:time]
       end
 
       def divider

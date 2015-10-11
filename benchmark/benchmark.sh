@@ -2,7 +2,7 @@
 
 echo Running truffle graal with enough heap space
 jruby+truffle run --graal -- -e "puts RUBY_DESCRIPTION"
-jruby+truffle run --graal -J-Xmx1500m benchmark/mcts_avg_19.rb
+jruby+truffle run --graal -J-Xmx1500m benchmark/mcts_avg.rb
 echo
 echo
 
@@ -13,7 +13,7 @@ do
   echo Running $ruby with ${RUBY_TO_ARG[$ruby]}
   rvm use $ruby
   ruby -v
-  ruby ${RUBY_TO_ARG[$ruby]} benchmark/mcts_avg_19.rb
+  ruby ${RUBY_TO_ARG[$ruby]} benchmark/mcts_avg.rb
   echo
   echo
 done
