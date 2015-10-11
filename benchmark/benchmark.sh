@@ -1,12 +1,20 @@
 #! /bin/bash --login
 
-declare -A RUBY_TO_ARG=( ["2.2"]="" [jruby]="" [rbx]="" [jruby-1]="" [jruby-dev-graal]="-X+T -J-Xmx1500m" [1.9.3]="" )
+echo Running truffle graal with enough heap space
+jruby+truffle run --graal -- -e "puts RUBY_DESCRIPTION"
+jruby+truffle run --graal -J-Xmx1500m benchmark/mcts_avg_19.rb
+echo
+echo
+
+declare -A RUBY_TO_ARG=( ["2.2"]="" [jruby]="" [jruby-9]="--server -Xcompile.invokedynamic=true -J-Xmx1500m" [rbx]="" [jruby-1]="" [1.9.3]="" )
 
 for ruby in "${!RUBY_TO_ARG[@]}"
 do
   echo Running $ruby with ${RUBY_TO_ARG[$ruby]}
   rvm use $ruby
   ruby -v
-  ruby ${RUBY_TO_ARG[$ruby]} benchmark/full_playout.rb
+  ruby ${RUBY_TO_ARG[$ruby]} benchmark/mcts_avg_19.rb
+  echo
+  echo
 done
 
