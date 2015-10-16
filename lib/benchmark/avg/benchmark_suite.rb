@@ -3,7 +3,6 @@ module Benchmark
   module Avg
     class BenchmarkSuite
       OUTPUT_WIDTH = 80
-      PRECISION    = 2
       BENCHMARK_DESCRIPTION = {
         warmup: 'Warming up...',
         time:   'Running the benchmark...'
@@ -11,24 +10,41 @@ module Benchmark
 
       def initialize
         @options = default_options
-        @list = []
+        @jobs = []
+        @samples = {
+          warmup: [],
+          time:   []
+        }
       end
 
       def config(options)
         @options.merge! options
       end
 
-      def report(label = "", &blk)
-        @list << [label, blk]
+      def report(label = "", &block)
+        @jobs << Job.new(label, block)
         self
       end
 
-      def run(type)
-        puts BENCHMARK_DESCRIPTION[type]
+      def run
+        puts 'Running your benchmark...'
         divider
-        time = @options[type]
-        run_benchmarks(time)
+        @jobs.each do |job|
+          job.run @options[:warmup], @options[:time]
+        end
+        puts 'Benchmarking finished, here are your reports...'
         puts
+        puts 'Warm up results:'
+        divider
+        @jobs.each do |job|
+          puts job.warm_up_report
+        end
+        puts
+        puts 'Runtime results:'
+        divider
+        @jobs.each do |job|
+          puts job.runtime_report
+        end
       end
 
       private
@@ -44,53 +60,7 @@ module Benchmark
         puts '-' * OUTPUT_WIDTH
       end
 
-      def run_benchmarks(time)
-        @list.each do |label, to_benchmark|
-          run_and_measure(label, to_benchmark, time)
-        end
-      end
 
-      def run_and_measure(label, to_benchmark, time)
-        suite_finish      = Time.now + time
-        samples = []
-
-        while Time.now < suite_finish
-          measure_block(samples, to_benchmark)
-        end
-
-        print_results label, samples
-      end
-
-      def measure_block(samples, to_benchmark)
-        start = Time.now
-        to_benchmark.call
-        finish = Time.now
-        samples << (finish - start)
-      end
-
-      def extract_times(samples)
-        times         = {}
-        times[:total] = samples.inject(:+)
-        iterations    = samples.size
-        times[:avg]   = times[:total] / iterations
-        times[:ipm]   = iterations / (times[:total] / 60)
-        total_variane = samples.inject(0) do |total, time|
-          total + ((time - times[:avg]) ** 2)
-        end
-        times[:variance] = total_variane / iterations
-        times[:standard_deviation] = Math.sqrt times[:variance]
-        times[:standard_deviation_percent] = 100.0 * (times[:standard_deviation] / times[:avg])
-        times
-      end
-
-
-      def print_results(label, samples)
-        p samples
-        times = extract_times(samples)
-        print label.ljust(28) + ' ' * 2
-        puts "#{times[:ipm].round(PRECISION)} i/min  #{times[:avg].round(PRECISION)} s (avg) (± #{times[:standard_deviation_percent].round(PRECISION)
-        }%)"
-      end
     end
   end
 end

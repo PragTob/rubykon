@@ -1,3 +1,4 @@
+require_relative 'avg/job'
 require_relative 'avg/benchmark_suite'
 
 module Benchmark
@@ -7,11 +8,7 @@ module Benchmark
 
       yield benchmark_suite
 
-      [:warmup, :time].each do |type|
-        benchmark_suite.run type
-      end
-
-      benchmark_suite.report
+      benchmark_suite.run
     end
   end
 
