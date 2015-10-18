@@ -35,22 +35,17 @@ module Benchmark
       def run
         puts 'Running your benchmark...'
         divider
-        @jobs.each do |job|
-          job.run @options[:warmup], @options[:time]
-        end
+        each_job { |job| job.run @options[:warmup], @options[:time] }
         puts 'Benchmarking finished, here are your reports...'
         puts
         puts 'Warm up results:'
         divider
-        @jobs.each do |job|
-          puts job.warm_up_report
-        end
+        each_job { |job| puts job.warm_up_report }
         puts
         puts 'Runtime results:'
         divider
-        @jobs.each do |job|
-          puts job.runtime_report
-        end
+        each_job { |job| puts job.runtime_report }
+        divider
       end
 
       private
@@ -66,7 +61,9 @@ module Benchmark
         puts '-' * OUTPUT_WIDTH
       end
 
-
+      def each_job(&proc)
+        @jobs.each &proc
+      end
     end
   end
 end
