@@ -1,8 +1,14 @@
 # encoding: UTF-8
 module Benchmark
   module Avg
+
+    OUTPUT_WIDTH  = 80
+    LABEL_WIDTH   = 30
+    PADDING       = 2
+    METRICS_WIDTH = OUTPUT_WIDTH - LABEL_WIDTH
+
     class BenchmarkSuite
-      OUTPUT_WIDTH = 80
+
       BENCHMARK_DESCRIPTION = {
         warmup: 'Warming up...',
         time:   'Running the benchmark...'

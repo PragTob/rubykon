@@ -1,8 +1,7 @@
 module Benchmark
   module Avg
     class Job
-
-      PRECISION    = 2
+      PRECISION     = 2
 
       def initialize(label, block)
         @label          = label
@@ -51,7 +50,7 @@ module Benchmark
 
       def report(samples)
         times = extract_times(samples)
-        label = @label.ljust(28) + ' ' * 2
+        label = @label.ljust(LABEL_WIDTH - PADDING) + ' ' * PADDING
         time = "#{times[:ipm].round(PRECISION)} i/min  #{times[:avg].round(PRECISION)} s (avg) (± #{times[:standard_deviation_percent].round(PRECISION)}%)"
         label + time
       end
