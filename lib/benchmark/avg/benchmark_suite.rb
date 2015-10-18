@@ -9,18 +9,9 @@ module Benchmark
 
     class BenchmarkSuite
 
-      BENCHMARK_DESCRIPTION = {
-        warmup: 'Warming up...',
-        time:   'Running the benchmark...'
-      }
-
       def initialize
         @options = default_options
         @jobs = []
-        @samples = {
-          warmup: [],
-          time:   []
-        }
       end
 
       def config(options)

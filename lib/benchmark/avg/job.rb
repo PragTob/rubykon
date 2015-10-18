@@ -1,7 +1,7 @@
 module Benchmark
   module Avg
     class Job
-      PRECISION     = 2
+      PRECISION = 2
 
       def initialize(label, block)
         @label          = label
@@ -30,8 +30,8 @@ module Benchmark
       end
 
       private
-      def measure_until(samples, warm_up_finish)
-        while Time.now < warm_up_finish do
+      def measure_until(samples, finish_time)
+        while Time.now < finish_time do
           measure_block(samples)
         end
       end
@@ -49,10 +49,16 @@ module Benchmark
       end
 
       def report(samples)
-        times = extract_times(samples)
-        label = @label.ljust(LABEL_WIDTH - PADDING) + ' ' * PADDING
-        time = "#{times[:ipm].round(PRECISION)} i/min  #{times[:avg].round(PRECISION)} s (avg) (± #{times[:standard_deviation_percent].round(PRECISION)}%)"
-        label + time
+        times   = extract_times(samples)
+        label   = @label.ljust(LABEL_WIDTH - PADDING) + padding_space
+        metrics = "#{times[:ipm].round(PRECISION)} i/min" << padding_space
+        metrics << "#{times[:avg].round(PRECISION)} s (avg)" << padding_space
+        metrics << "(± #{times[:standard_deviation_percent].round(PRECISION)}%)"
+        label + metrics
+      end
+
+      def padding_space
+        ' ' * PADDING
       end
 
       def extract_times(samples)
@@ -66,7 +72,8 @@ module Benchmark
         end
         times[:variance] = total_variane / iterations
         times[:standard_deviation] = Math.sqrt times[:variance]
-        times[:standard_deviation_percent] = 100.0 * (times[:standard_deviation] / times[:avg])
+        times[:standard_deviation_percent] =
+          100.0 * (times[:standard_deviation] / times[:avg])
         times
       end
     end
