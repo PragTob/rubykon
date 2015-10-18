@@ -99,7 +99,7 @@ RSpec.describe Benchmark::Avg do
 
   def create_fake_job(i = 1)
     double 'fake job', run: nil,
-                       warm_up_report:  "Warm up Report #{i}",
+                       warmup_report:  "Warm up Report #{i}",
                        runtime_report:  "Runtime Report #{i}"
   end
 end

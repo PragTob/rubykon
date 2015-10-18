@@ -11,9 +11,9 @@ module Benchmark
         @warming_up     = true
       end
 
-      def run(warm_up_time, run_time)
-        warm_up_finish = Time.now + warm_up_time
-        measure_until(@warmup_samples, warm_up_finish)
+      def run(warmup_time, run_time)
+        warmup_finish = Time.now + warmup_time
+        measure_until(@warmup_samples, warmup_finish)
         finish_warmup
 
         suite_finish = Time.now + run_time
@@ -21,7 +21,7 @@ module Benchmark
       end
 
 
-      def warm_up_report
+      def warmup_report
         report @warmup_samples
       end
 

@@ -12,7 +12,7 @@ module Benchmark::Avg
       let(:fake_io) {FakeIO.new}
       before :each do
         $stdout = fake_io
-        job.run 0.5, 0.5
+        job.run 0.2, 0.3
         $stdout = STDOUT
       end
 
@@ -30,7 +30,7 @@ module Benchmark::Avg
       end
 
       describe '#warmup_report' do
-        subject(:warm_up_report) { job.warm_up_report}
+        subject(:warmup_report) { job.warmup_report}
 
         it_behaves_like "static run time report"
       end

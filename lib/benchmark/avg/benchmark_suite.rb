@@ -31,7 +31,7 @@ module Benchmark
         puts
         puts 'Warm up results:'
         divider
-        each_job { |job| puts job.warm_up_report }
+        each_job { |job| puts job.warmup_report }
         puts
         puts 'Runtime results:'
         divider
