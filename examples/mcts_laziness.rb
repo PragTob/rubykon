@@ -11,11 +11,22 @@ mcts = MCTS::MCTS.new
   [10, 100, 1000].each do |playouts|
     results = Hash.new {0}
     double_step_game = MCTS::Examples::DoubleStep.new position
-    100.times do
+    100.times do |i|
       root = mcts.start double_step_game, playouts
       best_move = root.best_move
       results[best_move] += 1
+      if i == 99
+        puts "Overall win percentage: #{root.win_percentage}"
+        puts "Win percentage with best move played: #{root.children.find{|node| node.move == best_move}.win_percentage}"
+        puts '------------'
+        ([root] + root.children).each do |n|
+          puts n.move
+          puts n.wins
+          puts n.visits
+          puts '-----------'
+        end
+      end
     end
-    puts "Distribution for #{playouts} with a handicap of #{position[:black] - position[:white]} playouts: #{results}"
+    puts "Distribution for #{playouts} playouts with a handicap of #{position[:black] - position[:white]}: #{results}"
   end
 end

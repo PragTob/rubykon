@@ -2,7 +2,7 @@ module MCTS
   module Examples
     class DoubleStep
 
-      FINAL_POSITION = 6
+      FINAL_POSITION = 10
       MAX_STEP = 2
 
       attr_reader :positions
@@ -18,7 +18,7 @@ module MCTS
       end
 
       def generate_move
-        rand(MAX_STEP)
+        rand(MAX_STEP) + 1
       end
 
       def set_move(move)
