@@ -44,7 +44,6 @@ module Benchmark
         {
           warmup: 30,
           time: 60,
-          min_iterations: 2
         }
       end
 
