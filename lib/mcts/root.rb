@@ -27,6 +27,16 @@ module MCTS
       playout_node.backpropagate(won)
     end
 
+    def update_won(won)
+      # logic reversed as the node accumulates its children and has no move
+      # of its own
+      if won
+        self.lost
+      else
+        self.won
+      end
+    end
+
     private
     def select
       node = self

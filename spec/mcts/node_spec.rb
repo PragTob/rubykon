@@ -136,7 +136,7 @@ module MCTS
         4.times do root.lost end
       end
 
-      describe "winning ad child_1_1" do
+      describe "winning at child_1_1" do
 
         before :each do
           child_1_1.backpropagate true
@@ -152,8 +152,8 @@ module MCTS
           expect(child_1.visits).to eq 5
         end
 
-        it "results in a win in the root" do
-          expect(root.wins).to eq 4
+        it "results in a loss in the root (root accumulates level beneath it)" do
+          expect(root.wins).to eq 3
           expect(root.visits).to eq 8
         end
 
@@ -192,8 +192,8 @@ module MCTS
           expect(child_1.visits).to eq 5
         end
 
-        it "propagates the change to the root as a loss" do
-          expect(root.wins).to eq 3
+        it "propagates the change to the root as a win" do
+          expect(root.wins).to eq 4
           expect(root.visits).to eq 8
         end
 

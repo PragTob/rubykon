@@ -55,11 +55,11 @@ module MCTS
 
     def backpropagate(won)
       node = self
-      update_node_won(node, won)
+      node.update_won won
       until node.root? do
         won = !won # switching players perspective
         node = node.parent
-        update_node_won(node, won)
+        node.update_won(won)
       end
     end
 
@@ -67,15 +67,15 @@ module MCTS
       !@untried_moves.empty?
     end
 
-    private
-
-    def update_node_won(node, won)
+    def update_won(won)
       if won
-        node.won
+        self.won
       else
-        node.lost
+        self.lost
       end
     end
+
+    private
 
     def create_child(move)
       game_state = @game_state.dup
