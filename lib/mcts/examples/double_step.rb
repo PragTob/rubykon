@@ -2,7 +2,7 @@ module MCTS
   module Examples
     class DoubleStep
 
-      FINAL_POSITION = 10
+      FINAL_POSITION = 6
       MAX_STEP = 2
 
       attr_reader :positions
@@ -32,6 +32,7 @@ module MCTS
       end
 
       def won?
+        fail "Game not finished" unless finished?
         @positions[@my_color] > @positions[enemy_color]
       end
 
