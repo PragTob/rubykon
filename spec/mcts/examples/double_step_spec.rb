@@ -33,6 +33,10 @@ module MCTS::Examples
         expect(subject.positions[:black]).to eq 2
       end
 
+      it "returns the correct color for last turn" do
+        expect(subject.last_turn_color).to eq :black
+      end
+
       it "does not touch the moves of the other color" do
         expect(subject.positions[:white]).to eq 0
       end
@@ -44,6 +48,10 @@ module MCTS::Examples
 
         it "sets the move for white" do
           expect(subject.positions[:white]).to eq 1
+        end
+
+        it "returns the correct color for last turn" do
+          expect(subject.last_turn_color).to eq :white
         end
 
         it "does not touch the moves of the other color" do
@@ -71,7 +79,8 @@ module MCTS::Examples
           subject.set_move(1)
         end
         expect(subject).to be_finished
-        expect(subject).to be_won
+        expect(subject).to be_won(:black)
+        expect(subject).not_to be_won(:white)
       end
 
       it "is finished once black reaches the 6th field" do
@@ -80,7 +89,8 @@ module MCTS::Examples
           subject.set_move(2)
         end
         expect(subject).to be_finished
-        expect(subject).not_to be_won
+        expect(subject).not_to be_won(:black)
+        expect(subject).to be_won(:white)
       end
     end
 
@@ -100,7 +110,7 @@ module MCTS::Examples
         game = described_class.new({black: 4, white: 0})
         game.set_move(2)
         expect(game).to be_finished
-        expect(game).to be_won
+        expect(game).to be_won(:black)
       end
     end
   end

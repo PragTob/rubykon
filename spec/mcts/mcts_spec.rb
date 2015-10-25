@@ -4,8 +4,8 @@ module MCTS
   RSpec.describe MCTS do
     subject {MCTS.new }
     let(:double_step) {Examples::DoubleStep.new}
-    let(:root) {subject.start(double_step)}
-    let(:times) {1000}
+    let(:root) {subject.start(double_step, times)}
+    let(:times) {100}
 
     it "returns the best move (2)" do
       expect(root.best_move).to eq 2

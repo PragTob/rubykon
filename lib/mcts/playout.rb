@@ -8,8 +8,9 @@ module MCTS
     end
 
     def play
+      my_color = @game_state.last_turn_color
       playout
-      @game_state.won?
+      @game_state.won?(my_color)
     end
 
     def playout

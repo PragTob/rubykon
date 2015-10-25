@@ -7,10 +7,9 @@ module MCTS
 
       attr_reader :positions
 
-      def initialize(positions = init_positions, n = 0, color = nil)
+      def initialize(positions = init_positions, n = 0)
         @positions = positions
         @move_count = n
-        @my_color = color || next_turn_color
       end
 
       def finished?
@@ -28,12 +27,12 @@ module MCTS
       end
 
       def dup
-        self.class.new @positions.dup, @move_count, @my_color
+        self.class.new @positions.dup, @move_count
       end
 
-      def won?
+      def won?(color)
         fail "Game not finished" unless finished?
-        @positions[@my_color] > @positions[enemy_color]
+        @positions[color] > @positions[other_color(color)]
       end
 
       def all_valid_moves
@@ -42,6 +41,10 @@ module MCTS
         else
           [1, 2]
         end
+      end
+
+      def last_turn_color
+        @move_count.odd? ? :black : :white
       end
 
       private
@@ -53,8 +56,8 @@ module MCTS
         {black: 0, white: 0}
       end
 
-      def enemy_color
-        if @my_color == :black
+      def other_color(color)
+        if color == :black
           :white
         else
           :black
