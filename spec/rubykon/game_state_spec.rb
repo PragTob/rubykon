@@ -37,29 +37,31 @@ module Rubykon
     end
 
     describe "full MCTS playout" do
-      let(:original_game) {GameState.new Game.new(9)}
-      let(:mcts) {MCTS::MCTS.new}
-      let!(:root) {mcts.start(original_game, playouts)}
-      let(:playouts) {100}
+      before :all do
+        # this is rather expensive and no mutating operations are used
+        # => before :all and instance variables for spec perf ++
+        @original_game = GameState.new Game.new(9)
+        @root = MCTS::MCTS.new.start(@original_game, 100)
+      end
 
       it "creates the right number of children" do
-        expect(root.children.size).to eq original_game.game.board.cutting_point_count
+        expect(@root.children.size).to eq @original_game.game.board.cutting_point_count
       end
 
       it "has some kind of win_percentage" do
-        expect(root.win_percentage).to be_between(0, 1).exclusive
+        expect(@root.win_percentage).to be_between(0, 1).exclusive
       end
 
       it "has 500 visits" do
-        expect(root.visits).to eq playouts
+        expect(@root.visits).to eq 100
       end
 
       it "can select the best move" do
-        expect(root.best_move).not_to be_nil
+        expect(@root.best_move).not_to be_nil
       end
 
       it "does not touch the original game" do
-        expect(original_game.game.move_count).to eq 0
+        expect(@original_game.game.move_count).to eq 0
       end
     end
 
