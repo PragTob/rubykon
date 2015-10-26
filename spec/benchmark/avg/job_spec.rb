@@ -25,7 +25,7 @@ module Benchmark::Avg
           expect(subject).to include label
           expect(subject).to match /(60[0123]|59[6789])\.\d* i\/min/
           expect(subject).to match /0\.1\d* s/
-          expect(subject).to match /[012]\.\d*%/
+          expect(subject).to match /([012]\.\d*|0)%/
         end
       end
 
