@@ -13,14 +13,18 @@ class FakeIO
     @input.shift.to_s
   end
 
-  def print(string)
+  def print(string = '')
     @output << string
   end
 
   alias_method :write, :print
 
-  def puts(string)
+  def puts(string = '')
     print "#{string}\n"
+  end
+
+  def match(regex_or_so)
+    @output.match regex_or_so
   end
 
   def self.each_input(input)
