@@ -1,7 +1,8 @@
 module Rubykon
   class CLI
 
-    EXIT = /exit/i
+    EXIT     = /exit/i
+    PLAYOUTS = 10_000
 
     def initialize(output = $stdout, input = $stdin)
       @output     = output
@@ -59,7 +60,7 @@ module Rubykon
 
     def bot_move
       @output.puts 'Rubykon is thinking...'
-      root = @mcts.start @game_state
+      root = @mcts.start @game_state, PLAYOUTS
       move = root.best_move
       best_children = root.children.sort_by(&:win_percentage).reverse.take(10)
       @output.puts best_children.map {|child| "#{@board.x_y_from(child.move.first)} => #{child.win_percentage}"}.join "\n"
