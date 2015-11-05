@@ -3,11 +3,10 @@ module Rubykon
 
     attr_reader :game
 
-    def initialize(game = Game.new, color = nil,
+    def initialize(game = Game.new,
                    validator = MoveValidator.new,
                    eye_detector = EyeDetector.new)
       @game = game
-      @my_color = color || next_turn_color
       @validator = validator
       @eye_detector = eye_detector
     end
@@ -27,11 +26,11 @@ module Rubykon
     end
 
     def dup
-      self.class.new @game.dup, @my_color, @validator, @eye_detector
+      self.class.new @game.dup, @validator, @eye_detector
     end
 
-    def won?
-      score[:winner] == @my_color
+    def won?(color)
+      score[:winner] == color
     end
 
     def all_valid_moves
@@ -44,6 +43,10 @@ module Rubykon
 
     def score
       @score ||= GameScorer.new.score(@game)
+    end
+
+    def last_turn_color
+      Game.other_color(next_turn_color)
     end
 
     private
