@@ -27,7 +27,7 @@ module Benchmark::Avg
       shared_examples_for 'static run time report' do
         it "gets the reportright" do
           expect(subject).to include label
-          expect(subject).to match /(6[0123]\d\d|5[6789]\d\d)\.\d* i\/min/
+          expect(subject).to match /(6[012345]\d\d|5[456789]\d\d)\.\d* i\/min/
           expect(subject).to match /0\.01\d* s/
           expect(subject).to match /([012345678]\.\d*|0)%/
         end
