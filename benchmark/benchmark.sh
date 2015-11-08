@@ -1,8 +1,11 @@
 #! /bin/bash --login
 
+script_name=$1
+echo $script_name
+
 echo Running truffle graal with enough heap space
 jruby+truffle run --graal -- -e "puts RUBY_DESCRIPTION"
-jruby+truffle run --graal -J-Xmx1500m benchmark/mcts_avg.rb
+jruby+truffle run --graal -J-Xmx1500m $script_name
 echo
 echo
 
@@ -13,7 +16,7 @@ do
   echo Running $ruby with ${RUBY_TO_ARG[$ruby]}
   rvm use $ruby
   ruby -v
-  ruby ${RUBY_TO_ARG[$ruby]} benchmark/mcts_avg.rb
+  ruby ${RUBY_TO_ARG[$ruby]} $script_name
   echo
   echo
 done
