@@ -128,9 +128,7 @@ module Rubykon
     end
 
     def self.convert(old_board_string)
-      old_board_string.split("\n").map do |line|
-        line.each_char.map{|char| LEGACY_CONVERSION.fetch(char)}.join
-      end.join("\n") << "\n"
+      old_board_string.gsub /[XO-]/, LEGACY_CONVERSION
     end
 
     private
