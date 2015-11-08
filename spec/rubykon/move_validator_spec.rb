@@ -95,9 +95,9 @@ module Rubykon
     describe 'suicide moves' do
       it "is forbidden" do
         game = Game.from <<-BOARD
--X-
-X-X
--X-
+ . X .
+ X . X
+ . X .
         BOARD
         force_next_move_to_be :white, game
         should_be_invalid_move [2, 2, :white], game
@@ -105,9 +105,9 @@ X-X
 
       it "is forbidden in the corner as well" do
         game = Game.from <<-BOARD
--X-
-X--
----
+ . X .
+ X . .
+ . . .
         BOARD
         force_next_move_to_be :white, game
         should_be_invalid_move [1, 1, :white], game
@@ -115,10 +115,10 @@ X--
 
       it "is forbidden when it robs a friendly group of its last liberty" do
         game = Game.from <<-BOARD
-OX--
-OX--
-OX--
--X--
+ O X . .
+ O X . .
+ O X . .
+ . X . .
         BOARD
         force_next_move_to_be :white, game
         should_be_invalid_move [1, 4, :white], game
@@ -126,10 +126,10 @@ OX--
 
       it "is valid if the group still has liberties with the move" do
         game = Game.from <<-BOARD
-OX--
-OX--
-OX--
-----
+ O X . .
+ O X . .
+ O X . .
+ . . . .
         BOARD
         force_next_move_to_be :white, game
         should_be_valid_move [1, 4, :white], game
@@ -137,10 +137,10 @@ OX--
 
       it "is valid if it captures the group" do
         game = Game.from <<-BOARD
-OXO-
-OXO-
-OXO-
--XO-
+ O X O .
+ O X O .
+ O X O .
+ . X O .
         BOARD
         force_next_move_to_be :white, game
         should_be_valid_move [1, 4, :white], game
@@ -148,10 +148,10 @@ OXO-
 
       it "is allowed when it captures a stone first (e.g. no suicide)" do
         game = Game.from <<-BOARD
-----
--XO-
-X-XO
--XO-
+ . . . .
+ . X O .
+ X . X O
+ . X O .
         BOARD
         force_next_move_to_be :white, game
         should_be_valid_move [2, 3, :white], game
@@ -164,10 +164,10 @@ X-XO
 
       let(:board_string) do
         <<-BOARD
--XO-
-X-XO
--XO-
-----
+ . X O .
+ X . X O
+ . X O .
+ . . . .
         BOARD
       end
       let(:white_ko_capture) {StoneFactory.build x: 2, y: 2, color: :white}

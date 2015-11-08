@@ -22,9 +22,9 @@ module Rubykon
 
       it "is false when one of the star shapes is another color" do
         board = Board.from <<-BOARD
--X-
-X-X
--O-
+ . X .
+ X . X
+ . O .
         BOARD
         expect_no_eye 2, 2, board
       end
@@ -34,64 +34,64 @@ X-X
 
       it "is false when two diagonals are occupied by the enemy" do
         board = Board.from <<-BOARD
------
---XO-
--X-X-
---XO-
------
+ . . . . .
+ . . X O .
+ . X . X .
+ . . X O .
+ . . . . .
         BOARD
         expect_no_eye 3, 3, board
       end
 
       it "is false when two diagonals are occupied by the enemy (diagonal)" do
         board = Board.from <<-BOARD
------
---XO-
--X-X-
--OX-
------
+ . . . . .
+ . . X O .
+ . X . X .
+ . O X . .
+ . . . . .
         BOARD
         expect_no_eye 3, 3, board
       end
 
       it "is false when three diagonals are occupied by the enemy" do
         board = Board.from <<-BOARD
------
--OXO-
--X-X-
---XO-
------
+ . . . . .
+ . O X O .
+ . X . X .
+ . . X O .
+ . . . . .
         BOARD
         expect_no_eye 3, 3, board
       end
 
       it "is false when four diagonals are occupied by the enemy" do
         board = Board.from <<-BOARD
------
--OXO-
--X-X-
--OXO-
------
+ . . . . .
+ . O X O .
+ . X . X .
+ . O X O .
+ . . . . .
         BOARD
         expect_no_eye 3, 3, board
       end
 
       it "is false on the edge when just one diagonal is occupied" do
         board = Board.from <<-BOARD
--X-X-
---XO-
------
------
------
+ . X . X .
+ . . X O .
+ . . . . .
+ . . . . .
+ . . . . .
         BOARD
         expect_no_eye 3, 1, board
       end
 
       it "is false in the corner with the diagonal occupied" do
         board = Board.from <<-BOARD
--X-
-XO-
----
+ . X .
+ X O .
+ . . .
         BOARD
         expect_no_eye 1, 1, board
       end
@@ -102,38 +102,38 @@ XO-
 
       it "is real for a star shape" do
         board = Board.from <<-BOARD
--X-
-X-X
--X-
+ . X .
+ X . X
+ . X .
         BOARD
         expect_eye 2, 2, board
       end
 
       it "is real for a star shape with one diagonal occupied by enemy" do
         board = Board.from <<-BOARD
------
---XO-
--X-X-
---X--
------
+ . . . . .
+ . . X O .
+ . X . X .
+ . . X . .
+ . . . . .
         BOARD
         expect_eye 3, 3, board
       end
 
       it "is real on the edge" do
         board = Board.from <<-BOARD
-X-X
--X-
----
+ X . X
+ . X .
+ . . .
         BOARD
         expect_eye 2, 1, board
       end
 
       it "is real in the corner" do
         board = Board.from <<-BOARD
--X-
-X--
----
+ . X .
+ X . .
+ . . .
         BOARD
         expect_eye 1, 1, board
       end

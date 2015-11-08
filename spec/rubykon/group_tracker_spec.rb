@@ -39,9 +39,9 @@ module Rubykon
       describe 'group of a lonely stone' do
         let(:board_string) do
           <<-BOARD
----
--X-
----
+ . . .
+ . X .
+ . . .
           BOARD
         end
 
@@ -63,9 +63,9 @@ module Rubykon
       describe 'group of a lonely stone on the edge' do
         let(:board_string) do
           <<-BOARD
--X-
----
----
+ . X .
+ . . .
+ . . .
           BOARD
         end
         let(:coords) {[2, 1]}
@@ -82,9 +82,9 @@ module Rubykon
       describe 'group of a lonely stone in the corner' do
         let(:board_string) do
           <<-BOARD
-X--
----
----
+ X . .
+ . . .
+ . . .
           BOARD
         end
 
@@ -103,10 +103,10 @@ X--
       describe 'group of two' do
         let(:board_string) do
           <<-BOARD
-----
--XX-
-----
-----
+ . . . .
+ . X X .
+ . . . .
+ . . . .
           BOARD
         end
         let(:coords) {[2, 2]}
@@ -130,11 +130,11 @@ X--
         describe 'merging two groups with multiple stones' do
           let(:board_string) do
             <<-BOARD
------
------
-XX-XX
------
------
+ . . . . .
+ . . . . .
+ X X . X X
+ . . . . .
+ . . . . .
             BOARD
           end
 
@@ -177,10 +177,10 @@ XX-XX
         describe 'connecting groups with a shared liberty' do
           let(:board_string) do
             <<-BOARD
-----
---X-
--X--
-----
+ . . . .
+ . . X .
+ . X . .
+ . . . .
             BOARD
           end
 
@@ -198,11 +198,11 @@ XX-XX
         describe 'group with multiple shared liberties' do
           let(:board_string) do
             <<-BOARD
------
-XXXXX
------
-XXXXX
------
+ . . . . .
+ X X X X X
+ . . . . .
+ X X X X X
+ . . . . .
             BOARD
           end
           let(:connector) {[3, 3, :black]}
@@ -220,11 +220,11 @@ XXXXX
         describe "joining stones of the same group" do
           let(:board_string) do
             <<-BOARD
------
-XXXXX
-X----
-XXXXX
------
+ . . . . .
+ X X X X X
+ X . . . .
+ X X X X X
+ . . . . .
             BOARD
           end
           let(:connector) {[5,3, :black]}
@@ -240,9 +240,9 @@ XXXXX
         describe "simple taking away" do
           let(:board_string) do
             <<-BOARD
----
--X-
--O-
+ . . .
+ . X .
+ . O .
             BOARD
           end
           let(:other_coords) {[2, 2]}
@@ -260,9 +260,9 @@ XXXXX
         describe "before capture" do
           let(:board_string) do
             <<-BOARD
----
-OXO
--O-
+ . . .
+ O X O
+ . O .
             BOARD
           end
 
@@ -290,11 +290,11 @@ OXO
         describe "the tricky shared liberty situation" do
           let(:board_string) do
             <<-BOARD
------
-XXXXX
--O---
-XXXXX
------
+ . . . . .
+ X X X X X
+ . O . . .
+ X X X X X
+ . . . . .
             BOARD
           end
 
@@ -318,11 +318,11 @@ XXXXX
         describe "taking a liberty from a shared liberty group" do
           let(:board_string) do
             <<-BOARD
------
-XXXXX
---X--
-XXXXX
------
+ . . . . .
+ X X X X X
+ . . X . .
+ X X X X X
+ . . . . .
             BOARD
           end
 
@@ -347,10 +347,10 @@ XXXXX
         describe "multiple stones next to the capturing stone" do
           let(:board_string) do
             <<-BOARD
--XX--
-XOOX-
---OX-
---X--
+ . X X . .
+ X O O X .
+ . . O X .
+ . . X . .
             BOARD
           end
 
@@ -385,11 +385,11 @@ XOOX-
         describe "capturing 2 birds with one stone" do
           let(:board_string) do
             <<-BOARD
------
-XX-XX
-OO-OO
-XX-XX
------
+ . . . . .
+ X X . X X
+ O O . O O
+ X X . X X
+ . . . . .
             BOARD
           end
 
@@ -426,10 +426,10 @@ XX-XX
         describe "capturing a stone after the assigned group of a neighbor changed" do
           let(:board_string) do
             <<-BOARD
-X-XO
-----
-----
-----
+ X . X O
+ . . . .
+ . . . .
+ . . . .
             BOARD
           end
 
@@ -456,25 +456,25 @@ X-XO
         describe "integration" do
           let(:board_string) do
             <<-BOARD
-XOOOOOOOOX-------X-
---XXXXXXX--------OO
-----------X-----OXX
---------OOOOO---OX-
--------XOX-XOX--OXX
---------OXXXOX--OX-
---------OOOOO---OXX
------------------OO
--------------------
----X-----------O---
----------------XO--
----------------XO--
----------------O---
---X----------------
--X--------------O--
--OXX-----------X-O-
--OOOXXX--X---X--XO-
-----OO-----------X-
--------------------
+ X O O O O O O O O X . . . . . . . X .
+ . . X X X X X X X . . . . . . . . O O
+ . . . . . . . . . . X . . . . . O X X
+ . . . . . . . . O O O O O . . . O X .
+ . . . . . . . X O X . X O X . . O X X
+ . . . . . . . . O X X X O X . . O X .
+ . . . . . . . . O O O O O . . . O X X
+ . . . . . . . . . . . . . . . . . O O
+ . . . . . . . . . . . . . . . . . . .
+ . . . X . . . . . . . . . . . O . . .
+ . . . . . . . . . . . . . . . X O . .
+ . . . . . . . . . . . . . . . X O . .
+ . . . . . . . . . . . . . . . O . . .
+ . . X . . . . . . . . . . . . . . . .
+ . X . . . . . . . . . . . . . . O . .
+ . O X X . . . . . . . . . . . X . O .
+ . O O O X X X . . X . . . X . . X O .
+ . . . . O O . . . . . . . . . . . X .
+ . . . . . . . . . . . . . . . . . . .
             BOARD
           end
 

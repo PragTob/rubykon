@@ -75,9 +75,10 @@ module Rubykon
       identifier >= 0 && identifier < @board.size
     end
     
-    COLOR_TO_CHARACTER = {BLACK => 'X', WHITE => 'O', EMPTY => '-'}
+    COLOR_TO_CHARACTER = {BLACK => ' X', WHITE => ' O', EMPTY => ' .'}
     CHARACTER_TO_COLOR = COLOR_TO_CHARACTER.invert
     LEGACY_CONVERSION  = {'X' => ' X', 'O' => ' O', '-' => ' .'}
+    CHARS_PER_GLYPH    = 2
 
     def ==(other_board)
       board == other_board.board
@@ -111,7 +112,7 @@ module Rubykon
     end
 
     def self.from(string)
-      new_board = new string.index("\n")
+      new_board = new(string.index("\n") / CHARS_PER_GLYPH)
       each_move_from(string) do |index, color|
         new_board[index] = color
       end
@@ -119,11 +120,12 @@ module Rubykon
     end
 
     def self.each_move_from(string)
-      relevant_chars = string.chars.select do |char|
-        CHARACTER_TO_COLOR.has_key?(char)
+      glyphs = string.tr("\n", '').chars.each_slice(CHARS_PER_GLYPH).map(&:join)
+      relevant_glyphs = glyphs.select do |glyph|
+        CHARACTER_TO_COLOR.has_key?(glyph)
       end
-      relevant_chars.each_with_index do |char, index|
-        yield index, CHARACTER_TO_COLOR.fetch(char)
+      relevant_glyphs.each_with_index do |glyph, index|
+        yield index, CHARACTER_TO_COLOR.fetch(glyph)
       end
     end
 

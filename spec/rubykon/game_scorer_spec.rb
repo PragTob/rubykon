@@ -20,11 +20,11 @@ module Rubykon
 
       let(:board_string) do
       <<-BOARD
--XXO-
-XXO-O
--XOO-
-XXOOO
-XXXXO
+ . X X O .
+ X X O . O
+ . X O O .
+ X X O O O
+ X X X X O
       BOARD
       end
 
@@ -39,15 +39,15 @@ XXXXO
     describe "it correctly scores a 9x9 board" do
       let(:board_string) do
         <<-BOARD
--XXO-O-OO
-X-XOO-OOO
-XXOO-OXXX
-OXO-OOXXX
-OOOOOOXXX
--OOXXXXOO
-OOX-XXXO-
-OX-X-XXOO
-OXX-XXXO-
+ . X X O . O . O O
+ X . X O O . O O O
+ X X O O . O X X X
+ O X O . O O X X X
+ O O O O O O X X X
+ . O O X X X X O O
+ O O X . X X X O .
+ O X . X . X X O O
+ O X X . X X X O .
         BOARD
       end
 
@@ -58,15 +58,15 @@ OXX-XXXO-
     describe "game won slightly by komi" do
       let(:board_string) do 9
         <<-BOARD
--XXO-O-OO
-X-XOO-OOO
-XXOO-OXXX
-OXO-OOXXX
-OOOOOOXXX
-OOOXXXXOO
-XXX-XXXO-
-XX-X-XXOO
-XXX-XXXO-
+ . X X O . O . O O
+ X . X O O . O O O
+ X X O O . O X X X
+ O X O . O O X X X
+ O O O O O O X X X
+ O O O X X X X O O
+ X X X . X X X O .
+ X X . X . X X O O
+ X X X . X X X O .
         BOARD
       end
 

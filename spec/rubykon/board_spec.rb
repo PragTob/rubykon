@@ -63,9 +63,9 @@ module Rubykon
     describe "#neighbours_of and neighbour_colors_of" do
       it "returns the stones of the neighbouring fields" do
         board = Rubykon::Board.from <<-String
--X-
-O-X
----
+ . X .
+ O . X
+ . . .
         String
         identifier = board.identifier_for(2, 2)
         expect(board.neighbours_of(identifier)).to contain_exactly(
@@ -81,9 +81,9 @@ O-X
 
       it "returns fewer stones when on the edge" do
         board = Rubykon::Board.from <<-String
---X
--O-
----
+ . . X
+ . O .
+ . . .
         String
         identifier = board.identifier_for(2, 1)
         expect(board.neighbours_of(identifier)).to contain_exactly(
@@ -97,9 +97,9 @@ O-X
 
       it "on the other edge" do
         board = Rubykon::Board.from <<-String
-X--
--O-
----
+ X . .
+ . O .
+ . . .
         String
         identifier = board.identifier_for(1, 2)
         expect(board.neighbours_of(identifier)).to contain_exactly(
@@ -114,9 +114,9 @@ X--
 
       it "returns fewer stones when in the corner" do
         board = Rubykon::Board.from <<-String
--X-
----
----
+ . X .
+ . . .
+ . . .
         String
         identifier = board.identifier_for(1, 1)
         expect(board.neighbours_of(identifier)).to contain_exactly(
@@ -130,9 +130,9 @@ X--
     describe "#diagonal_colors_of" do
       it "returns the colors in the diagonal fields" do
         board = Board.from <<-BOARD
-O-X
----
-X--
+ O . X
+ . . .
+ X . .
         BOARD
         expect(board.diagonal_colors_of(board.identifier_for(2, 2))).to contain_exactly :white,
                                                                   :black,
@@ -142,9 +142,9 @@ X--
 
       it "does not contain the neighbors" do
         board = Board.from <<-BOARD
--X-
-O-X
--O-
+ . X .
+ O . X
+ . O .
         BOARD
         expect(board.diagonal_colors_of(board.identifier_for(2, 2))).to contain_exactly Board::EMPTY,
                                                                   Board::EMPTY,
@@ -154,9 +154,9 @@ O-X
 
       it "works on the edge" do
         board = Board.from <<-BOARD
----
-O-X
----
+ . . .
+ O . X
+ . . .
         BOARD
         expect(board.diagonal_colors_of(board.identifier_for(2, 1))).to contain_exactly :white,
                                                                   :black
@@ -164,9 +164,9 @@ O-X
 
       it "works on the edge 2" do
         board = Board.from <<-BOARD
--X-
----
--O-
+ . X .
+ . . .
+ . O .
         BOARD
         expect(board.diagonal_colors_of(board.identifier_for(1, 2))).to contain_exactly :white,
                                                                   :black
@@ -174,9 +174,9 @@ O-X
 
       it "works in the corner" do
         board = Board.from <<-BOARD
----
--X-
----
+ . . .
+ . X .
+ . . .
         BOARD
         expect(board.diagonal_colors_of(board.identifier_for(1, 1))).to contain_exactly :black
       end
@@ -246,13 +246,13 @@ O-X
 
       it "correctly outputs an empty board" do
         expected = <<-BOARD
--------
--------
--------
--------
--------
--------
--------
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
         BOARD
 
         board_string = board.to_s
@@ -263,13 +263,13 @@ O-X
       it "correctly outputs a board with a black move" do
         board[board.identifier_for(4, 4)] = :black
         expected = <<-BOARD
--------
--------
--------
----X---
--------
--------
--------
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
+ . . . X . . .
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
         BOARD
         board_string = board.to_s
         expect(board_string).to eq expected
@@ -279,13 +279,13 @@ O-X
       it "correctly outputs a board with a white move" do
         board[board.identifier_for(4, 4)] = :white
         expected = <<-BOARD
--------
--------
--------
----O---
--------
--------
--------
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
+ . . . O . . .
+ . . . . . . .
+ . . . . . . .
+ . . . . . . .
         BOARD
         board_string = board.to_s
         expect(board_string).to eq expected
@@ -301,13 +301,13 @@ O-X
         board[board.identifier_for(3, 3)] = :black
 
         expected = <<-BOARD
-O-----X
--------
---X----
--------
-----O--
--------
-O-----X
+ O . . . . . X
+ . . . . . . .
+ . . X . . . .
+ . . . . . . .
+ . . . . O . .
+ . . . . . . .
+ O . . . . . X
         BOARD
         board_string = board.to_s
         expect(board_string).to eq expected

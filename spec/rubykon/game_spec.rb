@@ -68,11 +68,11 @@ module Rubykon
     describe ".from" do
       let(:string) do
         <<-GAME
-X---O
---X--
-X----
------
--X--O
+ X . . . O
+ . . X . .
+ X . . . .
+ . . . . .
+ . X . . O
         GAME
       end
 
@@ -138,9 +138,9 @@ X----
         describe 'simple star capture' do
           let(:board_string) do
             <<-BOARD
----
-XOX
--X-
+ . . .
+ X O X
+ . X .
             BOARD
           end
           let(:capturer) {[2, 1, :black]}
@@ -162,11 +162,11 @@ XOX
         describe 'turtle capture' do
           let(:board_string) do
             <<-BOARD
------
--OO--
-OXX--
--OOO-
------
+ . . . . .
+ . O O . .
+ O X X . .
+ . O O O .
+ . . . . .
             BOARD
           end
           let(:capturer) {[4, 3, :white]}
@@ -178,11 +178,11 @@ OXX--
 
           it "the board looks cleared afterwards" do
             expect(board.to_s).to eq <<-BOARD
------
--OO--
-O--O-
--OOO-
------
+ . . . . .
+ . O O . .
+ O . . O .
+ . O O O .
+ . . . . .
             BOARD
           end
 
@@ -232,11 +232,11 @@ O--O-
         describe 'capturing two distinct groups' do
           let(:board_string) do
             <<-BOARD
------
-OO-OO
-XX-XX
-OO-OO
------
+ . . . . .
+ O O . O O
+ X X . X X
+ O O . O O
+ . . . . .
             BOARD
             let(:capturer) {[3, 3, :white]}
 
@@ -348,11 +348,11 @@ OO-OO
 
         it "does not change the board" do
           expect(board.to_s).to eq <<-BOARD
------
------
------
------
------
+ . . . . .
+ . . . . .
+ . . . . .
+ . . . . .
+ . . . . .
           BOARD
         end
 
@@ -362,11 +362,11 @@ OO-OO
 
         it "changes the board for the copy" do
           expect(dupped.board.to_s).to eq <<-BOARD
-X-O-X
------
------
------
------
+ X . O . X
+ . . . . .
+ . . . . .
+ . . . . .
+ . . . . .
           BOARD
         end
 
@@ -381,11 +381,11 @@ X-O-X
         end
         let(:board_string) do
           <<-BOARD
------
-O-X-X
-O-O-O
------
------
+ . . . . .
+ O . X . X
+ O . O . O
+ . . . . .
+ . . . . .
           BOARD
         end
         let(:group_tracker) {game.group_tracker}
@@ -433,11 +433,11 @@ O-O-O
 
           it "has the new moves" do
             expect(dupped.board.to_s).to eq <<-BOARD
-X-O-X
-O-X-X
-O-O-O
------
------
+ X . O . X
+ O . X . X
+ O . O . O
+ . . . . .
+ . . . . .
             BOARD
           end
 

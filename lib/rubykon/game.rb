@@ -79,7 +79,7 @@ module Rubykon
     end
 
     def self.from(string)
-      game = new(string.index("\n"))
+      game = new(string.index("\n") / Board::CHARS_PER_GLYPH)
       Board.each_move_from(string) do |identifier, color|
         game.safe_set_move(identifier, color)
       end
