@@ -42,7 +42,7 @@ module Rubykon
         end
 
         it "makes a whole test through all the things" do
-          output = FakeIO.each_input %w(9 1-1 exit) do
+          output = FakeIO.each_input %w(9 A9 exit) do
             subject.start
           end
 
@@ -86,7 +86,7 @@ module Rubykon
 
     context 'real MCTS' do
       it "does not blow up (but we take a very small board" do
-        output = FakeIO.each_input %w(2 2-1 exit) do
+        output = FakeIO.each_input %w(2 B1 exit) do
           subject.start
         end
 

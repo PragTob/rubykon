@@ -44,21 +44,26 @@ module Rubykon
     def init_game(input)
       board_size = input.to_i
       @output.puts "Great starting a #{board_size}x#{board_size} game"
-      @game       = Game.new board_size
-      @game_state = GameState.new @game
-      @mcts       = MCTS::MCTS.new
-      @board      = @game.board
+      @game          = Game.new board_size
+      @game_state    = GameState.new @game
+      @mcts          = MCTS::MCTS.new
+      @board         = @game.board
+      @gtp_converter = GTPCoordinateConverter.new(@board)
     end
 
     def game_loop
       print_board
       while true
-        if @game.next_turn_color == Board::BLACK
+        if bot_turn?
           bot_move
         else
           human_move
         end
       end
+    end
+
+    def bot_turn?
+      @game.next_turn_color == Board::BLACK
     end
 
     def print_board
@@ -83,16 +88,14 @@ module Rubykon
       root = @mcts.start @game_state, PLAYOUTS
       move = root.best_move
       best_children = root.children.sort_by(&:win_percentage).reverse.take(10)
-      @output.puts best_children.map {|child| "#{@board.x_y_from(child.move.first)} => #{child.win_percentage}"}.join "\n"
+      @output.puts best_children.map {|child| "#{@gtp_converter.to(child.move.first)} => #{child.win_percentage}"}.join "\n"
       make_move(move)
     end
 
     def human_move
-      @output.puts "Make a move in the form x-y, e.g. 1-1, 4-5 starting from
-the top left!"
+      @output.puts "Make a move in the form XY, e.g. A19, D7 as the labels indicate!"
       coords = get_input
-      x, y = coords.split('-').map &:to_i
-      identifier = @board.identifier_for(x, y)
+      identifier = @gtp_converter.from(coords)
       move = [identifier, :white]
       make_move(move)
     end
@@ -100,7 +103,7 @@ the top left!"
     def make_move(move)
       @game_state.set_move move
       print_board
-      @output.puts "#{move.last} played at #{@board.x_y_from(move.first)}"
+      @output.puts "#{move.last} played at #{@gtp_converter.to(move.first)}"
       @output.puts "#{@game.next_turn_color}'s turn to move!'"
     end
 
