@@ -3,7 +3,7 @@ module Rubykon
 
     EXIT            = /exit/i
     PLAYOUTS        = 10_000
-    CHAR_LABELS     = ('A'..'Z').reject { |c| c == 'I'.freeze }
+    CHAR_LABELS     = GTPCoordinateConverter::X_CHARS
     X_LABEL_PADDING = ' '.freeze * 4
     Y_LABEL_WIDTH   = 3
 
