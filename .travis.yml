@@ -3,7 +3,7 @@ rvm:
   - jruby-19mode
   - rbx-19mode
   - 2.2
-  - jruby-9
+  - jruby-9.0.3.0
 script: bundle exec rspec spec
 
 addons:
