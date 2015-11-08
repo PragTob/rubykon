@@ -2,7 +2,6 @@ module Rubykon
   class CLI
 
     EXIT            = /exit/i
-    PLAYOUTS        = 10_000
     CHAR_LABELS     = GTPCoordinateConverter::X_CHARS
     X_LABEL_PADDING = ' '.freeze * 4
     Y_LABEL_WIDTH   = 3
@@ -15,16 +14,27 @@ module Rubykon
 
     def start
       @output.puts 'Please enter a board size (common sizes are 9, 13, and 19)'
+      size = get_digit_input
+      @output.puts <<-PLAYOUTS
+Please enter the number of playouts you'd like rubykon to make!
+More playouts means rubykon is stronger, but also takes longer.
+For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
+      PLAYOUTS
+      playouts = get_digit_input
+      init_game(size, playouts)
+      game_loop
+    end
+
+    private
+    def get_digit_input
       input = get_input
       until input.match /^\d\d*$/
         @output.puts "Input has to be a number. Please try again!"
         input = get_input
       end
-      init_game(input)
-      game_loop
+      input
     end
 
-    private
     def get_input
       @output.print '> '
       input = @input.gets.chomp
@@ -41,14 +51,15 @@ module Rubykon
       exit
     end
 
-    def init_game(input)
-      board_size = input.to_i
-      @output.puts "Great starting a #{board_size}x#{board_size} game"
+    def init_game(size, playouts)
+      board_size = size.to_i
+      @output.puts "Great starting a #{board_size}x#{board_size} game with #{playouts} playouts"
       @game          = Game.new board_size
       @game_state    = GameState.new @game
       @mcts          = MCTS::MCTS.new
       @board         = @game.board
       @gtp_converter = GTPCoordinateConverter.new(@board)
+      @playouts      = playouts.to_i
     end
 
     def game_loop
@@ -85,7 +96,7 @@ module Rubykon
 
     def bot_move
       @output.puts 'Rubykon is thinking...'
-      root = @mcts.start @game_state, PLAYOUTS
+      root = @mcts.start @game_state, @playouts
       move = root.best_move
       best_children = root.children.sort_by(&:win_percentage).reverse.take(10)
       @output.puts best_children.map {|child| "#{@gtp_converter.to(child.move.first)} => #{child.win_percentage}"}.join "\n"

@@ -27,22 +27,30 @@ module Rubykon
         end
 
         it "waits for some input of a board size" do
-          output = FakeIO.each_input %w(9 exit) do
+          output = FakeIO.each_input %w(9 100 exit) do
             subject.start
           end
           expect(output).to match /starting.*9x9/
         end
 
         it "keeps prompting until a number was entered" do
-          output = FakeIO.each_input %w(h9 19 exit) do
+          output = FakeIO.each_input %w(h9 19 100 exit) do
             subject.start
           end
           expect(output).to match /number.*try again/i
           expect(output).to match /starting/i
         end
 
+        it "asks for the number of playouts" do
+          output = FakeIO.each_input %w(9 1000 exit) do
+            subject.start
+          end
+          expect(output).to match /number.*playouts/i
+          expect(output).to match /1000 playout/i
+        end
+
         it "makes a whole test through all the things" do
-          output = FakeIO.each_input %w(9 A9 exit) do
+          output = FakeIO.each_input %w(9 100 A9 exit) do
             subject.start
           end
 
@@ -51,7 +59,7 @@ module Rubykon
         end
 
         it "prints a board with nice labels" do
-          output = FakeIO.each_input %w(19 exit) do
+          output = FakeIO.each_input %w(19 100 exit) do
             subject.start
           end
 
@@ -86,7 +94,7 @@ module Rubykon
 
     context 'real MCTS' do
       it "does not blow up (but we take a very small board" do
-        output = FakeIO.each_input %w(2 B1 exit) do
+        output = FakeIO.each_input %w(2 100 B1 exit) do
           subject.start
         end
 
