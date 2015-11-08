@@ -57,10 +57,15 @@ module Benchmark
       def report(samples)
         times   = extract_times(samples)
         label   = @label.ljust(LABEL_WIDTH - PADDING) + padding_space
-        metrics = "#{times[:ipm].round(PRECISION)} i/min" << padding_space
-        metrics << "#{times[:avg].round(PRECISION)} s (avg)" << padding_space
-        metrics << "(± #{times[:standard_deviation_percent].round(PRECISION)}%)"
+        metrics = "#{round(times[:ipm])} i/min" << padding_space
+        metrics << "#{round(times[:avg])} s (avg)" << padding_space
+        metrics << "(± #{round(times[:standard_deviation_percent])}%)"
         label + metrics
+      end
+
+      def round(number)
+        # not Float#round to also get numbers like 3.20 (static number after ,)
+        sprintf("%.#{PRECISION}f", number)
       end
 
       def padding_space
