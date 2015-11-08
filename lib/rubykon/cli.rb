@@ -1,8 +1,11 @@
 module Rubykon
   class CLI
 
-    EXIT     = /exit/i
-    PLAYOUTS = 10_000
+    EXIT            = /exit/i
+    PLAYOUTS        = 10_000
+    CHAR_LABELS     = ('A'..'Z').reject { |c| c == 'I'.freeze }
+    X_LABEL_PADDING = ' '.freeze * 4
+    Y_LABEL_WIDTH   = 3
 
     def initialize(output = $stdout, input = $stdin)
       @output     = output
@@ -48,7 +51,7 @@ module Rubykon
     end
 
     def game_loop
-      @output.puts @board
+      print_board
       while true
         if @game.next_turn_color == Board::BLACK
           bot_move
@@ -56,6 +59,23 @@ module Rubykon
           human_move
         end
       end
+    end
+
+    def print_board
+      @output.puts labeled_board
+    end
+
+    def labeled_board
+      rows = []
+      x_labels = X_LABEL_PADDING + CHAR_LABELS.take(@board.size).join(' ')
+      rows << x_labels
+      board_rows = @board.to_s.split("\n").each_with_index.map do |row, i|
+        y_label = "#{@board.size - i}".rjust(Y_LABEL_WIDTH)
+        y_label + row + y_label
+      end
+      rows += board_rows
+      rows << x_labels
+      rows.join "\n"
     end
 
     def bot_move
@@ -79,7 +99,7 @@ the top left!"
 
     def make_move(move)
       @game_state.set_move move
-      @output.puts @board
+      print_board
       @output.puts "#{move.last} played at #{@board.x_y_from(move.first)}"
       @output.puts "#{@game.next_turn_color}'s turn to move!'"
     end

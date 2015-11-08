@@ -16,7 +16,6 @@ module Rubykon
       end
 
       describe 'choosing a board' do
-
         # input has to go in before starting, otherwise we are stuck waiting
         it "displays a message prompting the user to choose a game type" do
           output = FakeIO.each_input ['exit'] do
@@ -47,9 +46,40 @@ module Rubykon
             subject.start
           end
 
-          expect(output).to match Board.new(9).to_s
-          expect(output).to match /O......../
+          expect(output).to match /O . . . . . . . ./
           expect(output).to match /starting/i
+        end
+
+        it "prints a board with nice labels" do
+          output = FakeIO.each_input %w(19 exit) do
+            subject.start
+          end
+
+          nice_board = <<-BOARD
+    A B C D E F G H J K L M N O P Q R S T
+ 19 . . . . . . . . . . . . . . . . . . . 19
+ 18 . . . . . . . . . . . . . . . . . . . 18
+ 17 . . . . . . . . . . . . . . . . . . . 17
+ 16 . . . . . . . . . . . . . . . . . . . 16
+ 15 . . . . . . . . . . . . . . . . . . . 15
+ 14 . . . . . . . . . . . . . . . . . . . 14
+ 13 . . . . . . . . . . . . . . . . . . . 13
+ 12 . . . . . . . . . . . . . . . . . . . 12
+ 11 . . . . . . . . . . . . . . . . . . . 11
+ 10 . . . . . . . . . . . . . . . . . . . 10
+  9 . . . . . . . . . . . . . . . . . . .  9
+  8 . . . . . . . . . . . . . . . . . . .  8
+  7 . . . . . . . . . . . . . . . . . . .  7
+  6 . . . . . . . . . . . . . . . . . . .  6
+  5 . . . . . . . . . . . . . . . . . . .  5
+  4 . . . . . . . . . . . . . . . . . . .  4
+  3 . . . . . . . . . . . . . . . . . . .  3
+  2 . . . . . . . . . . . . . . . . . . .  2
+  1 . . . . . . . . . . . . . . . . . . .  1
+    A B C D E F G H J K L M N O P Q R S T
+          BOARD
+
+          expect(output).to include nice_board
         end
       end
     end
