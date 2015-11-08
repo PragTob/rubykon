@@ -42,7 +42,7 @@ module Benchmark
     class Job
 
       def run_warmup
-        @jobs.each do |item|
+        @list.each do |item|
           @suite.warming item.label, @warmup if @suite
 
           unless @quiet

@@ -3,7 +3,7 @@ require_relative 'support/playout_help'
 require_relative 'support/benchmark-ips'
 
 Benchmark.ips do |benchmark|
-  benchmark.config time: 20, warmup: 5
+  benchmark.config time: 30, warmup: 60
 
   benchmark.report '9x9 full playout (+ score)' do
     full_playout_for 9
