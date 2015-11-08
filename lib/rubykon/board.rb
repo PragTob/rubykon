@@ -77,6 +77,7 @@ module Rubykon
     
     COLOR_TO_CHARACTER = {BLACK => 'X', WHITE => 'O', EMPTY => '-'}
     CHARACTER_TO_COLOR = COLOR_TO_CHARACTER.invert
+    LEGACY_CONVERSION  = {'X' => ' X', 'O' => ' O', '-' => ' .'}
 
     def ==(other_board)
       board == other_board.board
@@ -124,6 +125,12 @@ module Rubykon
       relevant_chars.each_with_index do |char, index|
         yield index, CHARACTER_TO_COLOR.fetch(char)
       end
+    end
+
+    def self.convert(old_board_string)
+      old_board_string.split("\n").map do |line|
+        line.each_char.map{|char| LEGACY_CONVERSION.fetch(char)}.join
+      end.join("\n") << "\n"
     end
 
     private

@@ -314,6 +314,29 @@ O-----X
         expect(Rubykon::Board.from board_string).to eq board
       end
 
+      describe '.convert' do
+        it "makes the conversion" do
+          legacy = <<-BOARD
+O-----X
+-------
+--X----
+-------
+----O--
+-------
+O-----X
+          BOARD
+          expect(Board.convert(legacy)).to eq <<-BOARD
+ O . . . . . X
+ . . . . . . .
+ . . X . . . .
+ . . . . . . .
+ . . . . O . .
+ . . . . . . .
+ O . . . . . X
+          BOARD
+        end
+      end
+
     end
 
   end
