@@ -19,6 +19,7 @@ module Benchmark
 
         suite_finish = Time.now + run_time
         measure_until(@run_samples, suite_finish)
+        finish_measure
       end
 
 
@@ -47,6 +48,10 @@ module Benchmark
       def finish_warmup
         @warming_up = false
         puts "Finished warm up for #{@label}, running the real bechmarks now"
+      end
+
+      def finish_measure
+        puts "Finished measuring the run time for #{@label}"
       end
 
       def report(samples)

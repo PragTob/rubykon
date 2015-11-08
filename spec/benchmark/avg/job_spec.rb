@@ -17,7 +17,11 @@ module Benchmark::Avg
       end
 
       it "prints a note about the warm up phase being over" do
-        expect(fake_io.output).to match /finish.+warm up/i
+        expect(fake_io.output).to match /finish.+warm up.*#{label}/i
+      end
+
+      it "prints a note about the runtime phase being over" do
+        expect(fake_io.output).to match /finish.+measur.+run.*#{label}/i
       end
       
       shared_examples_for 'static run time report' do
