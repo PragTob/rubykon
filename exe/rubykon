@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/exe/env ruby
 require_relative '../lib/rubykon'
 
 cli = Rubykon::CLI.new
