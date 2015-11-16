@@ -1,3 +1,21 @@
+## 0.3 (2015-11-12)
+Implement full bot together with Monte Carlo Tree Search, as well as a more coarse grained benchmarking tool to benchmark full MCTS runs. Also add a CLI. Mostly a feature release.
+
+### Performance
+* Faster and more reliable move selection
+* optimize neighbours_of by enumerating possibilities, raw but effective
+
+### Features
+* Full Monte Carlo Tree Search implementation
+* Basic CLI implementation
+* benchmark/avg to do more coarse grained benchmarking
+* More readable string board representation
+* Added License (oops)
+* Added CoC
+
+### Bugfixes
+* correctly count captures for score
+
 ## 0.2 (2015-10-03)
 Rewrote data representation to be smaller and do way less allocations.
 
