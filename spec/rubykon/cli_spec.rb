@@ -120,6 +120,15 @@ module Rubykon
           expect(output).to match /invalid move/i
           expect(output).to match /O . . O . . . . ./
         end
+
+        it "doesn't blow up on invalid input" do
+          output = FakeIO.each_input %w(9 100 adslkadla A9 exit) do
+            subject.start
+          end
+
+          expect(output).to match /sorry/i
+          expect(output).to match /O . . . . . . . ./
+        end
       end
     end
 
