@@ -1,4 +1,11 @@
-## 0.3 (2015-11-12)
+## 0.3.1
+Fixups to the CLI after the fast release.
+
+### Bugfixes
+* fix wrong magic comment in gem executable
+* do not allow invalid moves in the CLI
+
+## 0.3 (2015-11-17)
 Implement full bot together with Monte Carlo Tree Search, as well as a more coarse grained benchmarking tool to benchmark full MCTS runs. Also add a CLI. Mostly a feature release.
 
 ### Performance
