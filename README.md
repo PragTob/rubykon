@@ -2,7 +2,11 @@
 A Go-Engine being built in Ruby. 
 
 ### Status?
-A naive very slow implementation of random playouts. Next up making it faster... or implementing the mcts bits. We'll see. Don't use and judge yet, some pretty inefficient stuff in here :D
+There is a CLI with which you can play, it does a full UCT MCTS. Still work to do on making move generation and scoring faster. Also there is no AMAF/RAVE implementation yet (which would make it a lot stronger) and it also does not use any expert knowledge right now. So still a lot to do, but it works.
+
+
+### Sub gems
+Right now the `mcts` and `benchmark/avg` gem that I wrote for this are still embedded in here. They are bound to be broken out and released as separate gems to play with. If you want to use them now, just use rubykon and you can require `mcts` or `benchmark/avg` :)
 
 ### Why would you build a Go-Bot in Ruby?
 Cause it's fun.
