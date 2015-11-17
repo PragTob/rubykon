@@ -41,23 +41,6 @@ module Rubykon
           expect(output).to match /starting/i
         end
 
-        it "asks for the number of playouts" do
-          output = FakeIO.each_input %w(9 1000 exit) do
-            subject.start
-          end
-          expect(output).to match /number.*playouts/i
-          expect(output).to match /1000 playout/i
-        end
-
-        it "makes a whole test through all the things" do
-          output = FakeIO.each_input %w(9 100 A9 exit) do
-            subject.start
-          end
-
-          expect(output).to match /O . . . . . . . ./
-          expect(output).to match /starting/i
-        end
-
         it "prints a board with nice labels" do
           output = FakeIO.each_input %w(19 100 exit) do
             subject.start
@@ -88,6 +71,45 @@ module Rubykon
           BOARD
 
           expect(output).to include nice_board
+        end
+      end
+
+      describe 'enter playputs' do
+        it "asks for the number of playouts" do
+          output = FakeIO.each_input %w(9 1000 exit) do
+            subject.start
+          end
+          expect(output).to match /number.*playouts/i
+          expect(output).to match /1000 playout/i
+        end
+      end
+
+      describe 'entering a move' do
+        it "makes a whole test through all the things" do
+          output = FakeIO.each_input %w(9 100 A9 exit) do
+            subject.start
+          end
+
+          expect(output).to match /O . . . . . . . ./
+          expect(output).to match /starting/i
+        end
+
+        it "rejects moves that are not on the board" do
+          output = FakeIO.each_input %w(9 100 A10 A9 exit) do
+            subject.start
+          end
+
+          expect(output).to match /invalid move/i
+          expect(output).to match /O . . . . . . . ./
+        end
+
+        it "rejects moves that are set where there's only a move" do
+          output = FakeIO.each_input %w(9 100 A9 A9 D9 exit) do
+            subject.start
+          end
+
+          expect(output).to match /invalid move/i
+          expect(output).to match /O . . O . . . . ./
         end
       end
     end

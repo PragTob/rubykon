@@ -7,9 +7,10 @@ module Rubykon
     Y_LABEL_WIDTH   = 3
 
     def initialize(output = $stdout, input = $stdin)
-      @output     = output
-      @input      = input
-      @state      = :init
+      @output         = output
+      @input          = input
+      @state          = :init
+      @move_validator = MoveValidator.new
     end
 
     def start
@@ -104,11 +105,19 @@ For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
     end
 
     def human_move
-      @output.puts "Make a move in the form XY, e.g. A19, D7 as the labels indicate!"
-      coords = get_input
-      identifier = @gtp_converter.from(coords)
-      move = [identifier, :white]
+      move = ask_human_for_move
+      until @move_validator.valid?(*move, @game_state.game)
+        puts 'That was an invalid move, please try again!'
+        move = ask_human_for_move
+      end
       make_move(move)
+    end
+
+    def ask_human_for_move
+      @output.puts "Make a move in the form XY, e.g. A19, D7 as the labels indicate!"
+      coords     = get_input
+      identifier = @gtp_converter.from(coords)
+      [identifier, :white]
     end
 
     def make_move(move)
