@@ -94,6 +94,15 @@ module Rubykon
           expect(output).to match /starting/i
         end
 
+        it "can handle lower/uppercase case input" do
+          output = FakeIO.each_input %w(9 100 a9 exit) do
+            subject.start
+          end
+
+          expect(output).to match /O . . . . . . . ./
+          expect(output).not_to match /invalid/i
+        end
+
         it "rejects moves that are not on the board" do
           output = FakeIO.each_input %w(9 100 A10 A9 exit) do
             subject.start

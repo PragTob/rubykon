@@ -107,11 +107,11 @@ For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
     end
 
     def human_input
-      input = ask_for_input
+      input = ask_for_input.upcase
       case input
       when GTP_COORDINATE
         human_move(input)
-      when 'wdyt'
+      when 'WDYT'.freeze
         print_move_considerations
       else
         invalid_input
