@@ -15,6 +15,7 @@ class FakeIO
 
   def print(string = '')
     @output << string
+    nil
   end
 
   alias_method :write, :print

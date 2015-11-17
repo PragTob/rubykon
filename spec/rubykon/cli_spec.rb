@@ -124,6 +124,16 @@ module Rubykon
         expect(output).to match /black/
         expect(output).to match /white/
       end
+
+      describe "wdyt" do
+        it "prints the win percentages" do
+          output = FakeIO.each_input %w(9 10 wdyt exit) do
+            subject.start
+          end
+
+          expect(output).to match /\=> \d?\d\.\d\d*%/
+        end
+      end
     end
   end
 end

@@ -1,16 +1,19 @@
 module Rubykon
   class CLI
 
-    EXIT            = /exit/i
-    CHAR_LABELS     = GTPCoordinateConverter::X_CHARS
-    X_LABEL_PADDING = ' '.freeze * 4
-    Y_LABEL_WIDTH   = 3
+    EXIT                      = /exit/i
+    CHAR_LABELS               = GTPCoordinateConverter::X_CHARS
+    X_LABEL_PADDING           = ' '.freeze * 4
+    Y_LABEL_WIDTH             = 3
+    GTP_COORDINATE            = /^[A-Z]\d\d?$/
+    MOVE_CONSIDERATIONS_COUNT = 10
 
     def initialize(output = $stdout, input = $stdin)
       @output         = output
       @input          = input
       @state          = :init
       @move_validator = MoveValidator.new
+      @root           = nil
     end
 
     def start
@@ -69,7 +72,7 @@ For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
         if bot_turn?
           bot_move
         else
-          human_move
+          human_input
         end
       end
     end
@@ -97,26 +100,55 @@ For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
 
     def bot_move
       @output.puts 'Rubykon is thinking...'
-      root = @mcts.start @game_state, @playouts
-      move = root.best_move
-      best_children = root.children.sort_by(&:win_percentage).reverse.take(10)
-      @output.puts best_children.map {|child| "#{@gtp_converter.to(child.move.first)} => #{child.win_percentage}"}.join "\n"
+      @root = @mcts.start @game_state, @playouts
+      move = @root.best_move
+      print_move_considerations
       make_move(move)
     end
 
-    def human_move
-      move = ask_human_for_move
-      until @move_validator.valid?(*move, @game_state.game)
-        puts 'That was an invalid move, please try again!'
-        move = ask_human_for_move
+    def human_input
+      input = ask_for_input
+      case input
+      when GTP_COORDINATE
+        human_move(input)
+      when 'wdyt'
+        print_move_considerations
+      else
+        invalid_input
       end
-      make_move(move)
     end
 
-    def ask_human_for_move
+    def ask_for_input
       @output.puts "Make a move in the form XY, e.g. A19, D7 as the labels indicate!"
-      coords     = get_input
-      identifier = @gtp_converter.from(coords)
+      @output.puts 'Or ask rubykon what it is thinking with "wdyt"'
+      get_input
+    end
+
+    def human_move(input)
+      move = move_from_input(input)
+      if @move_validator.valid?(*move, @game_state.game)
+        make_move(move)
+      else
+        retry_input
+      end
+    end
+
+    def retry_input
+      @output.puts 'That was an invalid move, please try again!'
+      human_input
+    end
+
+    def print_move_considerations
+      best_children = @root.children.sort_by(&:win_percentage).reverse
+      top_children  = best_children.take(MOVE_CONSIDERATIONS_COUNT)
+      moves_to_win_percentage = top_children.map do |child|
+        "#{@gtp_converter.to(child.move.first)} => #{child.win_percentage * 100}%"
+      end.join "\n"
+      @output.puts moves_to_win_percentage
+    end
+
+    def move_from_input(input)
+      identifier = @gtp_converter.from(input)
       [identifier, :white]
     end
 
@@ -125,6 +157,11 @@ For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
       print_board
       @output.puts "#{move.last} played at #{@gtp_converter.to(move.first)}"
       @output.puts "#{@game.next_turn_color}'s turn to move!'"
+    end
+
+    def invalid_input
+      puts "Sorry, didn't catch that!"
+      human_input
     end
 
   end
