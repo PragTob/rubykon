@@ -22,7 +22,7 @@ module Rubykon
       @output.puts <<-PLAYOUTS
 Please enter the number of playouts you'd like rubykon to make!
 More playouts means rubykon is stronger, but also takes longer.
-For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
+For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time (but still plays bad).
       PLAYOUTS
       playouts = get_digit_input
       init_game(size, playouts)
