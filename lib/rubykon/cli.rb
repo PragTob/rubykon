@@ -102,7 +102,6 @@ For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
       @output.puts 'Rubykon is thinking...'
       @root = @mcts.start @game_state, @playouts
       move = @root.best_move
-      print_move_considerations
       make_move(move)
     end
 
@@ -161,7 +160,6 @@ For 9x9 10000 is an acceptable value, for 19x19 1000 already take a long time.
 
     def invalid_input
       puts "Sorry, didn't catch that!"
-      human_input
     end
 
   end
