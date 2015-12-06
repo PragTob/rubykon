@@ -6,11 +6,15 @@ rvm:
   - jruby-9.0.4.0
   - jruby-head
   - ruby-head
+before_script:
+  - bundle update
 matrix:
   allow_failures:
     - rvm: jruby-head
     - rvm: ruby-head
 script: bundle exec rspec spec
+sudo: false
+cache: bundler
 addons:
   code_climate:
     repo_token: fab8afb587984cc2f6100be9c660e966ac3fb5e113458fb381267bfffcef15fe
