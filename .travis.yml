@@ -12,6 +12,7 @@ matrix:
   allow_failures:
     - rvm: jruby-head
     - rvm: ruby-head
+  fast_finish: true
 script: bundle exec rspec spec
 sudo: false
 cache: bundler
