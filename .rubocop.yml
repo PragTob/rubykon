@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 # Don't require new lines between one-liner methods
 Style/EmptyLineBetweenDefs:
   AllowAdjacentOneLineDefs: true
