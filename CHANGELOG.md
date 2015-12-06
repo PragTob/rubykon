@@ -1,4 +1,4 @@
-## 0.3.1
+## 0.3.1 (2015-11-17)
 Fixups to the CLI after the fast release.
 
 ### Bugfixes
@@ -8,7 +8,7 @@ Fixups to the CLI after the fast release.
 * make FakeIO return nil on print/puts as it should be
 * Allow lower case move input (a19)
 
-## 0.3 (2015-11-17)
+## 0.3 (2015-11-16)
 Implement full bot together with Monte Carlo Tree Search, as well as a more coarse grained benchmarking tool to benchmark full MCTS runs. Also add a CLI. Mostly a feature release.
 
 ### Performance

@@ -1,4 +1,4 @@
-## 0.3 (yeez have a look in the logs what changed)
+## 0.3 More Reliable playouts + new benchmarking
 
 Benchmarking is anew, with the help of the truffle/graal team a shim for benchmark/ips is in use that doesn't confuse the JIT as much yielding nice results.
 
