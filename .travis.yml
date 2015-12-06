@@ -1,11 +1,16 @@
 language: ruby
 rvm:
-  - jruby-19mode
-  - rbx-19mode
+  - jruby-1.7.23
+  - rbx-2.5.8
   - 2.2
-  - jruby-9.0.3.0
+  - jruby-9.0.4.0
+  - jruby-head
+  - ruby-head
+matrix:
+  allow_failures:
+    - rvm: jruby-head
+    - rvm: ruby-head
 script: bundle exec rspec spec
-
 addons:
   code_climate:
     repo_token: fab8afb587984cc2f6100be9c660e966ac3fb5e113458fb381267bfffcef15fe
