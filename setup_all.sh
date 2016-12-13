@@ -8,7 +8,12 @@ do
   echo Running $ruby
   rvm use $ruby
   ruby -v
-  gem install bundler
+  # new rbx versions crash with new bundler so gotta use the bundled 1.11.x
+  # https://github.com/rubinius/rubinius/issues/3710
+  if [ "$ruby" != "rbx-3.69" ]
+  then
+    gem install bundler
+  fi
   bundle install
   bundle exec rspec
   echo
