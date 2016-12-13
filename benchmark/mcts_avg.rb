@@ -9,13 +9,13 @@ Benchmark.avg do |benchmark|
 
   benchmark.config warmup: 180, time: 120
 
-  benchmark.report "9x9 10_000 iterations" do
-    mcts.start game_state_9, 10_000
-  end
-
-  benchmark.report "13x13 2_000 iterations" do
-    mcts.start game_state_13, 2_000
-  end
+  # benchmark.report "9x9 10_000 iterations" do
+  #   mcts.start game_state_9, 10_000
+  # end
+  #
+  # benchmark.report "13x13 2_000 iterations" do
+  #   mcts.start game_state_13, 2_000
+  # end
 
   benchmark.report "19x19 1_000 iterations" do
     mcts.start game_state_19, 1_000
