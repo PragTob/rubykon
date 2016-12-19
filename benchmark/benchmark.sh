@@ -34,8 +34,8 @@ GRAAL_BIN=~/dev/graalvm-jdk1.8.0/bin/java ../old_jruby/tool/jt.rb run --graal -J
 echo
 echo
 
-rvm use jruby-9.1.6.0
-echo Running new truffle out of JRuby 9.1.6.0 release
-JAVACMD=~/dev/graalvm-0.18-re/bin/java jruby -X+T -e 'puts Truffle::Graal.graal?'
-JAVACMD=~/dev/graalvm-0.18-re/bin/java jruby -X+T -e 'puts RUBY_DESCRIPTION'
-JAVACMD=~/dev/graalvm-0.18-re/bin/java jruby -X+T -J-Xmx1500m $script_name
+rvm use 2.3.3@rubykone
+echo Running new truffle head
+GRAALVM_BIN=~/dev/graalvm-0.18-re/bin/java ../jruby/bin/jruby-truffle-tool run -- --graal -e 'puts Truffle::Graal.graal?'
+GRAALVM_BIN=~/dev/graalvm-0.18-re/bin/java ../jruby/bin/jruby-truffle-tool run -- --graal -e  'puts RUBY_DESCRIPTION'
+GRAALVM_BIN=~/dev/graalvm-0.18-re/bin/java ../jruby/bin/jruby-truffle-tool run -- --graal -J-Xmx1500m $script_name
