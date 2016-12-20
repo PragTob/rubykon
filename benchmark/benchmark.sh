@@ -36,6 +36,6 @@ echo
 
 rvm use 2.3.3@rubykone
 echo Running new truffle head
-GRAALVM_BIN=~/dev/graalvm-0.18-re/bin/java ../jruby/bin/jruby-truffle-tool run -- --graal -e 'puts Truffle::Graal.graal?'
-GRAALVM_BIN=~/dev/graalvm-0.18-re/bin/java ../jruby/bin/jruby-truffle-tool run -- --graal -e  'puts RUBY_DESCRIPTION'
-GRAALVM_BIN=~/dev/graalvm-0.18-re/bin/java ../jruby/bin/jruby-truffle-tool run -- --graal -J-Xmx1500m $script_name
+../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.18-re/bin/java run --graal --no-asserts -- -e 'puts Truffle::Graal.graal?'
+../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.18-re/bin/java run --graal --no-asserts -- -e  'puts RUBY_DESCRIPTION'
+../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.18-re/bin/java run --graal --no-asserts -- -J-Xmx1500m $script_name
