@@ -3,7 +3,7 @@
 script_name=$1
 
 declare -a RUBIES=( "2.0.0" "2.2.3" "jruby-9.0.3.0" "rbx-2.5.8" "2.3.3"
-"2.4.0-rc1" "jruby-9.1.6.0" "rbx-3.69" )
+"2.4.0" "jruby-9.1.6.0" "rbx-3.69" )
 
 for ruby in "${RUBIES[@]}"
 do
@@ -34,8 +34,8 @@ GRAAL_BIN=~/dev/graalvm-jdk1.8.0/bin/java ../old_jruby/tool/jt.rb run --graal -J
 echo
 echo
 
-rvm use 2.3.3@rubykone
+rvm use 2.3.3
 echo Running new truffle head
-../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.18-re/bin/java run --graal --no-asserts -- -e 'puts Truffle::Graal.graal?'
-../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.18-re/bin/java run --graal --no-asserts -- -e  'puts RUBY_DESCRIPTION'
-../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.18-re/bin/java run --graal --no-asserts -- -J-Xmx1500m $script_name
+../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.19-dk/bin/java run --graal -- -e 'puts Truffle::Graal.graal?'
+../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.19-dk/bin/java run --graal -- -e  'puts RUBY_DESCRIPTION'
+../jruby/bin/jruby-truffle-tool --graal-path ~/dev/graalvm-0.19-dk/bin/java run --graal -- -J-Xmx1500m $script_name
