@@ -16,7 +16,7 @@ do
 done
 
 declare -a JRUBIES=("jruby-9.0.3.0" "jruby-9.1.6.0" )
-for ruby in "${RUBIES[@]}"
+for ruby in "${JRUBIES[@]}"
 do
   echo Running $ruby with --server -Xcompile.invokedynamic=true -J-Xmx1500m
   rvm use $ruby
