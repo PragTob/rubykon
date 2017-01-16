@@ -26,14 +26,13 @@ do
   echo
 done
 
-rvm use 2.3.3@rubykon
+rvm use 2.4.0
 echo Running old truffle graal with enough heap space
-GRAAL_BIN=~/dev/graalvm-jdk1.8.0/bin/java ../old_jruby/tool/jt.rb run --graal -e 'puts RUBY_DESCRIPTION; puts "Graal? #{Truffle::Graal.graal?}"'
+GRAAL_BIN=~/dev/graalvm-jdk1.8.0/bin/java ../old_jruby/tool/jt.rb run --graal -e 'puts RUBY_DESCRIPTION; puts "Graal? #{Truffle.graal?}"'
 GRAAL_BIN=~/dev/graalvm-jdk1.8.0/bin/java ../old_jruby/tool/jt.rb run --graal -J-Xmx1500m $script_name
 echo
 echo
 
-rvm use 2.3.3
 echo Running new truffle head
 GRAAL_HOME=/home/tobi/github/truffleruby/graal/graal-core ./truffleruby/tool/jt.rb ruby --graal -e 'puts RUBY_DESCRIPTION; puts "Graal? #{Truffle::Graal.graal?}"'
 GRAAL_HOME=/home/tobi/github/truffleruby/graal/graal-core ../truffleruby/tool/jt.rb ruby --graal -J-Xmx1500m $script_name
