@@ -34,5 +34,5 @@ echo
 echo
 
 echo Running new truffle head
-GRAAL_HOME=/home/tobi/github/truffleruby/graal/graal-core ./truffleruby/tool/jt.rb ruby --graal -e 'puts RUBY_DESCRIPTION; puts "Graal? #{Truffle::Graal.graal?}"'
-GRAAL_HOME=/home/tobi/github/truffleruby/graal/graal-core ../truffleruby/tool/jt.rb ruby --graal -J-Xmx1500m $script_name
+GRAAL_HOME=~/github/truffleruby/graal/graal-core ./truffleruby/tool/jt.rb ruby --graal -e 'puts RUBY_DESCRIPTION; puts "Graal? #{Truffle::Graal.graal?}"'
+GRAAL_HOME=~/github/truffleruby/graal/graal-core ../truffleruby/tool/jt.rb ruby --graal -J-Xmx1500m $script_name
