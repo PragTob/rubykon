@@ -11,7 +11,7 @@ mcts = MCTS::MCTS.new
  {black: 0, white: -4}].each do |position|
   [2, 4, 8, 10, 16, 32, 64, 100].each do |playouts|
     results = Hash.new {0}
-    double_step_game = MCTS::Examples::DoubleStep.new position
+    double_step_game = MCTS::Examples::DoubleStep.new position[:black], position[:white]
     10_000.times do |i|
       root = mcts.start double_step_game, playouts
       best_move = root.best_move
