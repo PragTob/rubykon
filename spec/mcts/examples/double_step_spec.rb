@@ -10,7 +10,8 @@ module MCTS::Examples
       end
 
       it "has the right position" do
-        expect(subject.positions).to eq(black: 0, white: 0)
+        expect(subject.black).to eq(0)
+        expect(subject.white).to eq(0)
       end
     end
 
@@ -30,7 +31,7 @@ module MCTS::Examples
       end
 
       it "sets the move for the starting color (black)" do
-        expect(subject.positions[:black]).to eq 2
+        expect(subject.black).to eq 2
       end
 
       it "returns the correct color for last turn" do
@@ -38,7 +39,7 @@ module MCTS::Examples
       end
 
       it "does not touch the moves of the other color" do
-        expect(subject.positions[:white]).to eq 0
+        expect(subject.white).to eq 0
       end
 
       describe "and another move" do
@@ -47,7 +48,7 @@ module MCTS::Examples
         end
 
         it "sets the move for white" do
-          expect(subject.positions[:white]).to eq 1
+          expect(subject.white).to eq 1
         end
 
         it "returns the correct color for last turn" do
@@ -55,13 +56,13 @@ module MCTS::Examples
         end
 
         it "does not touch the moves of the other color" do
-          expect(subject.positions[:black]).to eq 2
+          expect(subject.black).to eq 2
         end
 
         it "then changes back to the original color" do
           subject.set_move(1)
-          expect(subject.positions[:black]).to eq 3
-          expect(subject.positions[:white]).to eq 1
+          expect(subject.black).to eq 3
+          expect(subject.white).to eq 1
         end
       end
     end
@@ -100,14 +101,16 @@ module MCTS::Examples
         dup = subject.dup
         subject.set_move(1)
         dup.set_move(2)
-        expect(subject.positions).to eq(black: 2, white: 1)
-        expect(dup.positions).to eq(black: 2, white: 2)
+        expect(subject.black).to eq(2)
+        expect(subject.white).to eq(1)
+        expect(dup.black).to eq(2)
+        expect(dup.white).to eq(2)
       end
     end
 
     describe "introducing a handicap" do
       it "works" do
-        game = described_class.new({black: 4, white: 0})
+        game = described_class.new(4, 0)
         game.set_move(2)
         expect(game).to be_finished
         expect(game).to be_won(:black)

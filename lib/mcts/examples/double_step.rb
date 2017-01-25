@@ -5,15 +5,16 @@ module MCTS
       FINAL_POSITION = 6
       MAX_STEP = 2
 
-      attr_reader :positions
+      attr_reader :black, :white
 
-      def initialize(positions = init_positions, n = 0)
-        @positions = positions
+      def initialize(black = 0, white = 0, n = 0)
+        @black = black
+        @white = white
         @move_count = n
       end
 
       def finished?
-        @positions.any? {|_color, position| position >= FINAL_POSITION }
+        @white >= FINAL_POSITION || @black >= FINAL_POSITION
       end
 
       def generate_move
@@ -22,17 +23,27 @@ module MCTS
 
       def set_move(move)
         steps = move
-        @positions[next_turn_color] += steps
+        case next_turn_color
+        when :white
+          @white += steps
+        else
+          @black += steps
+        end
         @move_count += 1
       end
 
       def dup
-        self.class.new @positions.dup, @move_count
+        self.class.new @black, @white, @move_count
       end
 
       def won?(color)
         fail "Game not finished" unless finished?
-        @positions[color] > @positions[other_color(color)]
+        case color
+        when :black
+          @black > @white
+        else
+          @white > @black
+        end
       end
 
       def all_valid_moves
@@ -50,18 +61,6 @@ module MCTS
       private
       def next_turn_color
         @move_count.even? ? :black : :white
-      end
-
-      def init_positions
-        {black: 0, white: 0}
-      end
-
-      def other_color(color)
-        if color == :black
-          :white
-        else
-          :black
-        end
       end
     end
   end
