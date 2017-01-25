@@ -3,7 +3,7 @@ module MCTS
     class DoubleStep
 
       FINAL_POSITION = 6
-      MAX_STEP = 2
+      STEPS = [1, 2]
 
       attr_reader :black, :white
 
@@ -18,7 +18,7 @@ module MCTS
       end
 
       def generate_move
-        rand(MAX_STEP) + 1
+        STEPS.sample
       end
 
       def set_move(move)
