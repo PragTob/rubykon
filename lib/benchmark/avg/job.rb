@@ -24,10 +24,12 @@ module Benchmark
 
 
       def warmup_report
+        puts "Warmup times: #{@warmup_samples.inspect}"
         report @warmup_samples
       end
 
       def runtime_report
+        puts "runtime times: #{@run_samples.inspect}"
         report @run_samples
       end
 
@@ -65,7 +67,12 @@ module Benchmark
 
       def round(number)
         # not Float#round to also get numbers like 3.20 (static number after ,)
-        sprintf("%.#{PRECISION}f", number)
+        number_string = sprintf("%.#{PRECISION}f", number)
+        number_delimiters(number_string)
+      end
+
+      def number_delimiters(number_string)
+        number_string.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
       end
 
       def padding_space
