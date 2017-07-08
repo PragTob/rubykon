@@ -1,6 +1,5 @@
 require_relative '../../lib/benchmark/avg'
 
-
 def fib n
   if n < 3
     1
@@ -10,7 +9,7 @@ def fib n
 end
 
 Benchmark.avg do |benchmark|
-  benchmark.config time: 10, warmup: 7
+  benchmark.config time: 20, warmup: 10
 
   benchmark.report "fib(30)" do
     fib(30)
