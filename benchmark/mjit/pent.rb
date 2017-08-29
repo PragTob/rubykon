@@ -120,7 +120,7 @@ def setpiece(a,pos)
 end
 
 Benchmark.avg do |benchmark|
-  benchmark.config time: 60, warmup: 95
+  benchmark.config time: 60, warmup: 60
 
   benchmark.report "pent" do
     mkpieces
