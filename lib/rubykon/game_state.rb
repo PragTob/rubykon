@@ -30,7 +30,11 @@ module Rubykon
     end
 
     def won?(color)
-      score[:winner] == color
+      winner == color
+    end
+
+    def winner
+      score[:winner]
     end
 
     def all_valid_moves

@@ -40,42 +40,31 @@ module MCTS
     end
 
     def rollout
-      playout = Playout.new(@game_state)
-      playout.play
+      state = @game_state.dup
+      state.set_move(state.generate_move) until state.finished?
+      state.winner
     end
 
-    def won
-      @visits += 1
-      @wins += 1
-    end
-
-    def lost
-      @visits += 1
-    end
-
-    def backpropagate(won)
+    def backpropagate(winner:)
       node = self
-      node.update_won won
-      until node.root? do
-        won = !won # switching players perspective
-        node = node.parent
-        node.update_won(won)
-      end
+      node.update_stats(winner: winner) until (node = node.parent).nil?
     end
 
     def untried_moves?
       !@untried_moves.empty?
     end
 
-    def update_won(won)
-      if won
-        self.won
-      else
-        self.lost
-      end
+    def update_stats(winner:)
+      @visits += 1
+      @wins += 1 if winner == acting_player
     end
 
     private
+
+    def acting_player
+      return -1 if parent.nil?
+      game_state.last_turn_color
+    end
 
     def create_child(move)
       game_state = @game_state.dup
