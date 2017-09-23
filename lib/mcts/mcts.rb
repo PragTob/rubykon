@@ -10,4 +10,3 @@ module MCTS
     end
   end
 end
-
