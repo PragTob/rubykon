@@ -1,6 +1,6 @@
 module MCTS
   class Node
-    attr_reader :parent,  :move, :wins, :visits, :children, :game_state
+    attr_reader :parent, :move, :wins, :visits, :children, :game_state
 
     def initialize(game_state, move, parent)
       @parent        = parent
