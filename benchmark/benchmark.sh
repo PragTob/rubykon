@@ -2,7 +2,7 @@
 
 script_name=$1
 
-declare -a RUBIES=( "2.4.6" "2.6.3" "2.7.0-dev"  "jruby-9.1.17.0" "jruby-9.2.7.0" "truffleruby-19.0.0" "truffleruby-1.0.0-rc16")
+declare -a RUBIES=( "2.4.6" "2.6.3" "2.7.0-dev"  "jruby-9.1.17.0" "jruby-9.2.7.0" "truffleruby-19.0.0")
 
 for ruby in "${RUBIES[@]}"
 do
