@@ -55,6 +55,7 @@ module Benchmark
       end
 
       def report(samples)
+        p samples
         times   = extract_times(samples)
         label   = @label.ljust(LABEL_WIDTH - PADDING) + padding_space
         metrics = "#{round(times[:ipm])} i/min" << padding_space
