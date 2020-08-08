@@ -1,5 +1,5 @@
 # Rubykon [![Gem Version](https://badge.fury.io/rb/rubykon.svg)](https://badge.fury.io/rb/rubykon)[![Build Status](https://secure.travis-ci.org/PragTob/rubykon.png?branch=master)](https://travis-ci.org/PragTob/rubykon)[![Code Climate](https://codeclimate.com/github/PragTob/Rubykon.png)](https://codeclimate.com/github/PragTob/Rubykon)[![Test Coverage](https://codeclimate.com/github/PragTob/Rubykon/badges/coverage.svg)](https://codeclimate.com/github/PragTob/Rubykon/coverage)
-A Go-Engine being built in Ruby. 
+A Go-Engine being built in Ruby.
 
 ### Status?
 There is a CLI with which you can play, it does a full UCT MCTS. Still work to do on making move generation and scoring faster. Also there is no AMAF/RAVE implementation yet (which would make it a lot stronger) and it also does not use any expert knowledge right now. So still a lot to do, but it works.
@@ -11,30 +11,20 @@ Right now the `mcts` and `benchmark/avg` gem that I wrote for this are still emb
 ### Why would you build a Go-Bot in Ruby?
 Cause it's fun.
 
-### Running truffle
+### Setting up
 
-Go ahead and [install from source](https://github.com/jruby/jruby/wiki/Truffle#from-source). Then you have to specify the graal VM when you execute something like this:
+It should work with any standard ruby implementation. `bundle install` and you're ready to go.
 
-    JAVACMD=~/dev/graalvm-jdk1.8.0/bin/java ../jruby/bin/jruby -X+T -e 'puts Truffle.graal?'
-    
-If this (adjusted to your paths) prints `true` then the setup is good so far.
- 
-Next up, install the jruby+truffle tool. Go into the jruby directory you checked out and make sure you use the same ruby version/gemset you want to use (this installs a gem). Then do:
- 
-    tool/jt.rb install-tool
-    
-With this installed you can then setup graal in your repository (i.e. rubykon), this install gems etc.:
+### Benchmarking
 
-    jruby+truffle setup
-    
-This should now still print true:
+If you're here for the benchmarking, then there are a couple of useful scripts.
+Assuming you have [`asdf`](https://github.com/asdf-vm/asdf) with both the [ruby](https://github.com/asdf-vm/asdf-ruby) and [java](https://github.com/halcyon/asdf-java) plugins you can run `setup_all.sh` which installs all rubies and JVMs for the benchmark.
 
-    jruby+truffle --graal-path ../graalvm-jdk1.8.0/bin/java run --graal -- -e 'p Truffle.graal?'
-    
-You can then use it like this to run benchmarks et. al.:
+You can then:
 
-    jruby+truffle --graal-path ../graalvm-jdk1.8.0/bin/java run --graal -J-Xmx1500m benchmark/mcts.rb
-    
-The `-J-Xmx1500m` is important as truffle needs more heap space.
-    
-You can also run the specs via `jruby+truffle run -S rspec spec/`
+```shell
+cd benchmark/
+benchmark.sh mcts_avg.rb
+```
+
+This runs the mcts_avg.rb (adjust timings as necessary) benchmark with all the configured ruby installations. This can take a _long_ while so you might want to comment out certain rubies/JVMs or entire sections.
