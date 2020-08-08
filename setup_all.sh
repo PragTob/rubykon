@@ -29,11 +29,21 @@ asdf plugin-update java
 
 for java in "${JVMS[@]}"
 do
-  echo Running $java
+  echo Installing $java
   asdf install java $java
-  asdf local java $java
-  java -version
 
   echo
   echo
 done
+
+# Setup GraalVM non native
+
+asdf local java graalvm-20.1.0+java11
+gu install ruby
+~/.asdf/installs/java/graalvm-20.1.0+java11/languages/ruby/lib/truffle/post_install_hook.sh
+ruby_home=$(/home/tobi/.asdf/installs/java/graalvm-20.1.0+java11/languages/ruby/bin/ruby -e 'print RbConfig::CONFIG["prefix"]')
+ln -s "$ruby_home" "$HOME/.asdf/installs/ruby/trufflerubyVM"
+asdf reshim ruby trufflerubyVM
+asdf local ruby trufflerubyVM
+ruby -v
+ruby --jvm -v

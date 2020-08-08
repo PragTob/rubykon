@@ -18,7 +18,7 @@ do
 done
 
 echo "-------------------------------------------"
-echo "|            DONE WITH "NORMAL" RUBIES     |"
+echo "|            DONE WITH 'NORMAL' RUBIES     |"
 echo "-------------------------------------------"
 
 declare -a MJITRUBIES=( "2.6.6" "2.7.1" "2.8.0-dev" )
@@ -69,3 +69,14 @@ done
 echo "-------------------------------------------"
 echo "|             DONE WITH JRUBIES          |"
 echo "-------------------------------------------"
+
+asdf local ruby trufflerubyVM
+echo "Running GraalVM installed ruby --native"
+ruby --native -v
+ruby --native $script_name
+echo
+
+echo "Running GraalVM installed ruby --jvm"
+ruby --jvm -v
+ruby --jvm $script_name
+echo
