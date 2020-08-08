@@ -5,7 +5,7 @@ Benchmark.avg do |benchmark|
   game_state_19 = Rubykon::GameState.new Rubykon::Game.new(19)
   mcts = MCTS::MCTS.new
 
-  benchmark.config warmup: 120, time: 180
+  benchmark.config warmup: 2, time: 5
 
   benchmark.report "19x19 1_000 iterations" do
     mcts.start game_state_19, 1_000
