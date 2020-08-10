@@ -76,6 +76,7 @@ do
     echo
 
     echo Running $ruby with --server -Xcompile.invokedynamic=true -J-Xmx1500m
+    ruby --server -Xcompile.invokedynamic=true -J-Xmx1500m -v
     ruby --server -Xcompile.invokedynamic=true -J-Xmx1500m $script_name
     echo
 
