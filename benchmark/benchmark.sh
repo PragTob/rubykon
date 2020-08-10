@@ -42,7 +42,7 @@ for ruby in "${MJITRUBIES[@]}"
 do
   echo Running $ruby
   asdf local ruby $ruby
-  ruby -v
+  ruby --jit -v
   ruby --jit $script_name
   echo
   echo "--------------------------------------------------"
