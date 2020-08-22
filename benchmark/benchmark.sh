@@ -4,7 +4,7 @@ set -e
 
 script_name=$1
 
-declare -a RUBIES=( "2.4.9" "2.6.6" "2.7.1" "2.8.0-dev"  "truffleruby-20.1.0" "truffleruby-1.0.0-rc16")
+declare -a RUBIES=( "2.4.10" "2.5.8" "2.6.6" "2.7.1" "2.8.0-dev"  "truffleruby-20.1.0" "truffleruby-1.0.0-rc16")
 
 for ruby in "${RUBIES[@]}"
 do
