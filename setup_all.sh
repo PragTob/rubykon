@@ -1,6 +1,6 @@
 #!/bin/bash --login
 
-declare -a RUBIES=( "2.4.9" "2.6.6" "2.7.1" "2.8.0-dev" "jruby-9.1.17.0" "jruby-9.2.11.1" "truffleruby-20.1.0" "truffleruby-1.0.0-rc16")
+declare -a RUBIES=( "2.4.10" "2.5.8" "2.6.6" "2.7.1" "2.8.0-dev" "jruby-9.1.17.0" "jruby-9.2.11.1" "truffleruby-20.1.0" "truffleruby-1.0.0-rc16")
 
 asdf plugin-update ruby
 
