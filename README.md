@@ -50,3 +50,7 @@ The goal of this is to make sure two things:
 
 a.) We don't accidentally make performance worse (I had ideas for great optimizations that actually made it worse...)
 b.) We don't implement optimizations that benefit one implementation while making the others worse
+
+## Blog Posts
+
+These days this is mostly used for writing performance blog posts. You can find all of them at https://pragtob.wordpress.com/tag/rubykon/
