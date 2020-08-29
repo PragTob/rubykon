@@ -40,9 +40,9 @@ Especially performance related contributions should ideally come with before/aft
 
 Ideally it'd have benchmarks for:
 
-* latest CRuby (plus points: also with --jit)
-* latest JRuby with invokedynamic
-* latest truffleruby (ideally both native and jvm but one is enough)
+* recent CRuby (plus points: also with --jit)
+* recent JRuby with invokedynamic
+* recent truffleruby (ideally both native and jvm but one is enough)
 
 If that's too much ruby setup (I understand) feel free to PR and let me run the benchmarks for the missing implementations. Might take me a while though ;)
 
