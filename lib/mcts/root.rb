@@ -17,24 +17,10 @@ module MCTS
     end
 
     def explore_tree
-      selected_node = select
-      playout_node =  if selected_node.leaf?
-                        selected_node
-                      else
-                        selected_node.expand
-                      end
-      won = playout_node.rollout
-      playout_node.backpropagate(won)
-    end
-
-    def update_won(won)
-      # logic reversed as the node accumulates its children and has no move
-      # of its own
-      if won
-        self.lost
-      else
-        self.won
-      end
+      node = select
+      node = node.expand unless node.leaf?
+      winner = node.rollout
+      node.backpropagate(winner: winner)
     end
 
     private
